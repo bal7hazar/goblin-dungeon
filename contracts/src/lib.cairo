@@ -3,56 +3,81 @@ mod store;
 
 mod types {
     mod direction;
-    mod mode;
+    mod spell;
+    mod category;
+    mod class;
+    mod element;
     mod monster;
     mod role;
+    mod threat;
+    mod slot;
+    mod item;
 }
 
 mod models {
     mod index;
-    mod dungeon;
     mod player;
+    mod factory;
+    mod dungeon;
+    mod room;
+    mod team;
+    // mod character;
 }
 
-mod components {
-    mod playable;
-}
+// mod components {
+//     mod playable;
+// }
 
-mod systems {
-    mod actions;
-}
+// mod systems {
+//     mod actions;
+// }
 
 mod elements {
-    mod modes {
-        mod interface;
-        mod easy;
-        mod medium;
-        mod hard;
-    }
     mod monsters {
         mod interface;
-        mod common;
-        mod elite;
-        mod boss;
+        mod goblin;
+        mod skeleton;
+        mod spider;
     }
     mod roles {
         mod interface;
+        mod knight;
+        mod ranger;
+        mod priest;
+    }
+    mod elements {
+        mod interface;
         mod fire;
         mod water;
-        mod earth;
         mod air;
+    }
+    mod spells {
+        mod interface;
+        mod damage;
+        mod heal;
+        mod stun;
+    }
+    mod items {
+        mod interface;
+        mod sword;
+        mod staff;
+        mod helmet;
     }
 }
 
 mod helpers {
+    mod dice;
+    mod math;
+    mod packer;
     mod seeder;
 }
+// #[cfg(test)]
+// mod tests {
+//     mod setup;
+//     mod test_setup;
+//     mod test_move;
+//     mod test_attack;
+//     mod test_heal;
+// }
 
-#[cfg(test)]
-mod tests {
-    mod setup;
-    mod test_setup;
-    mod test_move;
-    mod test_attack;
-    mod test_heal;
-}
+

@@ -1,10 +1,10 @@
 #[derive(Copy, Drop)]
 enum Direction {
     None,
-    Left,
-    Right,
-    Up,
-    Down,
+    North,
+    East,
+    South,
+    West,
 }
 
 impl IntoDirectionFelt252 of core::Into<Direction, felt252> {
@@ -12,10 +12,10 @@ impl IntoDirectionFelt252 of core::Into<Direction, felt252> {
     fn into(self: Direction) -> felt252 {
         match self {
             Direction::None => 'NONE',
-            Direction::Left => 'LEFT',
-            Direction::Right => 'RIGHT',
-            Direction::Up => 'UP',
-            Direction::Down => 'DOWN',
+            Direction::North => 'NORTH',
+            Direction::East => 'EAST',
+            Direction::South => 'SOUTH',
+            Direction::West => 'WEST',
         }
     }
 }
@@ -25,10 +25,10 @@ impl IntoDirectionU8 of core::Into<Direction, u8> {
     fn into(self: Direction) -> u8 {
         match self {
             Direction::None => 0,
-            Direction::Left => 1,
-            Direction::Right => 2,
-            Direction::Up => 3,
-            Direction::Down => 4,
+            Direction::North => 1,
+            Direction::East => 2,
+            Direction::South => 3,
+            Direction::West => 4,
         }
     }
 }
@@ -39,10 +39,10 @@ impl IntoU8Direction of core::Into<u8, Direction> {
         let card: felt252 = self.into();
         match card {
             0 => Direction::None,
-            1 => Direction::Left,
-            2 => Direction::Right,
-            3 => Direction::Up,
-            4 => Direction::Down,
+            1 => Direction::North,
+            2 => Direction::East,
+            3 => Direction::South,
+            4 => Direction::West,
             _ => Direction::None,
         }
     }

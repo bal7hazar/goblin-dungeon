@@ -1,16 +1,13 @@
-// Game
+// Factory
 
-const SEED_WEEK_SECONDS: u64 = 604800;
-const SEED_OFFSET_SECONDS: u64 = 345600;
+const FACTORY_ID: u32 = 0;
 
-// Player
+// Room
 
-const DEFAULT_PLAYER_DAMAGE: u8 = 10;
-const DEFAULT_PLAYER_HEALTH: u8 = 100;
-const MAX_PLAYER_HEALTH: u8 = 200;
-const DEFAULT_PLAYER_GOLD: u16 = 0;
+const MAX_MONSTER_COUNT: u8 = 3;
+const ATTRIBUTE_BIT_LENGTH: u8 = 8;
+const MONSTER_BIT_LENGTH: u8 = 32;
+const MONSTER_MAX_POWER: u8 = 5;
 
-// Shop
-
-const DEFAULT_POTION_COST: u16 = 10;
-const DEFAULT_POTION_HEAL: u8 = 20;
+const ROOM_ADVENTURER_COUNT: u8 = 2;
+const ADVENTURER_BIT_LENGTH: u8 = 16;
