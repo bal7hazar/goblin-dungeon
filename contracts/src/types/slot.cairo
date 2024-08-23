@@ -12,7 +12,7 @@ enum Slot {
 impl SlotImpl of SlotTrait {}
 
 impl IntoSlotFelt252 of core::Into<Slot, felt252> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Slot) -> felt252 {
         match self {
             Slot::None => 'NONE',
@@ -26,7 +26,7 @@ impl IntoSlotFelt252 of core::Into<Slot, felt252> {
 }
 
 impl IntoSlotU8 of core::Into<Slot, u8> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Slot) -> u8 {
         match self {
             Slot::None => 0,
@@ -40,7 +40,7 @@ impl IntoSlotU8 of core::Into<Slot, u8> {
 }
 
 impl IntoU8Slot of core::Into<u8, Slot> {
-    #[inline(always)]
+    #[inline]
     fn into(self: u8) -> Slot {
         let card: felt252 = self.into();
         match card {
@@ -56,7 +56,7 @@ impl IntoU8Slot of core::Into<u8, Slot> {
 }
 
 impl SlotPrint of core::debug::PrintTrait<Slot> {
-    #[inline(always)]
+    #[inline]
     fn print(self: Slot) {
         let felt: felt252 = self.into();
         felt.print();

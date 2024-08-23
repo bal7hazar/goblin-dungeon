@@ -63,7 +63,9 @@ pub struct Character {
     pub index: u8,
     pub class: u8,
     pub element: u8,
+    pub spell: u8,
     pub health: u8,
+    pub shield: u8,
     pub stun: u8,
     pub buff: u8,
 }

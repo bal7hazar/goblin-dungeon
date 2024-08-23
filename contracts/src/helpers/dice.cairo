@@ -15,12 +15,12 @@ pub struct Dice {
 
 #[generate_trait]
 pub impl DiceImpl of DiceTrait {
-    #[inline(always)]
+    #[inline]
     fn new(face_count: u8, seed: felt252) -> Dice {
         Dice { face_count, seed, nonce: 0 }
     }
 
-    #[inline(always)]
+    #[inline]
     fn roll(ref self: Dice) -> u8 {
         let mut state = PoseidonTrait::new();
         state = state.update(self.seed);

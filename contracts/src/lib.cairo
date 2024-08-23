@@ -14,24 +14,6 @@ mod types {
     mod item;
 }
 
-mod models {
-    mod index;
-    mod player;
-    mod factory;
-    mod dungeon;
-    mod room;
-    mod team;
-    // mod character;
-}
-
-// mod components {
-//     mod playable;
-// }
-
-// mod systems {
-//     mod actions;
-// }
-
 mod elements {
     mod monsters {
         mod interface;
@@ -54,8 +36,11 @@ mod elements {
     mod spells {
         mod interface;
         mod damage;
+        mod damage_all;
         mod heal;
+        mod heal_all;
         mod stun;
+        mod stun_all;
     }
     mod items {
         mod interface;
@@ -65,9 +50,28 @@ mod elements {
     }
 }
 
+mod models {
+    mod index;
+    mod player;
+    mod factory;
+    mod dungeon;
+    mod room;
+    mod team;
+    mod character;
+}
+
+// mod components {
+//     mod playable;
+// }
+
+// mod systems {
+//     mod actions;
+// }
+
 mod helpers {
     mod dice;
     mod math;
+    mod battler;
     mod packer;
     mod seeder;
 }

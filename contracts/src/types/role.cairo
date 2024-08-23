@@ -3,6 +3,7 @@
 use rpg::elements::roles;
 use rpg::elements::monsters;
 use rpg::types::spell::Spell;
+use rpg::types::class::Class;
 
 #[derive(Copy, Drop)]
 enum Role {
@@ -30,8 +31,20 @@ impl RoleImpl of RoleTrait {
     }
 }
 
+impl IntoRoleClass of core::Into<Role, Class> {
+    #[inline]
+    fn into(self: Role) -> Class {
+        match self {
+            Role::None => Class::None,
+            Role::Knight => Class::Knight,
+            Role::Ranger => Class::Ranger,
+            Role::Priest => Class::Priest,
+        }
+    }
+}
+
 impl IntoRoleFelt252 of core::Into<Role, felt252> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Role) -> felt252 {
         match self {
             Role::None => 'NONE',
@@ -43,7 +56,7 @@ impl IntoRoleFelt252 of core::Into<Role, felt252> {
 }
 
 impl IntoRoleU8 of core::Into<Role, u8> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Role) -> u8 {
         match self {
             Role::None => 0,
@@ -55,7 +68,7 @@ impl IntoRoleU8 of core::Into<Role, u8> {
 }
 
 impl IntoU8Role of core::Into<u8, Role> {
-    #[inline(always)]
+    #[inline]
     fn into(self: u8) -> Role {
         let card: felt252 = self.into();
         match card {
@@ -69,7 +82,7 @@ impl IntoU8Role of core::Into<u8, Role> {
 }
 
 impl RolePrint of core::debug::PrintTrait<Role> {
-    #[inline(always)]
+    #[inline]
     fn print(self: Role) {
         let felt: felt252 = self.into();
         felt.print();

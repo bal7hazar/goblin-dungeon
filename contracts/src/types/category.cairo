@@ -34,7 +34,7 @@ impl CategoryImpl of CategoryTrait {
 }
 
 impl IntoCategoryFelt252 of core::Into<Category, felt252> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Category) -> felt252 {
         match self {
             Category::None => 'NONE',
@@ -50,7 +50,7 @@ impl IntoCategoryFelt252 of core::Into<Category, felt252> {
 }
 
 impl IntoCategoryU8 of core::Into<Category, u8> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Category) -> u8 {
         match self {
             Category::None => 0,
@@ -66,7 +66,7 @@ impl IntoCategoryU8 of core::Into<Category, u8> {
 }
 
 impl IntoU8Category of core::Into<u8, Category> {
-    #[inline(always)]
+    #[inline]
     fn into(self: u8) -> Category {
         let card: felt252 = self.into();
         match card {
@@ -84,7 +84,7 @@ impl IntoU8Category of core::Into<u8, Category> {
 }
 
 impl CategoryPrint of core::debug::PrintTrait<Category> {
-    #[inline(always)]
+    #[inline]
     fn print(self: Category) {
         let felt: felt252 = self.into();
         felt.print();

@@ -11,3 +11,8 @@ const MONSTER_MAX_POWER: u8 = 5;
 
 const ROOM_ADVENTURER_COUNT: u8 = 2;
 const ADVENTURER_BIT_LENGTH: u8 = 16;
+
+// Characters
+
+const CHARACTER_BASE_HEALTH: u8 = 100;
+const CHARACTER_BASE_DAMAGE: u8 = 30;

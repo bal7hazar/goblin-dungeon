@@ -15,7 +15,7 @@ impl ItemImpl of ItemTrait {
 }
 
 impl IntoItemFelt252 of core::Into<Item, felt252> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Item) -> felt252 {
         match self {
             Item::None => 'NONE',
@@ -27,7 +27,7 @@ impl IntoItemFelt252 of core::Into<Item, felt252> {
 }
 
 impl IntoItemU8 of core::Into<Item, u8> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Item) -> u8 {
         match self {
             Item::None => 0,
@@ -39,7 +39,7 @@ impl IntoItemU8 of core::Into<Item, u8> {
 }
 
 impl IntoU8Item of core::Into<u8, Item> {
-    #[inline(always)]
+    #[inline]
     fn into(self: u8) -> Item {
         let card: felt252 = self.into();
         match card {
@@ -53,7 +53,7 @@ impl IntoU8Item of core::Into<u8, Item> {
 }
 
 impl ItemPrint of core::debug::PrintTrait<Item> {
-    #[inline(always)]
+    #[inline]
     fn print(self: Item) {
         let felt: felt252 = self.into();
         felt.print();

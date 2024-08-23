@@ -1,8 +1,11 @@
 // Internal imports
 
+use rpg::constants::{CHARACTER_BASE_DAMAGE, CHARACTER_BASE_HEALTH};
 use rpg::elements::roles;
 use rpg::elements::monsters;
 use rpg::types::spell::Spell;
+use rpg::types::role::Role;
+use rpg::types::monster::Monster;
 
 #[derive(Copy, Drop)]
 enum Class {
@@ -18,6 +21,26 @@ enum Class {
 #[generate_trait]
 impl ClassImpl of ClassTrait {
     #[inline]
+    fn health(self: Class) -> u8 {
+        match self {
+            Class::None => 0,
+            _ => CHARACTER_BASE_HEALTH,
+        }
+    }
+    #[inline]
+    fn damage(self: Class) -> u8 {
+        match self {
+            Class::None => 0,
+            _ => CHARACTER_BASE_DAMAGE,
+        }
+    }
+
+    #[inline]
+    fn base(self: Class) -> Spell {
+        Spell::Damage
+    }
+
+    #[inline]
     fn spell(self: Class) -> Spell {
         match self {
             Class::None => Spell::None,
@@ -31,8 +54,38 @@ impl ClassImpl of ClassTrait {
     }
 }
 
+impl IntoClassRole of core::Into<Class, Role> {
+    #[inline]
+    fn into(self: Class) -> Role {
+        match self {
+            Class::None => Role::None,
+            Class::Knight => Role::Knight,
+            Class::Ranger => Role::Ranger,
+            Class::Priest => Role::Priest,
+            Class::Goblin => Role::None,
+            Class::Skeleton => Role::None,
+            Class::Spider => Role::None,
+        }
+    }
+}
+
+impl IntoClassMonster of core::Into<Class, Monster> {
+    #[inline]
+    fn into(self: Class) -> Monster {
+        match self {
+            Class::None => Monster::None,
+            Class::Knight => Monster::None,
+            Class::Ranger => Monster::None,
+            Class::Priest => Monster::None,
+            Class::Goblin => Monster::Goblin,
+            Class::Skeleton => Monster::Skeleton,
+            Class::Spider => Monster::Spider,
+        }
+    }
+}
+
 impl IntoClassFelt252 of core::Into<Class, felt252> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Class) -> felt252 {
         match self {
             Class::None => 'NONE',
@@ -47,7 +100,7 @@ impl IntoClassFelt252 of core::Into<Class, felt252> {
 }
 
 impl IntoClassU8 of core::Into<Class, u8> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Class) -> u8 {
         match self {
             Class::None => 0,
@@ -62,7 +115,7 @@ impl IntoClassU8 of core::Into<Class, u8> {
 }
 
 impl IntoU8Class of core::Into<u8, Class> {
-    #[inline(always)]
+    #[inline]
     fn into(self: u8) -> Class {
         let card: felt252 = self.into();
         match card {
@@ -79,7 +132,7 @@ impl IntoU8Class of core::Into<u8, Class> {
 }
 
 impl ClassPrint of core::debug::PrintTrait<Class> {
-    #[inline(always)]
+    #[inline]
     fn print(self: Class) {
         let felt: felt252 = self.into();
         felt.print();

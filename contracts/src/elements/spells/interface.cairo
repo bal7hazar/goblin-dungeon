@@ -1,5 +1,12 @@
+// Internal imports
+
+use rpg::models::character::{Character, CharacterTrait};
+
 trait SpellTrait {
-    fn damage(power: u8) -> u8;
-    fn heal(power: u8) -> u8;
-    fn stun(power: u8) -> u8;
+    fn apply(
+        ref caster: Character,
+        ref target: Character,
+        ref mates: Array<Character>,
+        ref foes: Array<Character>
+    );
 }

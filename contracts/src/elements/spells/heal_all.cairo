@@ -4,9 +4,9 @@ use rpg::elements::spells::interface::{SpellTrait, Character, CharacterTrait};
 
 // Constants
 
-const HEALTH: u8 = 50;
+const HEALTH: u8 = 20;
 
-impl Heal of SpellTrait {
+impl HealAll of SpellTrait {
     #[inline]
     fn apply(
         ref caster: Character,
@@ -15,5 +15,15 @@ impl Heal of SpellTrait {
         ref foes: Array<Character>
     ) {
         caster.heal(HEALTH);
+        let mut index = mates.len();
+        loop {
+            if index == 0 {
+                break;
+            }
+            let mut mate = mates.pop_front().unwrap();
+            mate.heal(HEALTH);
+            mates.append(mate);
+            index -= 1;
+        }
     }
 }

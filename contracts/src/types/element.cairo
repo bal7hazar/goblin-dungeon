@@ -38,20 +38,26 @@ impl ElementImpl of ElementTrait {
     }
 
     #[inline]
-    fn received_damage(self: Element, role: Element, damage: u8) -> u8 {
-        let role_id: u8 = self.into();
-        if role_id == self.weakness().into() {
+    fn damage(self: Element, element: Element, damage: u8) -> u8 {
+        let element_id: u8 = element.into();
+        if element_id == self.weakness().into() {
             damage * 2
-        } else if role_id == self.strength().into() {
+        } else if element_id == self.strength().into() {
             damage / 2
         } else {
             damage
         }
     }
+
+    #[inline]
+    fn has_priority_over(self: Element, element: Element) -> bool {
+        let element_id: u8 = element.into();
+        element_id == self.strength().into()
+    }
 }
 
 impl IntoElementFelt252 of core::Into<Element, felt252> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Element) -> felt252 {
         match self {
             Element::None => 'NONE',
@@ -63,7 +69,7 @@ impl IntoElementFelt252 of core::Into<Element, felt252> {
 }
 
 impl IntoElementU8 of core::Into<Element, u8> {
-    #[inline(always)]
+    #[inline]
     fn into(self: Element) -> u8 {
         match self {
             Element::None => 0,
@@ -75,7 +81,7 @@ impl IntoElementU8 of core::Into<Element, u8> {
 }
 
 impl IntoU8Element of core::Into<u8, Element> {
-    #[inline(always)]
+    #[inline]
     fn into(self: u8) -> Element {
         let card: felt252 = self.into();
         match card {
@@ -89,7 +95,7 @@ impl IntoU8Element of core::Into<u8, Element> {
 }
 
 impl ElementPrint of core::debug::PrintTrait<Element> {
-    #[inline(always)]
+    #[inline]
     fn print(self: Element) {
         let felt: felt252 = self.into();
         felt.print();

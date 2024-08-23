@@ -41,7 +41,7 @@ mod setup {
         player_name: felt252,
     }
 
-    #[inline(always)]
+    #[inline]
     fn spawn_game() -> (IWorldDispatcher, Systems, Context) {
         // [Setup] World
         let models = array![index::player::TEST_CLASS_HASH, index::dungeon::TEST_CLASS_HASH,];

@@ -6,7 +6,7 @@ use rpg::elements::spells::interface::{SpellTrait, Character, CharacterTrait};
 
 const STUN: u8 = 1;
 
-impl Stun of SpellTrait {
+impl StunAll of SpellTrait {
     #[inline]
     fn apply(
         ref caster: Character,
@@ -15,5 +15,15 @@ impl Stun of SpellTrait {
         ref foes: Array<Character>
     ) {
         target.stun(STUN);
+        let mut index = foes.len();
+        loop {
+            if index == 0 {
+                break;
+            }
+            let mut foe = foes.pop_front().unwrap();
+            foe.stun(STUN);
+            foes.append(foe);
+            index -= 1;
+        }
     }
 }
