@@ -75,6 +75,22 @@ impl Battler of BattlerTrait {
             rhs.finish();
         };
     }
+
+    #[inline]
+    fn status(mut characters: Array<Character>) -> bool {
+        // [Compute] Check if any character is alive
+        loop {
+            match characters.pop_front() {
+                Option::Some(character) => {
+                    if !character.is_dead() {
+                        // [Return] At least one character is alive
+                        break true;
+                    }
+                },
+                Option::None => { break false; },
+            };
+        }
+    }
 }
 
 #[cfg(test)]

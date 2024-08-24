@@ -363,8 +363,8 @@
   },
   {
     "type": "impl",
-    "name": "teamImpl",
-    "interface_name": "rpg::models::index::Iteam"
+    "name": "challengeImpl",
+    "interface_name": "rpg::models::index::Ichallenge"
   },
   {
     "type": "enum",
@@ -382,14 +382,14 @@
   },
   {
     "type": "struct",
-    "name": "rpg::models::index::Team",
+    "name": "rpg::models::index::Challenge",
     "members": [
       {
         "name": "dungeon_id",
         "type": "core::integer::u32"
       },
       {
-        "name": "id",
+        "name": "team_id",
         "type": "core::integer::u32"
       },
       {
@@ -401,22 +401,18 @@
         "type": "core::integer::i32"
       },
       {
-        "name": "dead",
+        "name": "completed",
         "type": "core::bool"
       },
       {
-        "name": "seed",
-        "type": "core::felt252"
-      },
-      {
-        "name": "player_id",
-        "type": "core::felt252"
+        "name": "nonce",
+        "type": "core::integer::u32"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "rpg::models::index::Iteam",
+    "name": "rpg::models::index::Ichallenge",
     "items": [
       {
         "type": "function",
@@ -424,7 +420,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "rpg::models::index::Team"
+            "type": "rpg::models::index::Challenge"
           }
         ],
         "outputs": [],
@@ -434,7 +430,7 @@
   },
   {
     "type": "event",
-    "name": "rpg::models::index::team::Event",
+    "name": "rpg::models::index::challenge::Event",
     "kind": "enum",
     "variants": []
   }

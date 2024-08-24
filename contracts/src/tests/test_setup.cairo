@@ -28,7 +28,6 @@ fn test_actions_setup() {
     let store = StoreTrait::new(world);
 
     // [Assert]
-    let (player, dungeon) = store.get_state(context.player_id);
+    let player = store.get_player(context.player_id);
     assert(player.id == context.player_id, 'Setup: player id');
-    assert(dungeon.health == 0, 'Setup: dungeon health');
 }

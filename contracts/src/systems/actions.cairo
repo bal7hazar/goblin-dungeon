@@ -14,8 +14,7 @@ trait IActions<TContractState> {
     fn rename(self: @TContractState, name: felt252);
     fn spawn(self: @TContractState);
     fn move(self: @TContractState, direction: u8);
-    // fn attack(self: @TContractState);
-// fn heal(self: @TContractState, quantity: u8);
+    fn attack(self: @TContractState);
 }
 
 // Contracts
@@ -59,6 +58,12 @@ mod actions {
         PlayableEvent: PlayableComponent::Event,
     }
 
+    // Constructor
+
+    fn dojo_init(world: @IWorldDispatcher,) {
+        self.playable.initialize(world);
+    }
+
     // Implementations
 
     #[abi(embed_v0)]
@@ -77,6 +82,10 @@ mod actions {
 
         fn move(self: @ContractState, direction: u8) {
             self.playable.move(self.world(), direction)
+        }
+
+        fn attack(self: @ContractState) {
+            self.playable.attack(self.world())
         }
     }
 }

@@ -55,11 +55,27 @@ impl RoomImpl of RoomTrait {
         // [Effect] Define category
         let category: Category = CategoryTrait::from(seed);
         self.category = category.into();
-        match category {
-            Category::Monster => { self.monsters = self.compute_monsters(seed); },
-            Category::Item => { self.item = self.compute_item(seed); },
-            _ => {},
-        }
+        // [Effect] Generate room content according to category
+        // TODO: Hardcoded to be a monster room
+        // match category {
+        //     Category::Monster => { self.monsters = self.compute_monsters(seed); },
+        //     Category::Item => { self.item = self.compute_item(seed); },
+        //     _ => {},
+        // }
+        self.category = Category::Monster.into();
+        self.monsters = self.compute_monsters(seed);
+    }
+
+    #[inline]
+    fn get_monsters(self: Room) -> Array<u32> {
+        Packer::unpack(self.monsters, MONSTER_BIT_LENGTH)
+    }
+
+    #[inline]
+    fn pick(self: Room, seed: felt252) -> u8 {
+        let mut dice: Dice = DiceTrait::new(MAX_MONSTER_COUNT, seed);
+        // [Compute] Random number between 4 and 6 to pick one of the 3 potential monsters
+        dice.roll().into() + 3
     }
 
     #[inline]

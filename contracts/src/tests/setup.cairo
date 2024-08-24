@@ -17,9 +17,12 @@ mod setup {
 
     use rpg::models::index;
     use rpg::models::player::Player;
+    use rpg::models::factory::Factory;
     use rpg::models::dungeon::Dungeon;
-    use rpg::types::role::Role;
-    use rpg::types::mode::Mode;
+    use rpg::models::room::Room;
+    use rpg::models::team::Team;
+    use rpg::models::character::Character;
+    use rpg::models::challenge::Challenge;
     use rpg::systems::actions::{actions, IActions, IActionsDispatcher, IActionsDispatcherTrait};
 
     // Constants
@@ -44,21 +47,34 @@ mod setup {
     #[inline]
     fn spawn_game() -> (IWorldDispatcher, Systems, Context) {
         // [Setup] World
-        let models = array![index::player::TEST_CLASS_HASH, index::dungeon::TEST_CLASS_HASH,];
-        let world = spawn_test_world(array!["dojo_starter_rpg"].span(), models.span());
+        let models = array![
+            index::player::TEST_CLASS_HASH,
+            index::factory::TEST_CLASS_HASH,
+            index::dungeon::TEST_CLASS_HASH,
+            index::room::TEST_CLASS_HASH,
+            index::team::TEST_CLASS_HASH,
+            index::character::TEST_CLASS_HASH,
+            index::challenge::TEST_CLASS_HASH,
+        ];
+        'spawn'.print();
+        let world = spawn_test_world(array!["goblin_dungeon"].span(), models.span());
 
         // [Setup] Systems
+        'setup'.print();
         let actions_address = world
             .deploy_contract('salt', actions::TEST_CLASS_HASH.try_into().unwrap());
         let systems = Systems {
             actions: IActionsDispatcher { contract_address: actions_address },
         };
-        world.grant_writer(dojo::utils::bytearray_hash(@"dojo_starter_rpg"), actions_address);
-        world.grant_writer(dojo::utils::bytearray_hash(@"dojo_starter_rpg"), PLAYER());
+        'grant'.print();
+        world.grant_writer(dojo::utils::bytearray_hash(@"goblin_dungeon"), actions_address);
+        world.grant_writer(dojo::utils::bytearray_hash(@"goblin_dungeon"), PLAYER());
 
         // [Setup] Context
+        'context'.print();
         set_contract_address(PLAYER());
-        systems.actions.spawn(PLAYER_NAME, Role::Water.into());
+        systems.actions.signup(PLAYER_NAME);
+        systems.actions.spawn();
         let context = Context { player_id: PLAYER().into(), player_name: PLAYER_NAME, };
 
         // [Return]

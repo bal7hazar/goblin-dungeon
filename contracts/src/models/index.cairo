@@ -47,11 +47,12 @@ pub struct Team {
     #[key]
     pub dungeon_id: u32,
     #[key]
-    pub team_id: u32,
+    pub id: u32,
     pub x: i32,
     pub y: i32,
     pub dead: bool,
     pub seed: felt252,
+    pub player_id: felt252,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -70,4 +71,19 @@ pub struct Character {
     pub shield: u8,
     pub stun: u8,
     pub multiplier: u8,
+}
+
+#[derive(Copy, Drop, Serde)]
+#[dojo::model]
+pub struct Challenge {
+    #[key]
+    pub dungeon_id: u32,
+    #[key]
+    pub team_id: u32,
+    #[key]
+    pub x: i32,
+    #[key]
+    pub y: i32,
+    pub completed: bool,
+    pub nonce: u32,
 }

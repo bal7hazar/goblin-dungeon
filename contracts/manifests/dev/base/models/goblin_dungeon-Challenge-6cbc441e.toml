@@ -1,0 +1,36 @@
+kind = "DojoModel"
+class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
+original_class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
+abi = "manifests/dev/base/abis/models/goblin_dungeon-Challenge-6cbc441e.json"
+tag = "goblin_dungeon-Challenge"
+manifest_name = "goblin_dungeon-Challenge-6cbc441e"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "team_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "x"
+type = "i32"
+key = true
+
+[[members]]
+name = "y"
+type = "i32"
+key = true
+
+[[members]]
+name = "completed"
+type = "bool"
+key = false
+
+[[members]]
+name = "nonce"
+type = "u32"
+key = false

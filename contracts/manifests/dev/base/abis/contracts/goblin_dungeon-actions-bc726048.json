@@ -128,6 +128,24 @@
   },
   {
     "type": "impl",
+    "name": "IDojoInitImpl",
+    "interface_name": "rpg::systems::actions::actions::IDojoInit"
+  },
+  {
+    "type": "interface",
+    "name": "rpg::systems::actions::actions::IDojoInit",
+    "items": [
+      {
+        "type": "function",
+        "name": "dojo_init",
+        "inputs": [],
+        "outputs": [],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "type": "impl",
     "name": "ActionsImpl",
     "interface_name": "rpg::systems::actions::IActions"
   },
@@ -177,21 +195,10 @@
         ],
         "outputs": [],
         "state_mutability": "view"
-      }
-    ]
-  },
-  {
-    "type": "impl",
-    "name": "IDojoInitImpl",
-    "interface_name": "rpg::systems::actions::actions::IDojoInit"
-  },
-  {
-    "type": "interface",
-    "name": "rpg::systems::actions::actions::IDojoInit",
-    "items": [
+      },
       {
         "type": "function",
-        "name": "dojo_init",
+        "name": "attack",
         "inputs": [],
         "outputs": [],
         "state_mutability": "view"

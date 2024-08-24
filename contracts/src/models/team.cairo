@@ -18,9 +18,9 @@ mod errors {
 #[generate_trait]
 impl TeamImpl of TeamTrait {
     #[inline]
-    fn new(dungeon_id: u32, team_id: u32, seed: felt252) -> Team {
+    fn new(dungeon_id: u32, id: u32, seed: felt252, player_id: felt252) -> Team {
         // [Return] Team
-        Team { dungeon_id, team_id, x: 0, y: 0, dead: false, seed, }
+        Team { dungeon_id, id, x: 0, y: 0, dead: false, seed, player_id, }
     }
 
     #[inline]
@@ -45,12 +45,12 @@ impl TeamImpl of TeamTrait {
 impl TeamAssert of AssertTrait {
     #[inline]
     fn assert_exists(self: Team) {
-        assert(0 != self.seed, errors::TEAM_NOT_EXIST);
+        assert(0 != self.seed && !self.dead, errors::TEAM_NOT_EXIST);
     }
 
     #[inline]
     fn assert_not_exists(self: Team) {
-        assert(0 == self.seed, errors::TEAM_ALREADY_EXIST);
+        assert(0 == self.seed || self.dead, errors::TEAM_ALREADY_EXIST);
     }
 
     #[inline]
@@ -70,12 +70,13 @@ mod tests {
     const DUNGEON_ID: u32 = 1;
     const TEAM_ID: u32 = 42;
     const SEED: felt252 = 'SEED';
+    const PLAYER_ID: felt252 = 'PLAYER';
 
     #[test]
     fn test_team_new() {
-        let team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED);
+        let team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
         assert_eq!(team.dungeon_id, DUNGEON_ID);
-        assert_eq!(team.team_id, TEAM_ID);
+        assert_eq!(team.id, TEAM_ID);
         assert_eq!(team.x, 0);
         assert_eq!(team.y, 0);
         assert_eq!(team.dead, false);
@@ -84,7 +85,7 @@ mod tests {
 
     #[test]
     fn test_team_move_north() {
-        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED);
+        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
         let seed = team.seed;
         team.move(Direction::North);
         assert_eq!(seed != team.seed, true);
@@ -94,7 +95,7 @@ mod tests {
 
     #[test]
     fn test_team_move_east() {
-        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED);
+        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
         let seed = team.seed;
         team.move(Direction::East);
         assert_eq!(seed != team.seed, true);
@@ -104,7 +105,7 @@ mod tests {
 
     #[test]
     fn test_team_move_south() {
-        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED);
+        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
         let seed = team.seed;
         team.move(Direction::South);
         assert_eq!(seed != team.seed, true);
@@ -114,7 +115,7 @@ mod tests {
 
     #[test]
     fn test_team_move_west() {
-        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED);
+        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
         let seed = team.seed;
         team.move(Direction::West);
         assert_eq!(seed != team.seed, true);

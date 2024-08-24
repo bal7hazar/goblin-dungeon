@@ -4,12 +4,16 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
+use rpg::constants::ATTRIBUTE_BIT_LENGTH;
 use rpg::models::index::Character;
 use rpg::types::direction::Direction;
 use rpg::types::role::{Role, RoleTrait};
 use rpg::types::class::{Class, ClassTrait};
 use rpg::types::element::{Element, ElementTrait};
 use rpg::types::spell::{Spell, SpellTrait};
+use rpg::types::monster::{Monster, MonsterTrait};
+use rpg::types::threat::{Threat, ThreatTrait};
+use rpg::helpers::packer::Packer;
 use rpg::helpers::seeder::Seeder;
 
 mod errors {
@@ -37,6 +41,35 @@ impl CharacterImpl of CharacterTrait {
             stun: 0,
             multiplier: 1,
         }
+    }
+
+    #[inline]
+    fn from(dungeon_id: u32, team_id: u32, index: u8, packed: u32) -> Character {
+        let mut unpacked: Array<u8> = Packer::unpack(packed, ATTRIBUTE_BIT_LENGTH);
+        let monster: Monster = unpacked.pop_front().unwrap().into();
+        let element: Element = unpacked.pop_front().unwrap().into();
+        // TODO: Probably useless if we switch into a db of monsters with unique ids
+        let _threat: Threat = unpacked.pop_front().unwrap().into();
+        let _spell: Spell = unpacked.pop_front().unwrap().into();
+        Self::new(dungeon_id, team_id, index, monster.into(), element)
+    }
+
+    #[inline]
+    fn setup(ref self: Character) {
+        let class: Class = self.class.into();
+        let monster: Monster = class.into();
+        self.spell = monster.spell().into();
+    }
+
+    #[inline]
+    fn clean(ref self: Character) {
+        self.class = 0;
+        self.element = 0;
+        self.spell = 0;
+        self.health = 0;
+        self.shield = 0;
+        self.stun = 0;
+        self.multiplier = 0;
     }
 
     #[inline]

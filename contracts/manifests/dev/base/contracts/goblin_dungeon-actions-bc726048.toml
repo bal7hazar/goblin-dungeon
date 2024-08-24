@@ -1,6 +1,6 @@
 kind = "DojoContract"
-class_hash = "0x637005cd6d2834444753fa07cb84feaa071a592ccd3091b4e2162ba2c49737a"
-original_class_hash = "0x637005cd6d2834444753fa07cb84feaa071a592ccd3091b4e2162ba2c49737a"
+class_hash = "0x177e70d2579ef40d590af1781db403e3d72b410fca655635c6582aa0f0a2edc"
+original_class_hash = "0x177e70d2579ef40d590af1781db403e3d72b410fca655635c6582aa0f0a2edc"
 base_class_hash = "0x0"
 abi = "manifests/dev/base/abis/contracts/goblin_dungeon-actions-bc726048.json"
 reads = []
@@ -12,5 +12,6 @@ systems = [
     "rename",
     "spawn",
     "move",
+    "attack",
 ]
 manifest_name = "goblin_dungeon-actions-bc726048"
