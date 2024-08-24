@@ -77,7 +77,7 @@ impl Battler of BattlerTrait {
     }
 }
 
-#[test]
+#[cfg(test)]
 mod tests {
     // Core imports
 
@@ -94,20 +94,20 @@ mod tests {
 
     // Constants
 
-    const PLAYER_ID: felt252 = 'PLAYER';
     const DUNGEON_ID: u32 = 1;
+    const TEAM_ID: u32 = 42;
 
     #[test]
     fn test_battler_fight_priority_low() {
         // [Setup]
         let mut mates: Array<Character> = array![
             CharacterTrait::new(
-                PLAYER_ID, DUNGEON_ID, 0, class: Class::Knight, element: Element::Fire
+                DUNGEON_ID, TEAM_ID, 0, class: Class::Knight, element: Element::Fire
             ),
         ];
         let mut foes: Array<Character> = array![
             CharacterTrait::new(
-                PLAYER_ID, DUNGEON_ID, 0, class: Class::Goblin, element: Element::Water
+                DUNGEON_ID, TEAM_ID, 0, class: Class::Goblin, element: Element::Water
             ),
         ];
         let mut mate = mates.pop_front().unwrap();

@@ -10,10 +10,12 @@ use dojo::world::IWorldDispatcher;
 
 #[starknet::interface]
 trait IActions<TContractState> {
-    fn spawn(self: @TContractState, name: felt252, role: u8);
+    fn signup(self: @TContractState, name: felt252);
+    fn rename(self: @TContractState, name: felt252);
+    fn spawn(self: @TContractState);
     fn move(self: @TContractState, direction: u8);
-    fn attack(self: @TContractState);
-    fn heal(self: @TContractState, quantity: u8);
+    // fn attack(self: @TContractState);
+// fn heal(self: @TContractState, quantity: u8);
 }
 
 // Contracts
@@ -22,11 +24,8 @@ trait IActions<TContractState> {
 mod actions {
     // Component imports
 
+    use rpg::components::signable::SignableComponent;
     use rpg::components::playable::PlayableComponent;
-
-    // Internal imports
-
-    use rpg::types::mode::Mode;
 
     // Local imports
 
@@ -34,6 +33,8 @@ mod actions {
 
     // Components
 
+    component!(path: SignableComponent, storage: signable, event: SignableEvent);
+    impl SignableInternalImpl = SignableComponent::InternalImpl<ContractState>;
     component!(path: PlayableComponent, storage: playable, event: PlayableEvent);
     impl PlayableInternalImpl = PlayableComponent::InternalImpl<ContractState>;
 
@@ -41,6 +42,8 @@ mod actions {
 
     #[storage]
     struct Storage {
+        #[substorage(v0)]
+        signable: SignableComponent::Storage,
         #[substorage(v0)]
         playable: PlayableComponent::Storage,
     }
@@ -51,6 +54,8 @@ mod actions {
     #[derive(Drop, starknet::Event)]
     enum Event {
         #[flat]
+        SignableEvent: SignableComponent::Event,
+        #[flat]
         PlayableEvent: PlayableComponent::Event,
     }
 
@@ -58,20 +63,20 @@ mod actions {
 
     #[abi(embed_v0)]
     impl ActionsImpl of IActions<ContractState> {
-        fn spawn(self: @ContractState, name: felt252, role: u8) {
-            self.playable.spawn(self.world(), name, role, Mode::Medium.into())
+        fn signup(self: @ContractState, name: felt252) {
+            self.signable.signup(self.world(), name)
+        }
+
+        fn rename(self: @ContractState, name: felt252) {
+            self.signable.rename(self.world(), name)
+        }
+
+        fn spawn(self: @ContractState) {
+            self.playable.spawn(self.world())
         }
 
         fn move(self: @ContractState, direction: u8) {
             self.playable.move(self.world(), direction)
-        }
-
-        fn attack(self: @ContractState) {
-            self.playable.attack(self.world())
-        }
-
-        fn heal(self: @ContractState, quantity: u8) {
-            self.playable.heal(self.world(), quantity)
         }
     }
 }

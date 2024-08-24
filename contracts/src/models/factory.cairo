@@ -17,6 +17,12 @@ impl FactoryImpl of FactoryTrait {
     }
 
     #[inline]
+    fn dungeon_id(self: Factory) -> u32 {
+        // [Return] Dungeon id
+        self.dungeon_id
+    }
+
+    #[inline]
     fn generate(ref self: Factory) -> u32 {
         // [Effect] Increase dungeon id
         self.dungeon_id += 1;

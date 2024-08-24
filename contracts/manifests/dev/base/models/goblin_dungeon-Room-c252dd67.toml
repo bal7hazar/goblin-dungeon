@@ -1,0 +1,46 @@
+kind = "DojoModel"
+class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
+original_class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
+abi = "manifests/dev/base/abis/models/goblin_dungeon-Room-c252dd67.json"
+tag = "goblin_dungeon-Room"
+manifest_name = "goblin_dungeon-Room-c252dd67"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "x"
+type = "i32"
+key = true
+
+[[members]]
+name = "y"
+type = "i32"
+key = true
+
+[[members]]
+name = "category"
+type = "u8"
+key = false
+
+[[members]]
+name = "item"
+type = "u8"
+key = false
+
+[[members]]
+name = "monsters"
+type = "u128"
+key = false
+
+[[members]]
+name = "adventurers"
+type = "u128"
+key = false
+
+[[members]]
+name = "seed"
+type = "felt252"
+key = false

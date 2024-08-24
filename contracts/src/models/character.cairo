@@ -23,13 +23,11 @@ mod errors {
 #[generate_trait]
 impl CharacterImpl of CharacterTrait {
     #[inline]
-    fn new(
-        player_id: felt252, dungeon_id: u32, index: u8, class: Class, element: Element
-    ) -> Character {
+    fn new(dungeon_id: u32, team_id: u32, index: u8, class: Class, element: Element) -> Character {
         // [Return] Character
         Character {
-            player_id,
             dungeon_id,
+            team_id,
             index,
             class: class.into(),
             element: element.into(),
@@ -37,7 +35,7 @@ impl CharacterImpl of CharacterTrait {
             health: class.health(),
             shield: 0,
             stun: 0,
-            buff: 0
+            multiplier: 1,
         }
     }
 
@@ -101,6 +99,16 @@ impl CharacterImpl of CharacterTrait {
     }
 
     #[inline]
+    fn buff(ref self: Character, multiplier: u8) {
+        self.multiplier = multiplier;
+    }
+
+    #[inline]
+    fn debuff(ref self: Character) {
+        self.multiplier = 1;
+    }
+
+    #[inline]
     fn update(ref self: Character, spell: Spell) {
         self.spell = spell.into();
     }
@@ -134,84 +142,84 @@ mod tests {
 
     // Constants
 
-    const PLAYER_ID: felt252 = 'PLAYER';
     const DUNGEON_ID: u32 = 1;
+    const TEAM_ID: u32 = 42;
     const INDEX: u8 = 0;
     const CLASS: Class = Class::Knight;
     const ELEMENT: Element = Element::Fire;
 
     #[test]
-    fn test_player_new() {
-        let player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        assert_eq!(player.player_id, PLAYER_ID);
-        assert_eq!(player.dungeon_id, DUNGEON_ID);
-        assert_eq!(player.index, INDEX);
-        assert_eq!(player.class, CLASS.into());
-        assert_eq!(player.element, ELEMENT.into());
-        assert_eq!(player.spell, Spell::Damage.into());
-        assert_eq!(player.health, CLASS.health());
-        assert_eq!(player.shield, 0);
-        assert_eq!(player.stun, 0);
-        assert_eq!(player.buff, 0);
+    fn test_character_new() {
+        let character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        assert_eq!(character.dungeon_id, DUNGEON_ID);
+        assert_eq!(character.team_id, TEAM_ID);
+        assert_eq!(character.index, INDEX);
+        assert_eq!(character.class, CLASS.into());
+        assert_eq!(character.element, ELEMENT.into());
+        assert_eq!(character.spell, Spell::Damage.into());
+        assert_eq!(character.health, CLASS.health());
+        assert_eq!(character.shield, 0);
+        assert_eq!(character.stun, 0);
+        assert_eq!(character.multiplier, 1);
     }
 
     #[test]
-    fn test_player_is_stun() {
-        let player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        assert_eq!(player.is_stun(), false);
+    fn test_character_is_stun() {
+        let character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        assert_eq!(character.is_stun(), false);
     }
 
     #[test]
-    fn test_player_take() {
-        let mut player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        player.take(10);
-        assert_eq!(player.health, CLASS.health() - 10);
+    fn test_character_take() {
+        let mut character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        character.take(10);
+        assert_eq!(character.health, CLASS.health() - 10);
     }
 
     #[test]
-    fn test_player_heal() {
-        let mut player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        player.take(10);
-        player.heal(5);
-        assert_eq!(player.health, CLASS.health() - 5);
+    fn test_character_heal() {
+        let mut character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        character.take(10);
+        character.heal(5);
+        assert_eq!(character.health, CLASS.health() - 5);
     }
 
     #[test]
-    fn test_player_stun() {
-        let mut player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        player.stun(1);
-        assert_eq!(player.stun, 1);
+    fn test_character_stun() {
+        let mut character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        character.stun(1);
+        assert_eq!(character.stun, 1);
     }
 
     #[test]
-    fn test_player_shield() {
-        let mut player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        player.shield(5);
-        assert_eq!(player.shield, 5);
+    fn test_character_shield() {
+        let mut character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        character.shield(5);
+        assert_eq!(character.shield, 5);
     }
 
     #[test]
-    fn test_player_update() {
-        let mut player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        player.update(Spell::Stun);
-        assert_eq!(player.spell, Spell::Stun.into());
+    fn test_character_update() {
+        let mut character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        character.update(Spell::Stun);
+        assert_eq!(character.spell, Spell::Stun.into());
     }
 
     #[test]
-    fn test_player_finish() {
-        let mut player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        player.stun(1);
-        player.finish();
-        assert_eq!(player.stun, 0);
-        assert_eq!(player.spell, Spell::Damage.into());
+    fn test_character_finish() {
+        let mut character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        character.stun(1);
+        character.finish();
+        assert_eq!(character.stun, 0);
+        assert_eq!(character.spell, Spell::Damage.into());
     }
 
     #[test]
     #[should_panic(expected: ('Character: is dead',))]
-    fn test_player_assert_not_dead() {
-        let mut player = CharacterTrait::new(PLAYER_ID, DUNGEON_ID, INDEX, CLASS, ELEMENT);
-        player.health = 0;
-        player.assert_not_dead();
+    fn test_character_assert_not_dead() {
+        let mut character = CharacterTrait::new(DUNGEON_ID, TEAM_ID, INDEX, CLASS, ELEMENT);
+        character.health = 0;
+        character.assert_not_dead();
     }
 }
 

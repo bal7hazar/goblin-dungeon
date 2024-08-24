@@ -7,9 +7,11 @@ use core::debug::PrintTrait;
 use rpg::models::index::Player;
 
 mod errors {
-    const PLAYER_NOT_EXIST: felt252 = 'Player: does not exist';
-    const PLAYER_ALREADY_EXIST: felt252 = 'Player: already exist';
+    const PLAYER_NOT_CREATED: felt252 = 'Player: does not exist';
+    const PLAYER_ALREADY_CREATED: felt252 = 'Player: already exist';
     const PLAYER_INVALID_NAME: felt252 = 'Player: invalid name';
+    const PLAYER_NOT_MANAGER: felt252 = 'Player: not manager';
+    const PLAYER_ALREADY_MANAGER: felt252 = 'Player: already manager';
 }
 
 #[generate_trait]
@@ -19,7 +21,7 @@ impl PlayerImpl of PlayerTrait {
         // [Check] Name is valid
         assert(name != 0, errors::PLAYER_INVALID_NAME);
         // [Return] Player
-        Player { id, name }
+        Player { id, team_id: 0, name }
     }
 
     #[inline]
@@ -29,18 +31,44 @@ impl PlayerImpl of PlayerTrait {
         // [Effect] Change the name
         self.name = name;
     }
+
+    #[inline]
+    fn assemble(ref self: Player, team_id: u32) {
+        // [Check] Player is not a manager
+        self.assert_not_manager();
+        // [Effect] Update team id
+        self.team_id = team_id;
+    }
+
+    #[inline]
+    fn disband(ref self: Player) {
+        // [Check] Player is a manager
+        self.assert_is_manager();
+        // [Effect] Update team id
+        self.team_id = 0;
+    }
 }
 
 #[generate_trait]
 impl PlayerAssert of AssertTrait {
     #[inline]
-    fn assert_exists(self: Player) {
-        assert(0 != self.name, errors::PLAYER_NOT_EXIST);
+    fn assert_is_created(self: Player) {
+        assert(0 != self.name, errors::PLAYER_NOT_CREATED);
     }
 
     #[inline]
-    fn assert_not_exists(self: Player) {
-        assert(0 == self.name, errors::PLAYER_ALREADY_EXIST);
+    fn assert_not_created(self: Player) {
+        assert(0 == self.name, errors::PLAYER_ALREADY_CREATED);
+    }
+
+    #[inline]
+    fn assert_is_manager(self: Player) {
+        assert(0 != self.team_id, errors::PLAYER_NOT_MANAGER);
+    }
+
+    #[inline]
+    fn assert_not_manager(self: Player) {
+        assert(0 == self.team_id, errors::PLAYER_ALREADY_MANAGER);
     }
 }
 

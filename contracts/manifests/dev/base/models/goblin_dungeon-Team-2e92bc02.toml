@@ -1,0 +1,36 @@
+kind = "DojoModel"
+class_hash = "0x5791e838349d8c246b54db480d59b5634c8aa909de507332356da2e49f08642"
+original_class_hash = "0x5791e838349d8c246b54db480d59b5634c8aa909de507332356da2e49f08642"
+abi = "manifests/dev/base/abis/models/goblin_dungeon-Team-2e92bc02.json"
+tag = "goblin_dungeon-Team"
+manifest_name = "goblin_dungeon-Team-2e92bc02"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "team_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "x"
+type = "i32"
+key = false
+
+[[members]]
+name = "y"
+type = "i32"
+key = false
+
+[[members]]
+name = "dead"
+type = "bool"
+key = false
+
+[[members]]
+name = "seed"
+type = "felt252"
+key = false

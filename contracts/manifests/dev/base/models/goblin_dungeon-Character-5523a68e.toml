@@ -1,0 +1,56 @@
+kind = "DojoModel"
+class_hash = "0x35955a56ee3b19e7ccae85947073728061e86813c2fd62e56508c65868b7950"
+original_class_hash = "0x35955a56ee3b19e7ccae85947073728061e86813c2fd62e56508c65868b7950"
+abi = "manifests/dev/base/abis/models/goblin_dungeon-Character-5523a68e.json"
+tag = "goblin_dungeon-Character"
+manifest_name = "goblin_dungeon-Character-5523a68e"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "team_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "index"
+type = "u8"
+key = true
+
+[[members]]
+name = "class"
+type = "u8"
+key = false
+
+[[members]]
+name = "element"
+type = "u8"
+key = false
+
+[[members]]
+name = "spell"
+type = "u8"
+key = false
+
+[[members]]
+name = "health"
+type = "u8"
+key = false
+
+[[members]]
+name = "shield"
+type = "u8"
+key = false
+
+[[members]]
+name = "stun"
+type = "u8"
+key = false
+
+[[members]]
+name = "multiplier"
+type = "u8"
+key = false

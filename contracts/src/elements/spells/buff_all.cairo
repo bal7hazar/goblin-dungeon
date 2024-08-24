@@ -4,9 +4,9 @@ use rpg::elements::spells::interface::{SpellTrait, Character, CharacterTrait};
 
 // Constants
 
-const DAMAGE: u8 = 10;
+const MULTIPLIER: u8 = 2;
 
-impl DamageAll of SpellTrait {
+impl BuffAll of SpellTrait {
     #[inline]
     fn apply(
         ref caster: Character,
@@ -14,17 +14,16 @@ impl DamageAll of SpellTrait {
         ref mates: Array<Character>,
         ref foes: Array<Character>
     ) {
-        target.take(DAMAGE);
-        let mut index = foes.len();
+        caster.buff(MULTIPLIER);
+        let mut index = mates.len();
         loop {
             if index == 0 {
                 break;
             }
-            let mut foe = foes.pop_front().unwrap();
-            foe.take(DAMAGE * caster.multiplier);
-            foes.append(foe);
+            let mut mate = mates.pop_front().unwrap();
+            mate.buff(MULTIPLIER);
+            mates.append(mate);
             index -= 1;
-        };
-        caster.debuff();
+        }
     }
 }

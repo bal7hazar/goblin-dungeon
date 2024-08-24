@@ -3,6 +3,7 @@
 pub struct Player {
     #[key]
     pub id: felt252,
+    pub team_id: u32,
     pub name: felt252,
 }
 
@@ -19,6 +20,7 @@ pub struct Factory {
 pub struct Dungeon {
     #[key]
     pub id: u32,
+    pub nonce: u32,
     pub seed: felt252,
     pub name: felt252,
 }
@@ -43,9 +45,9 @@ pub struct Room {
 #[dojo::model]
 pub struct Team {
     #[key]
-    pub player_id: felt252,
-    #[key]
     pub dungeon_id: u32,
+    #[key]
+    pub team_id: u32,
     pub x: i32,
     pub y: i32,
     pub dead: bool,
@@ -56,9 +58,9 @@ pub struct Team {
 #[dojo::model]
 pub struct Character {
     #[key]
-    pub player_id: felt252,
-    #[key]
     pub dungeon_id: u32,
+    #[key]
+    pub team_id: u32,
     #[key]
     pub index: u8,
     pub class: u8,
@@ -67,5 +69,5 @@ pub struct Character {
     pub health: u8,
     pub shield: u8,
     pub stun: u8,
-    pub buff: u8,
+    pub multiplier: u8,
 }

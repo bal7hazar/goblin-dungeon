@@ -15,7 +15,7 @@ mod errors {
 impl DungeonImpl of DungeonTrait {
     #[inline]
     fn new(id: u32, seed: felt252) -> Dungeon {
-        Dungeon { id, seed, name: 0, }
+        Dungeon { id, nonce: 0, seed, name: 0, }
     }
 
     #[inline]
@@ -26,6 +26,12 @@ impl DungeonImpl of DungeonTrait {
     #[inline]
     fn claim(ref self: Dungeon, name: felt252) {
         self.name = name;
+    }
+
+    #[inline]
+    fn spawn_team(ref self: Dungeon) -> u32 {
+        self.nonce += 1;
+        self.nonce
     }
 }
 

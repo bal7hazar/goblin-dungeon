@@ -4,9 +4,9 @@ use rpg::elements::spells::interface::{SpellTrait, Character, CharacterTrait};
 
 // Constants
 
-const DAMAGE: u8 = 30;
+const SHIELD: u8 = 50;
 
-impl Damage of SpellTrait {
+impl Shield of SpellTrait {
     #[inline]
     fn apply(
         ref caster: Character,
@@ -14,7 +14,6 @@ impl Damage of SpellTrait {
         ref mates: Array<Character>,
         ref foes: Array<Character>
     ) {
-        target.take(DAMAGE * caster.multiplier);
-        caster.debuff();
+        caster.shield(SHIELD);
     }
 }

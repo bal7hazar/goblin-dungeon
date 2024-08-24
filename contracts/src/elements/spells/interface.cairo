@@ -7,6 +7,6 @@ trait SpellTrait {
         ref caster: Character,
         ref target: Character,
         ref mates: Array<Character>,
-        ref foes: Array<Character>
+        ref foes: Array<Character>,
     );
 }

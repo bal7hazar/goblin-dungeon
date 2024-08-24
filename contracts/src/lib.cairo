@@ -35,10 +35,14 @@ mod elements {
     }
     mod spells {
         mod interface;
+        mod buff;
+        mod buff_all;
         mod damage;
         mod damage_all;
         mod heal;
         mod heal_all;
+        mod shield;
+        mod shield_all;
         mod stun;
         mod stun_all;
     }
@@ -60,13 +64,14 @@ mod models {
     mod character;
 }
 
-// mod components {
-//     mod playable;
-// }
+mod components {
+    mod signable;
+    mod playable;
+}
 
-// mod systems {
-//     mod actions;
-// }
+mod systems {
+    mod actions;
+}
 
 mod helpers {
     mod dice;
