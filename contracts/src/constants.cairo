@@ -1,6 +1,6 @@
 // Factory
 
-const FACTORY_ID: u32 = 0;
+const FACTORY_ID: u32 = 1;
 
 // Room
 
@@ -12,6 +12,6 @@ const MONSTER_MAX_POWER: u8 = 5;
 const ROOM_ADVENTURER_COUNT: u8 = 2;
 const ADVENTURER_BIT_LENGTH: u8 = 16;
 
-// Characters
+// Mobs
 
-const CHARACTER_BASE_HEALTH: u8 = 100;
+const MOB_BASE_HEALTH: u8 = 100;

@@ -6,7 +6,7 @@ mod setup {
     // Starknet imports
 
     use starknet::ContractAddress;
-    use starknet::testing::{set_contract_address, set_caller_address};
+    use starknet::testing::{set_contract_address, set_block_timestamp};
 
     // Dojo imports
 
@@ -16,13 +16,6 @@ mod setup {
     // Internal imports
 
     use rpg::models::index;
-    use rpg::models::player::Player;
-    use rpg::models::factory::Factory;
-    use rpg::models::dungeon::Dungeon;
-    use rpg::models::room::Room;
-    use rpg::models::team::Team;
-    use rpg::models::character::Character;
-    use rpg::models::challenge::Challenge;
     use rpg::systems::actions::{actions, IActions, IActionsDispatcher, IActionsDispatcherTrait};
 
     // Constants
@@ -53,25 +46,28 @@ mod setup {
             index::dungeon::TEST_CLASS_HASH,
             index::room::TEST_CLASS_HASH,
             index::team::TEST_CLASS_HASH,
-            index::character::TEST_CLASS_HASH,
+            index::mob::TEST_CLASS_HASH,
             index::challenge::TEST_CLASS_HASH,
         ];
-        'spawn'.print();
         let world = spawn_test_world(array!["goblin_dungeon"].span(), models.span());
 
         // [Setup] Systems
-        'setup'.print();
         let actions_address = world
-            .deploy_contract('salt', actions::TEST_CLASS_HASH.try_into().unwrap());
+            .deploy_contract('actions', actions::TEST_CLASS_HASH.try_into().unwrap());
         let systems = Systems {
             actions: IActionsDispatcher { contract_address: actions_address },
         };
-        'grant'.print();
         world.grant_writer(dojo::utils::bytearray_hash(@"goblin_dungeon"), actions_address);
         world.grant_writer(dojo::utils::bytearray_hash(@"goblin_dungeon"), PLAYER());
 
+        // [Setup] Initialize
+        set_block_timestamp(1);
+        world
+            .init_contract(
+                dojo::utils::selector_from_names(@"goblin_dungeon", @"actions"), array![].span()
+            );
+
         // [Setup] Context
-        'context'.print();
         set_contract_address(PLAYER());
         systems.actions.signup(PLAYER_NAME);
         systems.actions.spawn();

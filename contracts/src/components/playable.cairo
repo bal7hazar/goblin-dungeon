@@ -16,23 +16,20 @@ mod PlayableComponent {
 
     // Internal imports
 
-    use rpg::constants;
+    use rpg::constants::FACTORY_ID;
     use rpg::store::{Store, StoreTrait};
     use rpg::models::factory::{Factory, FactoryTrait};
     use rpg::models::player::{Player, PlayerTrait, PlayerAssert};
     use rpg::models::dungeon::{Dungeon, DungeonTrait, DungeonAssert};
     use rpg::models::room::{Room, RoomTrait, RoomAssert};
     use rpg::models::team::{Team, TeamTrait, TeamAssert};
-    use rpg::models::character::{Character, CharacterTrait, CharacterAssert};
+    use rpg::models::mob::{Mob, MobTrait, MobAssert};
     use rpg::models::challenge::{Challenge, ChallengeTrait, ChallengeAssert};
     use rpg::types::class::Class;
     use rpg::types::element::Element;
     use rpg::types::direction::Direction;
+    use rpg::helpers::seeder::Seeder;
     use rpg::helpers::battler::Battler;
-
-    // Constants
-
-    const FACTORY_ID: u32 = 1;
 
     // Errors
 
@@ -62,7 +59,8 @@ mod PlayableComponent {
 
             // [Effect] Create dungeon
             let dungeon_id = factory.generate();
-            let seed: felt252 = get_block_timestamp().into();
+            let time = get_block_timestamp();
+            let seed: felt252 = Seeder::reseed(time.into(), time.into());
             let dungeon = DungeonTrait::new(dungeon_id, seed);
 
             // [Effect] Create the spawn room
@@ -103,14 +101,14 @@ mod PlayableComponent {
             let team = TeamTrait::new(dungeon_id, team_id, dungeon.seed, player_id);
             player.assemble(team_id);
 
-            // [Effect] Create characters
-            // TODO: Hardcoded characters, could be configurable
-            let knight = CharacterTrait::new(dungeon_id, team_id, 0, Class::Knight, Element::Fire);
-            let ranger = CharacterTrait::new(dungeon_id, team_id, 1, Class::Ranger, Element::Air);
-            let priest = CharacterTrait::new(dungeon_id, team_id, 2, Class::Priest, Element::Water);
-            store.set_character(knight);
-            store.set_character(ranger);
-            store.set_character(priest);
+            // [Effect] Create mobs
+            // TODO: Hardcoded mobs, could be configurable
+            let knight = MobTrait::new(dungeon_id, team_id, 0, Class::Knight, Element::Fire);
+            let ranger = MobTrait::new(dungeon_id, team_id, 1, Class::Ranger, Element::Air);
+            let priest = MobTrait::new(dungeon_id, team_id, 2, Class::Priest, Element::Water);
+            store.set_mob(knight);
+            store.set_mob(ranger);
+            store.set_mob(priest);
 
             // [Effect] Store team
             store.set_team(team);
@@ -153,10 +151,9 @@ mod PlayableComponent {
             challenge.assert_not_completed();
 
             // [Effect] Create room if it does not exist
-            let room = store.get_room(dungeon.id, team.x, team.y);
+            let mut room = store.get_room(dungeon.id, team.x, team.y);
             if !room.is_explored() {
                 // [Effect] Create room
-                let mut room = RoomTrait::new(dungeon.id, team.x, team.y);
                 room.explore(team.seed);
 
                 // [Effect] Store room
@@ -167,19 +164,19 @@ mod PlayableComponent {
             let caster_index = room.pick(team.seed);
             let mut monsters = room.get_monsters();
             // FIXME: Maybe find a better way to define the starting index of monsters
-            let mut index = 4;
+            let mut index = 3;
             loop {
                 match monsters.pop_front() {
                     Option::Some(packed) => {
                         // [Effect] Create monster
-                        let mut monster = CharacterTrait::from(dungeon.id, team.id, index, packed);
+                        let mut monster = MobTrait::from(dungeon.id, team.id, index, packed);
                         if monster.class == Class::None.into() {
                             monster.clean();
                         } else if index == caster_index {
                             monster.setup();
                         }
                         // [Effect] Store monster
-                        store.set_character(monster);
+                        store.set_mob(monster);
                         index += 1;
                     },
                     Option::None => { break; },
@@ -223,9 +220,9 @@ mod PlayableComponent {
             let monsters_status = Battler::status(monsters.clone());
             challenge.completed = mates_status && !monsters_status;
 
-            // [Effect] Update characters
-            store.set_characters(ref mates);
-            store.set_characters(ref monsters);
+            // [Effect] Update mobs
+            store.set_mobs(ref mates);
+            store.set_mobs(ref monsters);
 
             // [Effect] Update team status
             team.dead = !mates_status;

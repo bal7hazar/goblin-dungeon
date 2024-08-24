@@ -1,2 +1,11 @@
-tag = "dojo_starter_rpg-actions"
-writes = ["dojo_starter_rpg-Player", "dojo_starter_rpg-Dungeon"]
+tag = "goblin_dungeon-actions"
+writes = [
+    "goblin_dungeon-Player",
+    "goblin_dungeon-Factory",
+    "goblin_dungeon-Dungeon",
+    "goblin_dungeon-Room",
+    "goblin_dungeon-Team",
+    "goblin_dungeon-Mob",
+    "goblin_dungeon-Challenge",
+]
+init_calldata = []

@@ -3,6 +3,7 @@ class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
 original_class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
 abi = "manifests/dev/base/abis/models/goblin_dungeon-Room-c252dd67.json"
 tag = "goblin_dungeon-Room"
+qualified_path = "rpg::models::index::room"
 manifest_name = "goblin_dungeon-Room-c252dd67"
 
 [[members]]

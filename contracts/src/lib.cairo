@@ -61,7 +61,7 @@ mod models {
     mod dungeon;
     mod room;
     mod team;
-    mod character;
+    mod mob;
     mod challenge;
 }
 
@@ -86,7 +86,7 @@ mod helpers {
 mod tests {
     mod setup;
     mod test_setup;
-    // mod test_move;
-// mod test_attack;
+    mod test_move;
+    mod test_attack;
 }
 

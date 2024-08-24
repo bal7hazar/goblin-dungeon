@@ -3,6 +3,7 @@ class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
 original_class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
 abi = "manifests/dev/base/abis/models/goblin_dungeon-Dungeon-6a08af97.json"
 tag = "goblin_dungeon-Dungeon"
+qualified_path = "rpg::models::index::dungeon"
 manifest_name = "goblin_dungeon-Dungeon-6a08af97"
 
 [[members]]

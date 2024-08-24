@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::constants::CHARACTER_BASE_HEALTH;
+use rpg::constants::MOB_BASE_HEALTH;
 use rpg::elements::roles;
 use rpg::elements::monsters;
 use rpg::types::spell::Spell;
@@ -24,7 +24,7 @@ impl ClassImpl of ClassTrait {
     fn health(self: Class) -> u8 {
         match self {
             Class::None => 0,
-            _ => CHARACTER_BASE_HEALTH,
+            _ => MOB_BASE_HEALTH,
         }
     }
 

@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::elements::spells::interface::{SpellTrait, Character, CharacterTrait};
+use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait};
 
 // Constants
 
@@ -8,12 +8,7 @@ const DAMAGE: u8 = 10;
 
 impl DamageAll of SpellTrait {
     #[inline]
-    fn apply(
-        ref caster: Character,
-        ref target: Character,
-        ref mates: Array<Character>,
-        ref foes: Array<Character>
-    ) {
+    fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
         target.take(DAMAGE);
         let mut index = foes.len();
         loop {

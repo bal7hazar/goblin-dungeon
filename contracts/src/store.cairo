@@ -11,7 +11,7 @@ use rpg::models::player::Player;
 use rpg::models::dungeon::Dungeon;
 use rpg::models::room::Room;
 use rpg::models::team::Team;
-use rpg::models::character::Character;
+use rpg::models::mob::Mob;
 use rpg::models::challenge::Challenge;
 
 // Structs
@@ -56,8 +56,8 @@ impl StoreImpl of StoreTrait {
     }
 
     #[inline]
-    fn get_character(self: Store, dungeon_id: u32, team_id: u32, index: u8) -> Character {
-        get!(self.world, (dungeon_id, team_id, index), (Character))
+    fn get_mob(self: Store, dungeon_id: u32, team_id: u32, index: u8) -> Mob {
+        get!(self.world, (dungeon_id, team_id, index), (Mob))
     }
 
     #[inline]
@@ -66,20 +66,20 @@ impl StoreImpl of StoreTrait {
     }
 
     #[inline]
-    fn get_mates(self: Store, dungeon_id: u32, team_id: u32) -> Array<Character> {
+    fn get_mates(self: Store, dungeon_id: u32, team_id: u32) -> Array<Mob> {
         array![
-            self.get_character(dungeon_id, team_id, 0),
-            self.get_character(dungeon_id, team_id, 1),
-            self.get_character(dungeon_id, team_id, 2),
+            self.get_mob(dungeon_id, team_id, 0),
+            self.get_mob(dungeon_id, team_id, 1),
+            self.get_mob(dungeon_id, team_id, 2),
         ]
     }
 
     #[inline]
-    fn get_monsters(self: Store, dungeon_id: u32, team_id: u32) -> Array<Character> {
+    fn get_monsters(self: Store, dungeon_id: u32, team_id: u32) -> Array<Mob> {
         array![
-            self.get_character(dungeon_id, team_id, 4),
-            self.get_character(dungeon_id, team_id, 5),
-            self.get_character(dungeon_id, team_id, 6),
+            self.get_mob(dungeon_id, team_id, 4),
+            self.get_mob(dungeon_id, team_id, 5),
+            self.get_mob(dungeon_id, team_id, 6),
         ]
     }
 
@@ -109,15 +109,15 @@ impl StoreImpl of StoreTrait {
     }
 
     #[inline]
-    fn set_character(self: Store, character: Character) {
-        set!(self.world, (character))
+    fn set_mob(self: Store, mob: Mob) {
+        set!(self.world, (mob))
     }
 
     #[inline]
-    fn set_characters(self: Store, ref characters: Array<Character>) {
+    fn set_mobs(self: Store, ref mobs: Array<Mob>) {
         loop {
-            match characters.pop_front() {
-                Option::Some(character) => { self.set_character(character); },
+            match mobs.pop_front() {
+                Option::Some(mob) => { self.set_mob(mob); },
                 Option::None => { break; },
             }
         }

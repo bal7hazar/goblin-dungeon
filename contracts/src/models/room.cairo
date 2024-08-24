@@ -159,6 +159,10 @@ impl RoomAssert of AssertTrait {
 
 #[cfg(test)]
 mod tests {
+    // Core imports
+
+    use debug::PrintTrait;
+
     // Local imports
 
     use super::{Room, RoomTrait, AssertTrait};
@@ -180,7 +184,7 @@ mod tests {
     }
 
     #[test]
-    fn test_dungeon_explore() {
+    fn test_room_explore() {
         let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
         dungeon.explore(SEED);
         dungeon.assert_is_explored();
@@ -188,11 +192,26 @@ mod tests {
 
     #[test]
     #[should_panic(expected: ('Room: already explored',))]
-    fn test_dungeon_explore_twice() {
+    fn test_room_explore_twice() {
         let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
         dungeon.explore(SEED);
         dungeon.assert_is_explored();
         dungeon.explore(RESEED);
+    }
+
+    #[test]
+    fn test_room_compute_monsters() {
+        let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
+        dungeon.explore(SEED);
+        assert_eq!(dungeon.monsters != 0, true);
+    }
+
+    #[test]
+    fn test_room_get_monsters() {
+        let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
+        dungeon.explore(SEED);
+        let monsters = dungeon.get_monsters();
+        assert_eq!(monsters.len() != 0, true);
     }
 }
 

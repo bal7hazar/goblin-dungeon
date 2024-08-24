@@ -1,7 +1,7 @@
 // Internal imports
 
 use rpg::elements::spells;
-use rpg::models::character::Character;
+use rpg::models::mob::Mob;
 
 #[derive(Copy, Drop)]
 enum Spell {
@@ -27,11 +27,7 @@ impl SpellImpl of SpellTrait {
 
     #[inline]
     fn apply(
-        self: Spell,
-        ref caster: Character,
-        ref target: Character,
-        ref mates: Array<Character>,
-        ref foes: Array<Character>
+        self: Spell, ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>
     ) {
         match self {
             Spell::Buff => spells::buff::Buff::apply(ref caster, ref target, ref mates, ref foes),

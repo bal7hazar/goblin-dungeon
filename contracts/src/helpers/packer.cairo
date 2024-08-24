@@ -91,7 +91,6 @@ impl Packer<
             packed = packed / modulo;
             index += 1;
         };
-
         result
     }
 

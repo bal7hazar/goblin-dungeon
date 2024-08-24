@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::elements::spells::interface::{SpellTrait, Character, CharacterTrait};
+use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait};
 
 // Constants
 
@@ -8,12 +8,7 @@ const STUN: u8 = 1;
 
 impl StunAll of SpellTrait {
     #[inline]
-    fn apply(
-        ref caster: Character,
-        ref target: Character,
-        ref mates: Array<Character>,
-        ref foes: Array<Character>
-    ) {
+    fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
         target.stun(STUN);
         let mut index = foes.len();
         loop {

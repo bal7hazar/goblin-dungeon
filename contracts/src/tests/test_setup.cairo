@@ -12,8 +12,10 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 // Internal imports
 
+use rpg::constants;
 use rpg::store::{Store, StoreTrait};
 use rpg::models::player::{Player, PlayerTrait};
+use rpg::models::factory::{Factory, FactoryTrait};
 use rpg::models::dungeon::{Dungeon, DungeonTrait};
 use rpg::systems::actions::IActionsDispatcherTrait;
 
@@ -27,7 +29,15 @@ fn test_actions_setup() {
     let (world, _, context) = setup::spawn_game();
     let store = StoreTrait::new(world);
 
-    // [Assert]
+    // [Assert] Player
     let player = store.get_player(context.player_id);
-    assert(player.id == context.player_id, 'Setup: player id');
+    assert_eq!(player.id, context.player_id);
+
+    // [Assert] Factory
+    let factory = store.get_factory(constants::FACTORY_ID);
+    assert_eq!(factory.id, constants::FACTORY_ID);
+
+    // [Assert] Dungeon
+    let dungeon = store.get_dungeon(factory.dungeon_id());
+    assert_eq!(dungeon.seed != 0, true);
 }

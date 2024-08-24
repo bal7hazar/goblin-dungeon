@@ -1,6 +1,6 @@
 kind = "DojoContract"
-class_hash = "0x177e70d2579ef40d590af1781db403e3d72b410fca655635c6582aa0f0a2edc"
-original_class_hash = "0x177e70d2579ef40d590af1781db403e3d72b410fca655635c6582aa0f0a2edc"
+class_hash = "0x558aa712ade8cb884ddd6c820bf891bd74bfd8731acd81d6a70d5622e92b048"
+original_class_hash = "0x558aa712ade8cb884ddd6c820bf891bd74bfd8731acd81d6a70d5622e92b048"
 base_class_hash = "0x0"
 abi = "manifests/dev/base/abis/contracts/goblin_dungeon-actions-bc726048.json"
 reads = []

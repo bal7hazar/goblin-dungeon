@@ -363,12 +363,26 @@
   },
   {
     "type": "impl",
-    "name": "characterImpl",
-    "interface_name": "rpg::models::index::Icharacter"
+    "name": "challengeImpl",
+    "interface_name": "rpg::models::index::Ichallenge"
+  },
+  {
+    "type": "enum",
+    "name": "core::bool",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
   },
   {
     "type": "struct",
-    "name": "rpg::models::index::Character",
+    "name": "rpg::models::index::Challenge",
     "members": [
       {
         "name": "dungeon_id",
@@ -379,42 +393,26 @@
         "type": "core::integer::u32"
       },
       {
-        "name": "index",
-        "type": "core::integer::u8"
+        "name": "x",
+        "type": "core::integer::i32"
       },
       {
-        "name": "class",
-        "type": "core::integer::u8"
+        "name": "y",
+        "type": "core::integer::i32"
       },
       {
-        "name": "element",
-        "type": "core::integer::u8"
+        "name": "completed",
+        "type": "core::bool"
       },
       {
-        "name": "spell",
-        "type": "core::integer::u8"
-      },
-      {
-        "name": "health",
-        "type": "core::integer::u8"
-      },
-      {
-        "name": "shield",
-        "type": "core::integer::u8"
-      },
-      {
-        "name": "stun",
-        "type": "core::integer::u8"
-      },
-      {
-        "name": "multiplier",
-        "type": "core::integer::u8"
+        "name": "nonce",
+        "type": "core::integer::u32"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "rpg::models::index::Icharacter",
+    "name": "rpg::models::index::Ichallenge",
     "items": [
       {
         "type": "function",
@@ -422,7 +420,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "rpg::models::index::Character"
+            "type": "rpg::models::index::Challenge"
           }
         ],
         "outputs": [],
@@ -432,7 +430,7 @@
   },
   {
     "type": "event",
-    "name": "rpg::models::index::character::Event",
+    "name": "rpg::models::index::challenge::Event",
     "kind": "enum",
     "variants": []
   }

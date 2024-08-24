@@ -57,7 +57,7 @@ pub struct Team {
 
 #[derive(Copy, Drop, Serde)]
 #[dojo::model]
-pub struct Character {
+pub struct Mob {
     #[key]
     pub dungeon_id: u32,
     #[key]

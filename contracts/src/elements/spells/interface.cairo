@@ -1,12 +1,7 @@
 // Internal imports
 
-use rpg::models::character::{Character, CharacterTrait};
+use rpg::models::mob::{Mob, MobTrait};
 
 trait SpellTrait {
-    fn apply(
-        ref caster: Character,
-        ref target: Character,
-        ref mates: Array<Character>,
-        ref foes: Array<Character>,
-    );
+    fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>,);
 }

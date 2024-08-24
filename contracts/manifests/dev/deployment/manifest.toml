@@ -1,0 +1,313 @@
+[world]
+kind = "WorldContract"
+class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
+original_class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
+abi = "manifests/dev/deployment/abis/dojo-world.json"
+address = "0x3b092891f7d869d9255225311da9ffd7a090c851b7ea5de92ea162e5b4dfcd6"
+transaction_hash = "0x1d913752dde6b801850d3137739a55b7d7c005884164a25681ffb2fe156ae17"
+block_number = 3
+seed = "goblin_dungeon"
+manifest_name = "dojo-world"
+
+[world.metadata]
+profile_name = "dev"
+rpc_url = "http://localhost:5050/"
+
+[base]
+kind = "Class"
+class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+original_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/dev/deployment/abis/dojo-base.json"
+tag = "dojo-base"
+manifest_name = "dojo-base"
+
+[[contracts]]
+kind = "DojoContract"
+address = "0x3022cd638babf65f15e26ebc9e85a2413bedd9b6580db12b8dd0a8516c4bcfa"
+class_hash = "0x558aa712ade8cb884ddd6c820bf891bd74bfd8731acd81d6a70d5622e92b048"
+original_class_hash = "0x558aa712ade8cb884ddd6c820bf891bd74bfd8731acd81d6a70d5622e92b048"
+base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
+abi = "manifests/dev/deployment/abis/contracts/goblin_dungeon-actions-bc726048.json"
+reads = []
+writes = [
+    "goblin_dungeon-Player",
+    "goblin_dungeon-Factory",
+    "goblin_dungeon-Dungeon",
+    "goblin_dungeon-Room",
+    "goblin_dungeon-Team",
+    "goblin_dungeon-Mob",
+    "goblin_dungeon-Challenge",
+]
+init_calldata = []
+tag = "goblin_dungeon-actions"
+systems = [
+    "signup",
+    "rename",
+    "spawn",
+    "move",
+    "attack",
+]
+manifest_name = "goblin_dungeon-actions-bc726048"
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
+original_class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
+abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Challenge-6cbc441e.json"
+tag = "goblin_dungeon-Challenge"
+qualified_path = "rpg::models::index::challenge"
+manifest_name = "goblin_dungeon-Challenge-6cbc441e"
+
+[[models.members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "team_id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "x"
+type = "i32"
+key = true
+
+[[models.members]]
+name = "y"
+type = "i32"
+key = true
+
+[[models.members]]
+name = "completed"
+type = "bool"
+key = false
+
+[[models.members]]
+name = "nonce"
+type = "u32"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
+original_class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
+abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Dungeon-6a08af97.json"
+tag = "goblin_dungeon-Dungeon"
+qualified_path = "rpg::models::index::dungeon"
+manifest_name = "goblin_dungeon-Dungeon-6a08af97"
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "nonce"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "seed"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "name"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
+original_class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
+abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Factory-2a440efa.json"
+tag = "goblin_dungeon-Factory"
+qualified_path = "rpg::models::index::factory"
+manifest_name = "goblin_dungeon-Factory-2a440efa"
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "dungeon_id"
+type = "u32"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
+original_class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
+abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Mob-57fe6720.json"
+tag = "goblin_dungeon-Mob"
+qualified_path = "rpg::models::index::mob"
+manifest_name = "goblin_dungeon-Mob-57fe6720"
+
+[[models.members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "team_id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "index"
+type = "u8"
+key = true
+
+[[models.members]]
+name = "class"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "element"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "spell"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "health"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "shield"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "stun"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "multiplier"
+type = "u8"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
+original_class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
+abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Player-25b86644.json"
+tag = "goblin_dungeon-Player"
+qualified_path = "rpg::models::index::player"
+manifest_name = "goblin_dungeon-Player-25b86644"
+
+[[models.members]]
+name = "id"
+type = "felt252"
+key = true
+
+[[models.members]]
+name = "team_id"
+type = "u32"
+key = false
+
+[[models.members]]
+name = "name"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
+original_class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
+abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Room-c252dd67.json"
+tag = "goblin_dungeon-Room"
+qualified_path = "rpg::models::index::room"
+manifest_name = "goblin_dungeon-Room-c252dd67"
+
+[[models.members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "x"
+type = "i32"
+key = true
+
+[[models.members]]
+name = "y"
+type = "i32"
+key = true
+
+[[models.members]]
+name = "category"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "item"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "monsters"
+type = "u128"
+key = false
+
+[[models.members]]
+name = "adventurers"
+type = "u128"
+key = false
+
+[[models.members]]
+name = "seed"
+type = "felt252"
+key = false
+
+[[models]]
+kind = "DojoModel"
+class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
+original_class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
+abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Team-2e92bc02.json"
+tag = "goblin_dungeon-Team"
+qualified_path = "rpg::models::index::team"
+manifest_name = "goblin_dungeon-Team-2e92bc02"
+
+[[models.members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "id"
+type = "u32"
+key = true
+
+[[models.members]]
+name = "x"
+type = "i32"
+key = false
+
+[[models.members]]
+name = "y"
+type = "i32"
+key = false
+
+[[models.members]]
+name = "dead"
+type = "bool"
+key = false
+
+[[models.members]]
+name = "seed"
+type = "felt252"
+key = false
+
+[[models.members]]
+name = "player_id"
+type = "felt252"
+key = false

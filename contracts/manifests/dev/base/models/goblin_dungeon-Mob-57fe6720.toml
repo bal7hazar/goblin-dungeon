@@ -1,9 +1,10 @@
 kind = "DojoModel"
-class_hash = "0x35955a56ee3b19e7ccae85947073728061e86813c2fd62e56508c65868b7950"
-original_class_hash = "0x35955a56ee3b19e7ccae85947073728061e86813c2fd62e56508c65868b7950"
-abi = "manifests/dev/base/abis/models/goblin_dungeon-Character-5523a68e.json"
-tag = "goblin_dungeon-Character"
-manifest_name = "goblin_dungeon-Character-5523a68e"
+class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
+original_class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
+abi = "manifests/dev/base/abis/models/goblin_dungeon-Mob-57fe6720.json"
+tag = "goblin_dungeon-Mob"
+qualified_path = "rpg::models::index::mob"
+manifest_name = "goblin_dungeon-Mob-57fe6720"
 
 [[members]]
 name = "dungeon_id"

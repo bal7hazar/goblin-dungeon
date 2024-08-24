@@ -3,6 +3,7 @@ class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
 original_class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
 abi = "manifests/dev/base/abis/models/goblin_dungeon-Team-2e92bc02.json"
 tag = "goblin_dungeon-Team"
+qualified_path = "rpg::models::index::team"
 manifest_name = "goblin_dungeon-Team-2e92bc02"
 
 [[members]]

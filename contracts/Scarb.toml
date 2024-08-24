@@ -7,9 +7,12 @@ version = "0.0.0"
 sierra-replace-ids = true
 
 [scripts]
-migrate = "sozo build && sozo migrate apply"
+dev = "sozo clean && sozo build && sozo migrate plan && sozo migrate apply"
+slot = "sozo --profile slot clean && sozo --profile slot build && sozo --profile slot migrate plan && sozo --profile slot migrate apply"
 
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.0.0-alpha.7" }
 
 [[target.dojo]]
+
+[profile.slot]
