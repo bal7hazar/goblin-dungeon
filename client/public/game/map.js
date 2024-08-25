@@ -14,6 +14,7 @@ export function initMap(scene) {
             for (let i = 0; i < 7; i++) {
                 if (!randomDetails.includes((elem) => elem[0] == i && elem[1] == j)) {
                     const copyModel = gltf.scene.clone();
+                    copyModel.receiveShadow = true
                     copyModel.position.set((i - 3), 0, (j - 3)); // Adjust the position for each copy
                     scene.add(copyModel);   
                 }
@@ -83,17 +84,38 @@ export function initMap(scene) {
         let door = gltf.scene.clone();
         door.position.set(0, 0, -3.75); // Adjust the position for each copy
         scene.add(door);
+        door.children[0].children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "+y"
+            document.body.dispatchEvent(event)
+        }
         door = gltf.scene.clone();
         door.position.set(0, 0, 3.75); // Adjust the position for each copy
+        door.rotation.set(0,Math.PI, 0)
+        door.children[0].children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "-y"
+            document.body.dispatchEvent(event)
+        }
         scene.add(door);
         door = gltf.scene.clone();
         door.position.set(-3.75, 0, 0); // Adjust the position for each copy
         door.rotation.set(0,Math.PI * 0.5, 0)
+        door.children[0].children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "-x"
+            document.body.dispatchEvent(event)
+        }
         scene.add(door);
         door = gltf.scene.clone();
         door.position.set(3.75, 0, 0); // Adjust the position for each copy
-        door.rotation.set(0,Math.PI * 0.5, 0)
+        door.rotation.set(0,-Math.PI * 0.5, 0)
         scene.add(door);
+        door.children[0].children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "+x"
+            document.body.dispatchEvent(event)
+        }
     }, undefined, function (error) {
         console.error(error);
     });
@@ -101,17 +123,37 @@ export function initMap(scene) {
         let opening = gltf.scene.clone();
         opening.position.set(0, 0, -4); // Adjust the position for each copy
         scene.add(opening);
+        opening.children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "+y"
+            document.body.dispatchEvent(event)
+        }
         opening = gltf.scene.clone();
         opening.position.set(0, 0, 4); // Adjust the position for each copy
+        opening.rotation.set(0,Math.PI, 0)
         scene.add(opening);
+        opening.children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "-y"
+            document.body.dispatchEvent(event)
+        }
         opening = gltf.scene.clone();
         opening.position.set(-4, 0, 0); // Adjust the position for each copy
         opening.rotation.set(0,Math.PI * 0.5, 0)
         scene.add(opening);
+        opening.children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "-x"
+            document.body.dispatchEvent(event)
+        }
         opening = gltf.scene.clone();
         opening.position.set(4, 0, 0); // Adjust the position for each copy
         opening.rotation.set(0,Math.PI * 0.5, 0)
         scene.add(opening);
+        opening.children[0].onClick = function() {
+            const event = new Event("clickDoor")
+            event.doorDir = "+x"
+        }
     }, undefined, function (error) {
         console.error(error);
     });
