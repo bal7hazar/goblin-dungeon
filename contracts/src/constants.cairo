@@ -9,6 +9,7 @@ const SPELL_BIT_LENGTH: u8 = 4;
 
 // Room
 
+const TEAM_MATE_COUNT: u8 = 3;
 const ROOM_MONSTER_COUNT: u8 = 3;
 const ROOM_ADVENTURER_COUNT: u8 = 2;
 const ADVENTURER_BIT_LENGTH: u8 = 4;

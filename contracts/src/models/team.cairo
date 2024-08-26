@@ -4,15 +4,17 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::constants::SPELL_BIT_LENGTH;
+use rpg::constants::{SPELL_BIT_LENGTH, TEAM_MATE_COUNT};
 use rpg::models::index::Team;
 use rpg::types::direction::Direction;
 use rpg::types::role::{Role, RoleTrait};
 use rpg::types::spell::Spell;
+use rpg::types::element::{Element, ElementTrait};
 use rpg::helpers::deck::{Deck, DeckTrait};
 use rpg::helpers::bitmap::Bitmap;
 use rpg::helpers::seeder::Seeder;
 use rpg::helpers::packer::Packer;
+use rpg::helpers::dice::{Dice, DiceTrait};
 
 mod errors {
     const TEAM_NOT_EXIST: felt252 = 'Team: does not exist';
@@ -83,6 +85,26 @@ impl TeamImpl of TeamTrait {
     #[inline]
     fn clean(ref self: Team) {
         self.spells = 0;
+    }
+
+    #[inline]
+    fn compute_mates(self: Team) -> Array<(Role, Element)> {
+        // [Compute] Mate atributes and distribution
+        let mut dice: Dice = DiceTrait::new(RoleTrait::count(), self.seed);
+        let mut mates: Array<(Role, Element)> = array![];
+        let mut count = TEAM_MATE_COUNT;
+        loop {
+            if count == 0 {
+                break;
+            };
+            dice.face_count = RoleTrait::count();
+            let role: Role = dice.roll().into();
+            dice.face_count = ElementTrait::count();
+            let element: Element = dice.roll().into();
+            mates.append((role, element));
+            count -= 1;
+        };
+        mates
     }
 }
 

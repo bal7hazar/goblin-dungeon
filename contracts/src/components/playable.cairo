@@ -108,16 +108,22 @@ mod PlayableComponent {
             player.assemble(team_id);
 
             // [Effect] Create mobs
-            // FIXME: Hardcoded mobs, could be configurable
-            let knight = MobTrait::from_role(dungeon_id, team_id, 0, Role::Knight, Element::Fire);
-            let ranger = MobTrait::from_role(dungeon_id, team_id, 1, Role::Mage, Element::Air);
-            let priest = MobTrait::from_role(dungeon_id, team_id, 2, Role::Rogue, Element::Water);
-            team.mint(RoleTrait::spell(Role::Knight, Element::Fire));
-            team.mint(RoleTrait::spell(Role::Mage, Element::Air));
-            team.mint(RoleTrait::spell(Role::Rogue, Element::Water));
-            store.set_mob(knight);
-            store.set_mob(ranger);
-            store.set_mob(priest);
+            let mut mates: Array<(Role, Element)> = team.compute_mates();
+            let mut index = 0;
+            loop {
+                match mates.pop_front() {
+                    Option::Some((
+                        role, element
+                    )) => {
+                        // [Effect] Create mob
+                        let mob = MobTrait::from_role(dungeon_id, team_id, index, role, element);
+                        team.mint(role.spell(element));
+                        store.set_mob(mob);
+                        index += 1;
+                    },
+                    Option::None => { break; },
+                };
+            };
 
             // [Effect] Store team
             store.set_team(team);

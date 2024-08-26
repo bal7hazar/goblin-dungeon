@@ -5,7 +5,7 @@ use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait, Role, Element}
 // Constants
 
 const DAMAGE: u8 = 50;
-const DAMAGE_ALL: u8 = 10;
+const DAMAGE_OTHER: u8 = 10;
 
 impl Burst of SpellTrait {
     #[inline]
@@ -17,7 +17,7 @@ impl Burst of SpellTrait {
                 break;
             }
             let mut foe = foes.pop_front().unwrap();
-            foe.take(DAMAGE_ALL * caster.multiplier);
+            foe.take(DAMAGE_OTHER * caster.multiplier);
             foes.append(foe);
             index -= 1;
         };
