@@ -183,6 +183,10 @@ mod PlayableComponent {
                 }
             };
 
+            // [Effect] Create challenge
+            let challenge = ChallengeTrait::new(dungeon.id, team.id, team.x, team.y);
+            store.set_challenge(challenge);
+
             // [Effect] Update team
             store.set_team(team);
         }
@@ -219,6 +223,7 @@ mod PlayableComponent {
             let mates_status = Battler::status(mates.clone());
             let monsters_status = Battler::status(monsters.clone());
             challenge.completed = mates_status && !monsters_status;
+            store.set_challenge(challenge);
 
             // [Effect] Update mobs
             store.set_mobs(ref mates);
