@@ -58,9 +58,11 @@ export function createStaticText(scene, text, position, needRefresh) {
 
     textMesh.updateText = function(newText) {
         scene.remove(textMesh)
+        textMesh.removed = true
         return createStaticText(scene, newText, position)
     }
     scene.tickCallbacks.push(() => {
+        if (textMesh.removed) return false;
         textMesh.refresh()
     })    
     return textMesh

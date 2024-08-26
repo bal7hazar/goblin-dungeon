@@ -1,7 +1,9 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls'
+import TWEEN from '../node_modules/@tweenjs/tween.js'
 
 let objectToInteract
+const tweens = []
 
 export function initScene() {
     // Scene setup
@@ -48,8 +50,8 @@ export function initScene() {
 
     scene.tickCallbacks = []
     
-    function render() {
-        requestAnimationFrame(render)
+    function gameLoop() {
+        requestAnimationFrame(gameLoop)
     
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
@@ -61,27 +63,56 @@ export function initScene() {
             }
         }
     
-        scene.tickCallbacks.forEach(callback => callback())
+        for (let i = scene.tickCallbacks.length - 1; i >= 0; --i) {
+            const callbackResult = scene.tickCallbacks[i]()
+            // if (callbackResult === false) {
+            //     scene.tickCallbacks.splice(i, 1)
+            // }
+        }
 
+        render();
+        tweens.forEach((t) => t.update())
+    }
+
+    function render() {
         renderer.clear();      
         renderer.render(scene, camera);
-        // renderer.clearDepth(); 
+        renderer.clearDepth(); 
         renderer.render(scene, uiCamera);
     }
 
-    document.body.addEventListener("clickDoor", function(e) {
-        const doorDir = event.doorDir
-        console.log("go to ", doorDir)
+    scene.addTween = function(object, name, callback) {
+        const tween = new TWEEN.Tween(object[name])
+        tween.onComplete(() => {
+            const index = tweens.indexOf(tween)
+            tweens.splice(index, 1)
+        })
+        tweens.push(tween)
+        callback(tween)
+    }
+
+    const DIRECTIONS = ["None", "North", "East", "South", "West"]
+    document.body.addEventListener("clickDoor", function(event) {
+        const direction = event.direction
+        const e = new Event("dojo_move")
+        e.direction = DIRECTIONS.indexOf(direction)
+        if (e.direction === -1) {
+            console.log("invalid direction", direction)
+            return
+        }
+        document.body.dispatchEvent(e)
     })
 
     window.addEventListener('click', (e) => {
-        if (objectToInteract) objectToInteract.onClick()
+        if (objectToInteract) {
+            objectToInteract.onClick()
+        }
     })
   
     
-    window.addEventListener( 'pointermove', onPointerMove );
+    window.addEventListener('pointermove', onPointerMove);
     
-    render()
+    gameLoop()
 
     // scene.tickCallbacks.push(() => {
     //     cameraPivot.rotation.y += 0.001

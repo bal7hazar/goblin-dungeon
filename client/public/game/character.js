@@ -2,7 +2,7 @@ import * as THREE from '../node_modules/three/build/three.module.js';
 import { createFightInfoText, createStaticText } from '../utils/text.js';
 import { worldToScreenPosition } from '../utils/utils.js';
 
-export function addCharacter(scene, object, position, rotation) {
+export function addCharacter(scene, object, maxHp, position, rotation) {
     object.animationMixer = new THREE.AnimationMixer(object)
     object.animations = {
         idle: object.animationMixer.clipAction(object.animations[0])
@@ -30,36 +30,46 @@ export function addCharacter(scene, object, position, rotation) {
         object.animationMixer.update(clock.getDelta())
     })
 
-    let maxHp = 20
-    let hp = maxHp
+    object.maxHp = maxHp
+    object.hp = maxHp
 
-    let textHP = createStaticText(scene, `${hp}/${maxHp}`, [position[0], 1.2, position[2]])
+    let textHP = createStaticText(scene, `${object.hp}/${object.maxHp}`, [position[0], 1.2, position[2]])
     object.textHP = textHP
+
+    object.attack = function() {
+        if (object.animations.punch) {
+            object.animations.idle.stop()
+            object.animations.punch.reset()
+            object.animations.punch.play()
+        }
+    }
 
     object.hit = function(damage) {
         if (damage <= 0) {
             return
         }
-        if (hp <= 0) {
+        if (object.hp <= 0) {
             console.error("already dead")
             return;   
         }
-        hp -= damage
-        if (hp <= 0) {
-            hp = 0
+        object.hp -= damage
+        if (object.hp <= 0) {
+            object.hp = 0
         }
         if (object.animations.take_punch) {
             object.animations.idle.stop()
             object.animations.take_punch.reset()
             object.animations.take_punch.play()
         }
-        textHP.updateText(`${hp}/${maxHp}`)
+        textHP.updateText(`${object.hp}/${object.maxHp}`)
         createFightInfoText(scene, `-${damage} HP`, [position[0], 1.5, position[2]])
     }
 
     const loader = new THREE.ImageBitmapLoader();
     loader.setOptions( { imageOrientation: 'flipY' } );
-    object.prepare = function(name) {
+    object.prepare = function(spellId) {
+        object.currentSpell = spellId
+        const name = spellId == 2 ? "punch" : "stun";
         loader.load(
             `assets/icons/${name}.png`,
             function (imageBitmap) {

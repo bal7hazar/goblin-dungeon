@@ -1,44 +1,95 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
-import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 // import Stats from '../node_modules/three/examples/jsm/libs/stats.module'
-import { initDojo } from './dojo/init.js';
+import { initDojo } from './dojo/dojo.js';
 import { initScene } from './game/scene.js';
 import { initMap } from './game/map.js';
 import { loadFont } from './utils/text.js';
 import { startFight } from './game/fight.js';
 import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader';
 import { addHero } from './game/hero.js';
+import { createStaticText } from './utils/text.js';
 
-// initDojo()
-const scene = initScene()
-initMap(scene)
+let timeoutUpdateFight
+let scene
+let roomTexts = {}
+let room
+let currentRoomPosition = { x: 0, y: 0 }
+let dojoData = {}
+let hero
+let currentFight
+
+document.body.addEventListener("entityUpdate", function(event) {
+    const data = event.data
+    dojoData = data
+    console.log(data)
+    room = data.currentRoom
+    if (data.currentRoom && (currentRoomPosition.x !== data.currentRoom.x.value || currentRoomPosition.y !== data.currentRoom.y.value)) {
+        const x = data.currentRoom.x.value;
+        const y = data.currentRoom.y.value;
+        currentRoomPosition = { x, y }
+        roomTexts.current = roomTexts.current.updateText(`(${Math.floor(x)};${Math.floor(y)})`)
+        roomTexts.east = roomTexts.east.updateText(`(${Math.floor(x + 1)};${Math.floor(y)})`)
+        roomTexts.west = roomTexts.west.updateText(`(${Math.floor(x - 1)};${Math.floor(y)})`)
+        roomTexts.north = roomTexts.north.updateText(`(${Math.floor(x)};${Math.floor(y + 1)})`)
+        roomTexts.south = roomTexts.south.updateText(`(${Math.floor(x)};${Math.floor(y - 1)})`)
+
+        console.log("new room")
+        setTimeout(() => {
+            if (hero) {
+                hero.position.set([-4,0,0])
+            }
+            const fight = startFight(
+                scene,
+                room.allies,
+                room.enemies
+            )
+            currentFight = fight
+            setTimeout(() => {
+                fight.startTurn(["fireball", "heal", "punch"], [room.enemies[0].spell.value,room.enemies[1].spell.value,room.enemies[2].spell.value])
+                
+                setTimeout(() => { document.body.dispatchEvent(new Event("dojo_attack")) }, 1000)
+            }, 1000)
+        }, 500)
+    } else if (currentFight) {
+        if (timeoutUpdateFight) { clearTimeout(timeoutUpdateFight) }
+        timeoutUpdateFight = setTimeout(() => {
+            currentFight.setTurnResult(data.currentRoom)
+        }, 500)
+    }
+})
 
 function activateHeroMovement() {
     const fbxLoader = new FBXLoader()
     fbxLoader.load(
         `assets/models/hero_idle.fbx`,
         (object) => {
-            object = addHero(scene, object, [0, 0, 0], [0, Math.PI * 0.5, 0])
+            hero = addHero(scene, object, [0, 0, 0], [0, Math.PI * 0.5, 0])
         },
-        (xhr) => {
-            console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-        },
+        undefined,
         (error) => {
             console.log(error)
         }
     )
 }
 
+function initRoomUI() {
+    roomTexts.current = createStaticText(scene, `(0;0)`, [3, 1, -3])
+    roomTexts.east = createStaticText(scene, `(1;0)`, [8, 0, 1.25])
+    roomTexts.west = createStaticText(scene, `(-1;0)`, [1.25, 1, 6])
+    roomTexts.south = createStaticText(scene, `(0;-1)`, [-7, 1, -2])
+    roomTexts.north = createStaticText(scene, `(0;1)`, [-1.25, 0, -9])
+}
+
 loadFont(() => {
-    activateHeroMovement()
-    // const fight = startFight(
-    //     scene,
-    //     [{ class: "knight" }, { class: "wizard" }, { class: "priest" }],
-    //     [{ class: "goblin" }, { class: "spider" }, { class: "skeleton" }],
-    // )
-    // setTimeout(() => {
-    //     fight.startTurn(["fireball", "heal", "punch"], ["punch", "stun", "punch"])
-    // }, 1000)
+    setTimeout(() => {
+        initDojo()   
+    }, 1000)
+
+    scene = initScene()
+    initMap(scene)
+
+    initRoomUI()
+    activateHeroMovement() 
 });
 
 // const loader = new GLTFLoader();

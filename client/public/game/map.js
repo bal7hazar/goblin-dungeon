@@ -14,7 +14,7 @@ export function initMap(scene) {
             for (let i = 0; i < 7; i++) {
                 if (!randomDetails.includes((elem) => elem[0] == i && elem[1] == j)) {
                     const copyModel = gltf.scene.clone();
-                    copyModel.receiveShadow = true
+                    copyModel.children[0].receiveShadow = true
                     copyModel.position.set((i - 3), 0, (j - 3)); // Adjust the position for each copy
                     scene.add(copyModel);   
                 }
@@ -86,7 +86,7 @@ export function initMap(scene) {
         scene.add(door);
         door.children[0].children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "+y"
+            event.direction = "North"
             document.body.dispatchEvent(event)
         }
         door = gltf.scene.clone();
@@ -94,7 +94,7 @@ export function initMap(scene) {
         door.rotation.set(0,Math.PI, 0)
         door.children[0].children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "-y"
+            event.direction = "South"
             document.body.dispatchEvent(event)
         }
         scene.add(door);
@@ -103,7 +103,7 @@ export function initMap(scene) {
         door.rotation.set(0,Math.PI * 0.5, 0)
         door.children[0].children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "-x"
+            event.direction = "West"
             document.body.dispatchEvent(event)
         }
         scene.add(door);
@@ -113,7 +113,7 @@ export function initMap(scene) {
         scene.add(door);
         door.children[0].children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "+x"
+            event.direction = "East"
             document.body.dispatchEvent(event)
         }
     }, undefined, function (error) {
@@ -125,7 +125,7 @@ export function initMap(scene) {
         scene.add(opening);
         opening.children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "+y"
+            event.direction = "North"
             document.body.dispatchEvent(event)
         }
         opening = gltf.scene.clone();
@@ -134,7 +134,7 @@ export function initMap(scene) {
         scene.add(opening);
         opening.children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "-y"
+            event.direction = "South"
             document.body.dispatchEvent(event)
         }
         opening = gltf.scene.clone();
@@ -143,7 +143,7 @@ export function initMap(scene) {
         scene.add(opening);
         opening.children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "-x"
+            event.direction = "West"
             document.body.dispatchEvent(event)
         }
         opening = gltf.scene.clone();
@@ -152,7 +152,7 @@ export function initMap(scene) {
         scene.add(opening);
         opening.children[0].onClick = function() {
             const event = new Event("clickDoor")
-            event.doorDir = "+x"
+            event.direction = "East"
         }
     }, undefined, function (error) {
         console.error(error);
