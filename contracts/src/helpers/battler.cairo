@@ -95,8 +95,8 @@ mod tests {
 
     // Internal imports
 
-    use rpg::types::class::{Role, RoleTrait};
-    use rpg::types::class::{Monster, MonsterTrait};
+    use rpg::types::role::{Role, RoleTrait};
+    use rpg::types::monster::{Monster, MonsterTrait};
     use rpg::types::spell::{Spell, SpellTrait};
 
     // Local imports

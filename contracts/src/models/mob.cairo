@@ -4,7 +4,6 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::constants::ATTRIBUTE_BIT_LENGTH;
 use rpg::models::index::Mob;
 use rpg::types::direction::Direction;
 use rpg::types::role::{Role, RoleTrait};

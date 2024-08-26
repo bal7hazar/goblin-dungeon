@@ -4,7 +4,6 @@ use rpg::constants::MOB_BASE_HEALTH;
 use rpg::elements::roles;
 use rpg::elements::monsters;
 use rpg::types::spell::Spell;
-use rpg::types::class::Class;
 
 #[derive(Copy, Drop)]
 enum Role {
@@ -35,18 +34,6 @@ impl RoleImpl of RoleTrait {
             Role::Knight => roles::knight::Knight::spell(),
             Role::Ranger => roles::ranger::Ranger::spell(),
             Role::Priest => roles::priest::Priest::spell(),
-        }
-    }
-}
-
-impl IntoRoleClass of core::Into<Role, Class> {
-    #[inline]
-    fn into(self: Role) -> Class {
-        match self {
-            Role::None => Class::None,
-            Role::Knight => Class::Knight,
-            Role::Ranger => Class::Ranger,
-            Role::Priest => Class::Priest,
         }
     }
 }

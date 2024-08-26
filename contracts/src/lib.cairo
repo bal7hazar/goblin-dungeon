@@ -5,7 +5,6 @@ mod types {
     mod direction;
     mod spell;
     mod category;
-    mod class;
     mod element;
     mod monster;
     mod role;

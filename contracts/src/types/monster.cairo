@@ -4,7 +4,6 @@ use rpg::elements::roles;
 use rpg::elements::monsters;
 use rpg::types::spell::Spell;
 use rpg::types::element::Element;
-use rpg::types::class::Class;
 use rpg::types::threat::Threat;
 
 
@@ -129,27 +128,6 @@ impl MonsterImpl of MonsterTrait {
             Monster::WaterHobgoblin => monsters::water_hobgoblin::WaterHobgoblin::element(),
             Monster::WaterSpider => monsters::water_spider::WaterSpider::element(),
             Monster::WaterTarentula => monsters::water_tarentula::WaterTarentula::element(),
-        }
-    }
-}
-
-impl IntoMonsterClass of core::Into<Monster, Class> {
-    #[inline]
-    fn into(self: Monster) -> Class {
-        match self {
-            Monster::None => Class::None,
-            Monster::AirSkeleton => Class::AirSkeleton,
-            Monster::AirSpider => Class::AirSpider,
-            Monster::AirTarentula => Class::AirTarentula,
-            Monster::AirUndead => Class::AirUndead,
-            Monster::FireGoblin => Class::FireGoblin,
-            Monster::FireHobgoblin => Class::FireHobgoblin,
-            Monster::FireSkeleton => Class::FireSkeleton,
-            Monster::FireUndead => Class::FireUndead,
-            Monster::WaterGoblin => Class::WaterGoblin,
-            Monster::WaterHobgoblin => Class::WaterHobgoblin,
-            Monster::WaterSpider => Class::WaterSpider,
-            Monster::WaterTarentula => Class::WaterTarentula,
         }
     }
 }
