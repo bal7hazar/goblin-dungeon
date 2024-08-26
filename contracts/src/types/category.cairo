@@ -28,6 +28,19 @@ impl CategoryImpl of CategoryTrait {
             Category::Monster
         }
     }
+
+    #[inline]
+    fn default_challenge_status(self: Category) -> bool {
+        match self {
+            Category::Monster => false,
+            Category::Adventurer => true,
+            Category::Fountain => true,
+            Category::Spell => true,
+            Category::Burn => true,
+            Category::Boss => false,
+            Category::None => false,
+        }
+    }
 }
 
 impl IntoCategoryFelt252 of core::Into<Category, felt252> {

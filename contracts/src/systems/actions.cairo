@@ -15,6 +15,10 @@ trait IActions<TContractState> {
     fn spawn(self: @TContractState);
     fn move(self: @TContractState, direction: u8);
     fn attack(self: @TContractState, orders: u16, caster_index: u8, spell_index: u8);
+    fn hire(self: @TContractState, adventurer_index: u8, team_index: u8);
+    fn pickup(self: @TContractState);
+    fn burn(self: @TContractState, spell_index: u8);
+    fn heal(self: @TContractState);
 }
 
 // Contracts
@@ -86,6 +90,22 @@ mod actions {
 
         fn attack(self: @ContractState, orders: u16, caster_index: u8, spell_index: u8) {
             self.playable.attack(self.world(), orders, caster_index, spell_index)
+        }
+
+        fn hire(self: @ContractState, adventurer_index: u8, team_index: u8) {
+            self.playable.hire(self.world(), adventurer_index, team_index)
+        }
+
+        fn pickup(self: @ContractState) {
+            self.playable.pickup(self.world())
+        }
+
+        fn burn(self: @ContractState, spell_index: u8) {
+            self.playable.burn(self.world(), spell_index)
+        }
+
+        fn heal(self: @ContractState) {
+            self.playable.heal(self.world())
         }
     }
 }

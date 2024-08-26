@@ -48,13 +48,12 @@ impl TeamImpl of TeamTrait {
     }
 
     #[inline]
-    fn burn(ref self: Team, spell: Spell) {
-        let item: u8 = spell.into();
-        self.deck = Packer::remove(self.deck, item, SPELL_BIT_LENGTH);
+    fn burn(ref self: Team, index: u8) {
+        self.deck = Packer::remove_at(self.deck, index, SPELL_BIT_LENGTH);
     }
 
     #[inline]
-    fn pick(ref self: Team, seed: felt252) {
+    fn pick_spells(ref self: Team, seed: felt252) {
         // [Compute] Spells
         let mut spells: Array<u8> = Packer::unpack(self.deck, SPELL_BIT_LENGTH);
         let count = spells.len();

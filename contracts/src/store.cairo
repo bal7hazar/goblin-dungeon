@@ -114,6 +114,15 @@ impl StoreImpl of StoreTrait {
     }
 
     #[inline]
+    fn get_mates(self: Store, dungeon_id: u32, team_id: u32) -> Array<Mob> {
+        array![
+            self.get_mob(dungeon_id, team_id, 0),
+            self.get_mob(dungeon_id, team_id, 1),
+            self.get_mob(dungeon_id, team_id, 2),
+        ]
+    }
+
+    #[inline]
     fn get_monsters(self: Store, dungeon_id: u32, team_id: u32) -> Array<Mob> {
         array![
             self.get_mob(dungeon_id, team_id, 3),

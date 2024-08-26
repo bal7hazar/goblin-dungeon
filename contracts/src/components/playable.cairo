@@ -25,6 +25,7 @@ mod PlayableComponent {
     use rpg::models::team::{Team, TeamTrait, TeamAssert};
     use rpg::models::mob::{Mob, MobTrait, MobAssert};
     use rpg::models::challenge::{Challenge, ChallengeTrait, ChallengeAssert};
+    use rpg::types::category::{Category, CategoryTrait};
     use rpg::types::role::{Role, RoleTrait};
     use rpg::types::monster::Monster;
     use rpg::types::element::Element;
@@ -146,9 +147,16 @@ mod PlayableComponent {
             let mut team = store.get_team(dungeon.id, player.team_id);
             team.assert_not_dead();
 
-            // [Check] Challenge is completed
-            let challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
-            challenge.assert_is_completed();
+            // [Check] Challenge is completed or room is passable
+            let mut challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
+            if !challenge.completed {
+                // [Check] Room is passable
+                let room = store.get_room(dungeon.id, team.x, team.y);
+                room.assert_is_passable();
+                // [Effect] Update challange status
+                challenge.complete();
+                store.set_challenge(challenge);
+            }
 
             // [Effect] Move team
             team.move(direction.into());
@@ -168,7 +176,7 @@ mod PlayableComponent {
             }
 
             // [Effect] Generate monsters
-            let caster_index = room.pick(team.seed);
+            let caster_index = room.pick_monster(team.seed);
             let mut monsters = room.compute_monsters();
             // FIXME: Maybe find a better way to define the starting index of monsters
             let mut index = 3;
@@ -193,11 +201,13 @@ mod PlayableComponent {
             };
 
             // [Effect] Create challenge
-            let challenge = ChallengeTrait::new(dungeon.id, team.id, team.x, team.y);
+            let category: Category = room.category.into();
+            let status: bool = category.default_challenge_status();
+            let challenge = ChallengeTrait::new(dungeon.id, team.id, team.x, team.y, status);
             store.set_challenge(challenge);
 
             // [Effect] Pick spells
-            team.pick(team.seed);
+            team.pick_spells(team.seed);
 
             // [Effect] Update team
             store.set_team(team);
@@ -227,6 +237,11 @@ mod PlayableComponent {
             // [Check] Team is not dead
             let mut team = store.get_team(dungeon.id, player.team_id);
             team.assert_not_dead();
+
+            // [Check] Room is explored and is a monster room
+            let room = store.get_room(dungeon.id, team.x, team.y);
+            room.assert_is_explored();
+            room.assert_is_monster();
 
             // [Check] Challenge is not completed
             let mut challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
@@ -264,9 +279,184 @@ mod PlayableComponent {
                 team.clean();
             } else {
                 let seed: felt252 = Seeder::reseed(team.seed, challenge.nonce.into());
-                team.pick(seed);
+                team.pick_spells(seed);
                 store.set_team(team);
             }
+            store.set_team(team);
+        }
+
+        fn hire(
+            self: @ComponentState<TContractState>,
+            world: IWorldDispatcher,
+            adventurer_index: u8,
+            team_index: u8,
+        ) {
+            // [Setup] Datastore
+            let store: Store = StoreTrait::new(world);
+
+            // [Check] Player exists
+            let player_id: felt252 = get_caller_address().into();
+            let player = store.get_player(player_id);
+            player.assert_is_created();
+
+            // [Check] Dungeon is not done
+            let factory = store.get_factory(FACTORY_ID);
+            let dungeon_id = factory.dungeon_id();
+            let dungeon = store.get_dungeon(dungeon_id);
+            dungeon.assert_not_done();
+
+            // [Check] Team is not dead
+            let mut team = store.get_team(dungeon.id, player.team_id);
+            team.assert_not_dead();
+
+            // [Check] Room is explored and is an adventurer room
+            let room = store.get_room(dungeon.id, team.x, team.y);
+            room.assert_is_explored();
+            room.assert_is_adventurer();
+
+            // [Check] Challenge is not completed
+            let mut challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
+            challenge.assert_not_completed();
+
+            // [Effect] Create mob
+            let adventurers: Array<(Role, Element)> = room.get_adventurers();
+            let (role, element) = *adventurers.at(adventurer_index.into());
+            let mob = MobTrait::from_role(dungeon.id, team.id, team_index, role, element);
+            store.set_mob(mob);
+
+            // [Effect] Update challenge status
+            challenge.complete();
+            store.set_challenge(challenge);
+
+            // [Effect] Update team deck
+            team.mint(role.spell());
+            store.set_team(team);
+        }
+
+        fn pickup(self: @ComponentState<TContractState>, world: IWorldDispatcher) {
+            // [Setup] Datastore
+            let store: Store = StoreTrait::new(world);
+
+            // [Check] Player exists
+            let player_id: felt252 = get_caller_address().into();
+            let player = store.get_player(player_id);
+            player.assert_is_created();
+
+            // [Check] Dungeon is not done
+            let factory = store.get_factory(FACTORY_ID);
+            let dungeon_id = factory.dungeon_id();
+            let dungeon = store.get_dungeon(dungeon_id);
+            dungeon.assert_not_done();
+
+            // [Check] Team is not dead
+            let mut team = store.get_team(dungeon.id, player.team_id);
+            team.assert_not_dead();
+
+            // [Check] Room is explored
+            let room = store.get_room(dungeon.id, team.x, team.y);
+            room.assert_is_explored();
+            room.assert_is_spell();
+
+            // [Check] Challenge is not completed
+            let mut challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
+            challenge.assert_not_completed();
+
+            // [Check] Mint spell
+            team.mint(room.spell.into());
+
+            // [Effect] Update challenge status
+            challenge.complete();
+            store.set_challenge(challenge);
+
+            // [Effect] Update team
+            store.set_team(team);
+        }
+
+        fn burn(self: @ComponentState<TContractState>, world: IWorldDispatcher, spell_index: u8) {
+            // [Setup] Datastore
+            let store: Store = StoreTrait::new(world);
+
+            // [Check] Player exists
+            let player_id: felt252 = get_caller_address().into();
+            let player = store.get_player(player_id);
+            player.assert_is_created();
+
+            // [Check] Dungeon is not done
+            let factory = store.get_factory(FACTORY_ID);
+            let dungeon_id = factory.dungeon_id();
+            let dungeon = store.get_dungeon(dungeon_id);
+            dungeon.assert_not_done();
+
+            // [Check] Team is not dead
+            let mut team = store.get_team(dungeon.id, player.team_id);
+            team.assert_not_dead();
+
+            // [Check] Room is explored
+            let room = store.get_room(dungeon.id, team.x, team.y);
+            room.assert_is_explored();
+            room.assert_is_burn();
+
+            // [Check] Challenge is not completed
+            let mut challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
+            challenge.assert_not_completed();
+
+            // [Effect] Burn spell
+            team.burn(spell_index);
+
+            // [Effect] Update challenge status
+            challenge.complete();
+            store.set_challenge(challenge);
+
+            // [Effect] Update team
+            store.set_team(team);
+        }
+
+        fn heal(self: @ComponentState<TContractState>, world: IWorldDispatcher) {
+            // [Setup] Datastore
+            let store: Store = StoreTrait::new(world);
+
+            // [Check] Player exists
+            let player_id: felt252 = get_caller_address().into();
+            let player = store.get_player(player_id);
+            player.assert_is_created();
+
+            // [Check] Dungeon is not done
+            let factory = store.get_factory(FACTORY_ID);
+            let dungeon_id = factory.dungeon_id();
+            let dungeon = store.get_dungeon(dungeon_id);
+            dungeon.assert_not_done();
+
+            // [Check] Team is not dead
+            let mut team = store.get_team(dungeon.id, player.team_id);
+            team.assert_not_dead();
+
+            // [Check] Room is explored
+            let room = store.get_room(dungeon.id, team.x, team.y);
+            room.assert_is_explored();
+            room.assert_is_fountain();
+
+            // [Check] Challenge is not completed
+            let mut challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
+            challenge.assert_not_completed();
+
+            // [Effect] Update challenge status
+            challenge.complete();
+            store.set_challenge(challenge);
+
+            // [Effect] Heal team
+            let mut mates = store.get_mates(dungeon.id, team.id);
+            loop {
+                match mates.pop_front() {
+                    Option::Some(mut mate) => {
+                        mate.restore();
+                        store.set_mob(mate);
+                    },
+                    Option::None => { break; },
+                };
+            };
+
+            // [Effect] Update team
+            team.clean();
             store.set_team(team);
         }
     }

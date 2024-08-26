@@ -120,6 +120,21 @@ impl MobImpl of MobTrait {
     }
 
     #[inline]
+    fn restore(ref self: Mob) {
+        if self.is_dead() {
+            return;
+        }
+        let base_health = if self.index > 2 {
+            let monster: Monster = self.class.into();
+            monster.health()
+        } else {
+            let role: Role = self.class.into();
+            role.health()
+        };
+        self.health = base_health;
+    }
+
+    #[inline]
     fn stun(ref self: Mob, quantity: u8) {
         if self.is_dead() {
             return;

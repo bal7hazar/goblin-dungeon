@@ -16,16 +16,16 @@ mod errors {
 #[generate_trait]
 impl ChallengeImpl of ChallengeTrait {
     #[inline]
-    fn new(dungeon_id: u32, team_id: u32, x: i32, y: i32) -> Challenge {
-        Challenge { dungeon_id, team_id, x, y, completed: false, nonce: 0 }
+    fn new(dungeon_id: u32, team_id: u32, x: i32, y: i32, status: bool) -> Challenge {
+        Challenge { dungeon_id, team_id, x, y, completed: status, nonce: 0 }
     }
 
     #[inline]
-    fn complete(ref self: Challenge, status: bool) {
+    fn complete(ref self: Challenge) {
         // [Check] Not already completed
         self.assert_not_completed();
         // [Effect] Set completed
-        self.completed = status;
+        self.completed = true;
     }
 
     #[inline]
@@ -62,7 +62,7 @@ mod tests {
 
     #[test]
     fn test_challenge_new() {
-        let challenge: Challenge = ChallengeTrait::new(DUNGEON_ID, TEAM_ID, X, Y);
+        let challenge: Challenge = ChallengeTrait::new(DUNGEON_ID, TEAM_ID, X, Y, false);
         assert_eq!(challenge.dungeon_id, DUNGEON_ID);
         assert_eq!(challenge.team_id, TEAM_ID);
         assert_eq!(challenge.x, X);
@@ -73,18 +73,18 @@ mod tests {
 
     #[test]
     fn test_dungeon_complete() {
-        let mut challenge: Challenge = ChallengeTrait::new(DUNGEON_ID, TEAM_ID, X, Y);
-        challenge.complete(true);
+        let mut challenge: Challenge = ChallengeTrait::new(DUNGEON_ID, TEAM_ID, X, Y, false);
+        challenge.complete();
         challenge.assert_is_completed();
     }
 
     #[test]
     #[should_panic(expected: ('Challenge: already completed',))]
     fn test_dungeon_explore_twice() {
-        let mut challenge: Challenge = ChallengeTrait::new(DUNGEON_ID, TEAM_ID, X, Y);
-        challenge.complete(true);
+        let mut challenge: Challenge = ChallengeTrait::new(DUNGEON_ID, TEAM_ID, X, Y, false);
+        challenge.complete();
         challenge.assert_is_completed();
-        challenge.complete(true);
+        challenge.complete();
     }
 }
 
