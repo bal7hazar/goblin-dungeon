@@ -1,5 +1,6 @@
 // Internal imports
 
+use rpg::constants::MOB_BASE_HEALTH;
 use rpg::elements::roles;
 use rpg::elements::monsters;
 use rpg::types::spell::Spell;
@@ -18,6 +19,13 @@ impl RoleImpl of RoleTrait {
     #[inline]
     fn count() -> u8 {
         3
+    }
+    #[inline]
+    fn health(self: Role) -> u8 {
+        match self {
+            Role::None => 0,
+            _ => MOB_BASE_HEALTH,
+        }
     }
 
     #[inline]

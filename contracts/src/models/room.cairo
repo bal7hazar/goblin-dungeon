@@ -36,7 +36,7 @@ mod errors {
 impl RoomImpl of RoomTrait {
     #[inline]
     fn new(dungeon_id: u32, x: i32, y: i32) -> Room {
-        Room { dungeon_id, x, y, category: 0, item: 0, monsters: 0, adventurers: 0, seed: 0 }
+        Room { dungeon_id, x, y, category: 0, seed: 0 }
     }
 
     #[inline]
@@ -53,22 +53,16 @@ impl RoomImpl of RoomTrait {
         // [Effect] Update the seed
         self.seed = seed;
         // [Effect] Define category
-        let category: Category = CategoryTrait::from(seed);
-        self.category = category.into();
+        // let category: Category = CategoryTrait::from(seed);
+        // self.category = category.into();
         // [Effect] Generate room content according to category
-        // TODO: Hardcoded to be a monster room
         // match category {
         //     Category::Monster => { self.monsters = self.compute_monsters(seed); },
         //     Category::Item => { self.item = self.compute_item(seed); },
         //     _ => {},
         // }
+        // FIXME: Hardcoded to be a monster room
         self.category = Category::Monster.into();
-        self.monsters = self.compute_monsters(seed);
-    }
-
-    #[inline]
-    fn get_monsters(self: Room) -> Array<u32> {
-        Packer::unpack(self.monsters, MONSTER_BIT_LENGTH)
     }
 
     #[inline]
@@ -79,48 +73,35 @@ impl RoomImpl of RoomTrait {
     }
 
     #[inline]
-    fn compute_item(self: Room, seed: felt252) -> u8 {
-        let mut dice: Dice = DiceTrait::new(ItemTrait::count(), seed);
-        dice.roll().into()
-    }
-
-    #[inline]
-    fn compute_monsters(self: Room, seed: felt252) -> u128 {
+    fn compute_monsters(self: Room) -> Array<Monster> {
         // [Compute] Monster count to place
-        let mut dice: Dice = DiceTrait::new(MAX_MONSTER_COUNT, seed);
+        let mut dice: Dice = DiceTrait::new(MAX_MONSTER_COUNT, self.seed);
         let mut count = dice.roll();
         // [Compute] Monster types and distribution
-        let mut monsters: Array<u32> = array![];
+        let mut monsters: Array<Monster> = array![];
         let mut index: u8 = 0;
         loop {
             if count == 0 {
                 break;
             };
             // [Compute] Uniform random number between 0 and MULTIPLIER
-            let random = Seeder::reseed(seed, index.into()).into() % MULTIPLIER;
+            let random = Seeder::reseed(self.seed, index.into()).into() % MULTIPLIER;
             let probability: u256 = count.into() * MULTIPLIER / (MAX_MONSTER_COUNT - index).into();
             // [Check] Probability of being a monster
             if random <= probability {
                 // [Compute] Monster attributes
-                dice.face_count = MonsterTrait::count();
-                let monster: Monster = dice.roll().into();
-                dice.face_count = ElementTrait::count();
-                let element: Element = dice.roll().into();
-                let threat: Threat = ThreatTrait::from(dice.seed);
-                let spell: Spell = monster.spell();
-                // [Compute] Pack monster attributes
-                let attributes: Array<u8> = array![
-                    monster.into(), element.into(), threat.into(), spell.into()
-                ];
-                monsters.append(Packer::pack(attributes, ATTRIBUTE_BIT_LENGTH));
+                let random: u256 = dice.seed.into();
+                let threat: Threat = ThreatTrait::from(random.low.into());
+                let monster: Monster = MonsterTrait::from(threat, random.high.into());
+                monsters.append(monster);
                 count -= 1;
             } else {
-                monsters.append(0);
+                monsters.append(Monster::None);
             };
             index += 1;
         };
-        // [Compute] Return a packed array of monsters
-        Packer::pack(monsters, MONSTER_BIT_LENGTH)
+        // [Return] Monsters
+        monsters
     }
 
     #[inline]
@@ -165,7 +146,7 @@ mod tests {
 
     // Local imports
 
-    use super::{Room, RoomTrait, AssertTrait};
+    use super::{Room, RoomTrait, AssertTrait, Monster};
 
     // Constants
 
@@ -177,41 +158,38 @@ mod tests {
 
     #[test]
     fn test_room_new() {
-        let dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
-        assert_eq!(dungeon.dungeon_id, DUNGEON_ID);
-        assert_eq!(dungeon.x, X);
-        assert_eq!(dungeon.y, Y);
+        let room: Room = RoomTrait::new(DUNGEON_ID, X, Y);
+        assert_eq!(room.dungeon_id, DUNGEON_ID);
+        assert_eq!(room.x, X);
+        assert_eq!(room.y, Y);
     }
 
     #[test]
     fn test_room_explore() {
-        let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
-        dungeon.explore(SEED);
-        dungeon.assert_is_explored();
+        let mut room: Room = RoomTrait::new(DUNGEON_ID, X, Y);
+        room.explore(SEED);
+        room.assert_is_explored();
     }
 
     #[test]
     #[should_panic(expected: ('Room: already explored',))]
     fn test_room_explore_twice() {
-        let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
-        dungeon.explore(SEED);
-        dungeon.assert_is_explored();
-        dungeon.explore(RESEED);
+        let mut room: Room = RoomTrait::new(DUNGEON_ID, X, Y);
+        room.explore(SEED);
+        room.assert_is_explored();
+        room.explore(RESEED);
     }
 
     #[test]
     fn test_room_compute_monsters() {
-        let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
-        dungeon.explore(SEED);
-        assert_eq!(dungeon.monsters != 0, true);
-    }
-
-    #[test]
-    fn test_room_get_monsters() {
-        let mut dungeon: Room = RoomTrait::new(DUNGEON_ID, X, Y);
-        dungeon.explore(SEED);
-        let monsters = dungeon.get_monsters();
-        assert_eq!(monsters.len() != 0, true);
+        let mut room: Room = RoomTrait::new(DUNGEON_ID, X, Y);
+        room.explore(SEED);
+        let mut monsters: Array<Monster> = room.compute_monsters();
+        let mut sum: u8 = 0;
+        while let Option::Some(monster) = monsters.pop_front() {
+            sum += monster.into();
+        };
+        assert_eq!(sum != 0, true);
     }
 }
 

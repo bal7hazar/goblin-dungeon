@@ -17,9 +17,18 @@ mod types {
 mod elements {
     mod monsters {
         mod interface;
-        mod goblin;
-        mod skeleton;
-        mod spider;
+        mod air_skeleton;
+        mod air_spider;
+        mod air_tarentula;
+        mod air_undead;
+        mod fire_goblin;
+        mod fire_hobgoblin;
+        mod fire_skeleton;
+        mod fire_undead;
+        mod water_goblin;
+        mod water_hobgoblin;
+        mod water_spider;
+        mod water_tarentula;
     }
     mod roles {
         mod interface;

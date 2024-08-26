@@ -25,7 +25,8 @@ mod PlayableComponent {
     use rpg::models::team::{Team, TeamTrait, TeamAssert};
     use rpg::models::mob::{Mob, MobTrait, MobAssert};
     use rpg::models::challenge::{Challenge, ChallengeTrait, ChallengeAssert};
-    use rpg::types::class::Class;
+    use rpg::types::role::Role;
+    use rpg::types::monster::Monster;
     use rpg::types::element::Element;
     use rpg::types::direction::Direction;
     use rpg::helpers::seeder::Seeder;
@@ -103,9 +104,9 @@ mod PlayableComponent {
 
             // [Effect] Create mobs
             // TODO: Hardcoded mobs, could be configurable
-            let knight = MobTrait::new(dungeon_id, team_id, 0, Class::Knight, Element::Fire);
-            let ranger = MobTrait::new(dungeon_id, team_id, 1, Class::Ranger, Element::Air);
-            let priest = MobTrait::new(dungeon_id, team_id, 2, Class::Priest, Element::Water);
+            let knight = MobTrait::from_role(dungeon_id, team_id, 0, Role::Knight, Element::Fire);
+            let ranger = MobTrait::from_role(dungeon_id, team_id, 1, Role::Ranger, Element::Air);
+            let priest = MobTrait::from_role(dungeon_id, team_id, 2, Role::Priest, Element::Water);
             store.set_mob(knight);
             store.set_mob(ranger);
             store.set_mob(priest);
@@ -162,18 +163,20 @@ mod PlayableComponent {
 
             // [Effect] Generate monsters
             let caster_index = room.pick(team.seed);
-            let mut monsters = room.get_monsters();
+            let mut monsters = room.compute_monsters();
             // FIXME: Maybe find a better way to define the starting index of monsters
             let mut index = 3;
             loop {
                 match monsters.pop_front() {
-                    Option::Some(packed) => {
+                    Option::Some(monster) => {
                         // [Effect] Create monster
-                        let mut monster = MobTrait::from(dungeon.id, team.id, index, packed);
-                        if monster.class == Class::None.into() {
+                        let mut monster = MobTrait::from_monster(
+                            dungeon.id, team.id, index, monster
+                        );
+                        if monster.class == Monster::None.into() {
                             monster.clean();
                         } else if index == caster_index {
-                            monster.setup();
+                            monster.setup_monster();
                         }
                         // [Effect] Store monster
                         store.set_mob(monster);

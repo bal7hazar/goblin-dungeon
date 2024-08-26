@@ -95,7 +95,8 @@ mod tests {
 
     // Internal imports
 
-    use rpg::types::class::{Class, ClassTrait};
+    use rpg::types::class::{Role, RoleTrait};
+    use rpg::types::class::{Monster, MonsterTrait};
     use rpg::types::spell::{Spell, SpellTrait};
 
     // Local imports
@@ -111,10 +112,10 @@ mod tests {
     fn test_battler_fight_priority_low() {
         // [Setup]
         let mut mates: Array<Mob> = array![
-            MobTrait::new(DUNGEON_ID, TEAM_ID, 0, class: Class::Knight, element: Element::Fire),
+            MobTrait::from_role(DUNGEON_ID, TEAM_ID, 0, role: Role::Knight, element: Element::Fire),
         ];
         let mut foes: Array<Mob> = array![
-            MobTrait::new(DUNGEON_ID, TEAM_ID, 0, class: Class::Goblin, element: Element::Water),
+            MobTrait::from_monster(DUNGEON_ID, TEAM_ID, 0, monster: Monster::FireGoblin),
         ];
         let mut mate = mates.pop_front().unwrap();
         mate.update(Spell::Stun);

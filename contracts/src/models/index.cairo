@@ -35,9 +35,6 @@ pub struct Room {
     #[key]
     pub y: i32,
     pub category: u8,
-    pub item: u8,
-    pub monsters: u128,
-    pub adventurers: u128,
     pub seed: felt252,
 }
 
