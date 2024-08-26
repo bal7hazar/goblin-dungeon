@@ -14,7 +14,6 @@ use rpg::types::monster::{Monster, MonsterTrait};
 use rpg::types::element::{Element, ElementTrait};
 use rpg::types::spell::{Spell, SpellTrait};
 use rpg::types::threat::{Threat, ThreatTrait};
-use rpg::types::item::{Item, ItemTrait};
 use rpg::types::role::{Role, RoleTrait};
 
 // Constants
@@ -92,12 +91,12 @@ impl RoomImpl of RoomTrait {
     }
 
     #[inline]
-    fn compute_monsters(self: Room) -> Array<Monster> {
+    fn compute_monsters(self: Room) -> Array<(Monster, Threat, Element)> {
         // [Compute] Monster count to place
         let mut dice: Dice = DiceTrait::new(ROOM_MONSTER_COUNT, self.seed);
         let mut count = dice.roll();
         // [Compute] Monster types and distribution
-        let mut monsters: Array<Monster> = array![];
+        let mut monsters: Array<(Monster, Threat, Element)> = array![];
         let mut index: u8 = 0;
         loop {
             if count == 0 {
@@ -109,13 +108,16 @@ impl RoomImpl of RoomTrait {
             // [Check] Probability of being a monster
             if random <= probability {
                 // [Compute] Monster attributes
-                let random: u256 = dice.seed.into();
-                let threat: Threat = ThreatTrait::from(random.low.into());
-                let monster: Monster = MonsterTrait::from(threat, random.high.into());
-                monsters.append(monster);
+                dice.roll();
+                let monster: Monster = MonsterTrait::from(dice.seed);
+                dice.roll();
+                let threat: Threat = ThreatTrait::from(dice.seed);
+                dice.roll();
+                let element: Element = ElementTrait::from(dice.seed);
+                monsters.append((monster, threat, element));
                 count -= 1;
             } else {
-                monsters.append(Monster::None);
+                monsters.append((Monster::None, Threat::None, Element::None));
             };
             index += 1;
         };
@@ -208,7 +210,7 @@ mod tests {
 
     // Local imports
 
-    use super::{Room, RoomTrait, AssertTrait, Monster};
+    use super::{Room, RoomTrait, AssertTrait, Monster, Threat, Element};
 
     // Constants
 
@@ -246,9 +248,9 @@ mod tests {
     fn test_room_compute_monsters() {
         let mut room: Room = RoomTrait::new(DUNGEON_ID, X, Y);
         room.explore(SEED);
-        let mut monsters: Array<Monster> = room.compute_monsters();
+        let mut monsters: Array<(Monster, Threat, Element)> = room.compute_monsters();
         let mut sum: u8 = 0;
-        while let Option::Some(monster) = monsters.pop_front() {
+        while let Option::Some((monster, _threat, _elemment)) = monsters.pop_front() {
             sum += monster.into();
         };
         assert_eq!(sum != 0, true);

@@ -8,21 +8,17 @@ enum Threat {
 #[generate_trait]
 impl ThreatImpl of ThreatTrait {
     #[inline]
+    fn count() -> u8 {
+        2
+    }
+
+    #[inline]
     fn from(seed: felt252) -> Threat {
         let random: u256 = seed.into() % 100;
         if random < 20 {
             Threat::Elite
         } else {
             Threat::Common
-        }
-    }
-
-    #[inline]
-    fn power(self: Threat) -> u8 {
-        match self {
-            Threat::None => 0,
-            Threat::Common => 1,
-            Threat::Elite => 2,
         }
     }
 }

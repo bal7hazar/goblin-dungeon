@@ -18,6 +18,14 @@ impl ElementImpl of ElementTrait {
     }
 
     #[inline]
+    fn from(seed: felt252) -> Element {
+        let random: u256 = seed.into();
+        let count: u256 = Self::count().into();
+        let value: u8 = 1 + (random % count.into()).try_into().unwrap();
+        value.into()
+    }
+
+    #[inline]
     fn weakness(self: Element) -> Element {
         match self {
             Element::None => Element::None,

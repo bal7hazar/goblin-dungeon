@@ -9,25 +9,15 @@ mod types {
     mod monster;
     mod role;
     mod threat;
-    mod slot;
-    mod item;
 }
 
 mod elements {
     mod monsters {
         mod interface;
-        mod air_skeleton;
-        mod air_spider;
-        mod air_tarentula;
-        mod air_undead;
-        mod fire_goblin;
-        mod fire_hobgoblin;
-        mod fire_skeleton;
-        mod fire_undead;
-        mod water_goblin;
-        mod water_hobgoblin;
-        mod water_spider;
-        mod water_tarentula;
+        mod mage;
+        mod minion;
+        mod rogue;
+        mod warrior;
     }
     mod roles {
         mod interface;
@@ -44,21 +34,20 @@ mod elements {
     mod spells {
         mod interface;
         mod buff;
+        mod buff_other;
         mod buff_all;
         mod damage;
+        mod damage_other;
         mod damage_all;
         mod heal;
+        mod heal_other;
         mod heal_all;
         mod shield;
+        mod shield_other;
         mod shield_all;
         mod stun;
+        mod stun_other;
         mod stun_all;
-    }
-    mod items {
-        mod interface;
-        mod sword;
-        mod staff;
-        mod helmet;
     }
 }
 

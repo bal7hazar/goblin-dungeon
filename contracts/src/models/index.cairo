@@ -66,6 +66,7 @@ pub struct Mob {
     #[key]
     pub index: u8,
     pub class: u8,
+    pub threat: u8,
     pub element: u8,
     pub spell: u8,
     pub health: u8,

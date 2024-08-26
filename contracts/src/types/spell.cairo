@@ -11,6 +11,11 @@ enum Spell {
     Heal,
     Shield,
     Stun,
+    BuffOther,
+    DamageOther,
+    HealOther,
+    ShieldOther,
+    StunOther,
     BuffAll,
     DamageAll,
     HealAll,
@@ -22,7 +27,7 @@ enum Spell {
 impl SpellImpl of SpellTrait {
     #[inline]
     fn count() -> u8 {
-        10
+        15
     }
 
     #[inline]
@@ -69,6 +74,11 @@ impl IntoSpellFelt252 of core::Into<Spell, felt252> {
             Spell::Heal => 'HEAL',
             Spell::Shield => 'SHIELD',
             Spell::Stun => 'STUN',
+            Spell::BuffOther => 'BUFF_OTHER',
+            Spell::DamageOther => 'DAMAGE_OTHER',
+            Spell::HealOther => 'HEAL_OTHER',
+            Spell::ShieldOther => 'SHIELD_OTHER',
+            Spell::StunOther => 'STUN_OTHER',
             Spell::BuffAll => 'BUFF_ALL',
             Spell::DamageAll => 'DAMAGE_ALL',
             Spell::HealAll => 'HEAL_ALL',
@@ -88,11 +98,16 @@ impl IntoSpellU8 of core::Into<Spell, u8> {
             Spell::Heal => 3,
             Spell::Shield => 4,
             Spell::Stun => 5,
-            Spell::BuffAll => 6,
-            Spell::DamageAll => 7,
-            Spell::HealAll => 8,
-            Spell::ShieldAll => 9,
-            Spell::StunAll => 10,
+            Spell::BuffOther => 6,
+            Spell::DamageOther => 7,
+            Spell::HealOther => 8,
+            Spell::ShieldOther => 9,
+            Spell::StunOther => 10,
+            Spell::BuffAll => 11,
+            Spell::DamageAll => 12,
+            Spell::HealAll => 13,
+            Spell::ShieldAll => 14,
+            Spell::StunAll => 15,
         }
     }
 }
@@ -108,11 +123,16 @@ impl IntoU8Spell of core::Into<u8, Spell> {
             3 => Spell::Heal,
             4 => Spell::Shield,
             5 => Spell::Stun,
-            6 => Spell::BuffAll,
-            7 => Spell::DamageAll,
-            8 => Spell::HealAll,
-            9 => Spell::ShieldAll,
-            10 => Spell::StunAll,
+            6 => Spell::BuffOther,
+            7 => Spell::DamageOther,
+            8 => Spell::HealOther,
+            9 => Spell::ShieldOther,
+            10 => Spell::StunOther,
+            11 => Spell::BuffAll,
+            12 => Spell::DamageAll,
+            13 => Spell::HealAll,
+            14 => Spell::ShieldAll,
+            15 => Spell::StunAll,
             _ => Spell::None,
         }
     }

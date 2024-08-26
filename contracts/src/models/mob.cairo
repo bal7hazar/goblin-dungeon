@@ -26,14 +26,21 @@ mod errors {
 impl MobImpl of MobTrait {
     #[inline]
     fn new(
-        dungeon_id: u32, team_id: u32, index: u8, class: u8, health: u8, element: Element
+        dungeon_id: u32,
+        team_id: u32,
+        index: u8,
+        class: u8,
+        threat: Threat,
+        health: u8,
+        element: Element
     ) -> Mob {
         // [Return] Mob
         Mob {
             dungeon_id,
             team_id,
             index,
-            class: class,
+            class,
+            threat: threat.into(),
             element: element.into(),
             spell: Spell::Damage.into(),
             health: health,
@@ -44,19 +51,25 @@ impl MobImpl of MobTrait {
     }
 
     #[inline]
-    fn from_monster(dungeon_id: u32, team_id: u32, index: u8, monster: Monster) -> Mob {
-        Self::new(dungeon_id, team_id, index, monster.into(), monster.health(), monster.element())
+    fn from_monster(
+        dungeon_id: u32, team_id: u32, index: u8, monster: Monster, threat: Threat, element: Element
+    ) -> Mob {
+        Self::new(
+            dungeon_id, team_id, index, monster.into(), threat, monster.health(threat), element
+        )
     }
 
     #[inline]
     fn from_role(dungeon_id: u32, team_id: u32, index: u8, role: Role, element: Element) -> Mob {
-        Self::new(dungeon_id, team_id, index, role.into(), role.health(), element)
+        Self::new(dungeon_id, team_id, index, role.into(), Threat::None, role.health(), element)
     }
 
     #[inline]
     fn setup_monster(ref self: Mob) {
+        let threat: Threat = self.threat.into();
+        let element: Element = self.element.into();
         let monster: Monster = self.class.into();
-        self.spell = monster.spell().into();
+        self.spell = monster.spell(threat, element).into();
     }
 
     #[inline]
@@ -67,6 +80,7 @@ impl MobImpl of MobTrait {
     #[inline]
     fn clean(ref self: Mob) {
         self.class = 0;
+        self.threat = 0;
         self.element = 0;
         self.spell = 0;
         self.health = 0;
@@ -111,7 +125,8 @@ impl MobImpl of MobTrait {
         }
         let base_health = if self.index > 2 {
             let monster: Monster = self.class.into();
-            monster.health()
+            let threat: Threat = self.threat.into();
+            monster.health(threat)
         } else {
             let role: Role = self.class.into();
             role.health()
@@ -126,7 +141,8 @@ impl MobImpl of MobTrait {
         }
         let base_health = if self.index > 2 {
             let monster: Monster = self.class.into();
-            monster.health()
+            let threat: Threat = self.threat.into();
+            monster.health(threat)
         } else {
             let role: Role = self.class.into();
             role.health()
@@ -189,7 +205,7 @@ impl MobAssert of AssertTrait {
 mod tests {
     // Local imports
 
-    use super::{Mob, MobTrait, MobAssert, Monster, Role, RoleTrait, Element, Spell};
+    use super::{Mob, MobTrait, MobAssert, Monster, Role, RoleTrait, Element, Spell, Threat};
 
     // Constants
 
@@ -197,11 +213,14 @@ mod tests {
     const TEAM_ID: u32 = 42;
     const INDEX: u8 = 0;
     const ROLE: Role = Role::Knight;
+    const THREAT: Threat = Threat::None;
     const ELEMENT: Element = Element::Fire;
 
     #[test]
     fn test_mob_new() {
-        let mob = MobTrait::new(DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT);
+        let mob = MobTrait::new(
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
+        );
         assert_eq!(mob.dungeon_id, DUNGEON_ID);
         assert_eq!(mob.team_id, TEAM_ID);
         assert_eq!(mob.index, INDEX);
@@ -216,14 +235,16 @@ mod tests {
 
     #[test]
     fn test_mob_is_stun() {
-        let mob = MobTrait::new(DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT);
+        let mob = MobTrait::new(
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
+        );
         assert_eq!(mob.is_stun(), false);
     }
 
     #[test]
     fn test_mob_take() {
         let mut mob = MobTrait::new(
-            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
         mob.take(10);
         assert_eq!(mob.health, ROLE.health() - 10);
@@ -232,7 +253,7 @@ mod tests {
     #[test]
     fn test_mob_heal() {
         let mut mob = MobTrait::new(
-            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
         mob.take(10);
         mob.heal(5);
@@ -242,7 +263,7 @@ mod tests {
     #[test]
     fn test_mob_stun() {
         let mut mob = MobTrait::new(
-            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
         mob.stun(1);
         assert_eq!(mob.stun, 1);
@@ -251,7 +272,7 @@ mod tests {
     #[test]
     fn test_mob_shield() {
         let mut mob = MobTrait::new(
-            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
         mob.shield(5);
         assert_eq!(mob.shield, 5);
@@ -260,7 +281,7 @@ mod tests {
     #[test]
     fn test_mob_update() {
         let mut mob = MobTrait::new(
-            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
         mob.update(Spell::Stun);
         assert_eq!(mob.spell, Spell::Stun.into());
@@ -269,7 +290,7 @@ mod tests {
     #[test]
     fn test_mob_finish() {
         let mut mob = MobTrait::new(
-            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
         mob.stun(1);
         mob.finish();
@@ -281,7 +302,7 @@ mod tests {
     #[should_panic(expected: ('Mob: is dead',))]
     fn test_mob_assert_not_dead() {
         let mut mob = MobTrait::new(
-            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), ROLE.health(), ELEMENT
+            DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
         mob.health = 0;
         mob.assert_not_dead();

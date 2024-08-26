@@ -28,6 +28,7 @@ mod PlayableComponent {
     use rpg::types::category::{Category, CategoryTrait};
     use rpg::types::role::{Role, RoleTrait};
     use rpg::types::monster::Monster;
+    use rpg::types::threat::Threat;
     use rpg::types::element::Element;
     use rpg::types::direction::Direction;
     use rpg::types::spell::Spell;
@@ -177,15 +178,17 @@ mod PlayableComponent {
 
             // [Effect] Generate monsters
             let caster_index = room.pick_monster(team.seed);
-            let mut monsters = room.compute_monsters();
+            let mut monsters: Array<(Monster, Threat, Element)> = room.compute_monsters();
             // FIXME: Maybe find a better way to define the starting index of monsters
             let mut index = 3;
             loop {
                 match monsters.pop_front() {
-                    Option::Some(monster) => {
+                    Option::Some((
+                        monster, threat, element
+                    )) => {
                         // [Effect] Create monster
                         let mut monster = MobTrait::from_monster(
-                            dungeon.id, team.id, index, monster
+                            dungeon.id, team.id, index, monster, threat, element
                         );
                         if monster.class == Monster::None.into() {
                             monster.clean();

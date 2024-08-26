@@ -98,6 +98,7 @@ mod tests {
     use rpg::types::role::{Role, RoleTrait};
     use rpg::types::monster::{Monster, MonsterTrait};
     use rpg::types::spell::{Spell, SpellTrait};
+    use rpg::types::threat::{Threat, ThreatTrait};
 
     // Local imports
 
@@ -115,7 +116,14 @@ mod tests {
             MobTrait::from_role(DUNGEON_ID, TEAM_ID, 0, role: Role::Knight, element: Element::Fire),
         ];
         let mut foes: Array<Mob> = array![
-            MobTrait::from_monster(DUNGEON_ID, TEAM_ID, 0, monster: Monster::FireGoblin),
+            MobTrait::from_monster(
+                DUNGEON_ID,
+                TEAM_ID,
+                0,
+                monster: Monster::Warrior,
+                threat: Threat::Common,
+                element: Element::Fire,
+            ),
         ];
         let mut mate = mates.pop_front().unwrap();
         mate.update(Spell::Stun);
