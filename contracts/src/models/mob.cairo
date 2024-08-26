@@ -42,7 +42,7 @@ impl MobImpl of MobTrait {
             class,
             threat: threat.into(),
             element: element.into(),
-            spell: Spell::Damage.into(),
+            spell: Spell::Punch.into(),
             health: health,
             shield: 0,
             stun: 0,
@@ -70,11 +70,6 @@ impl MobImpl of MobTrait {
         let element: Element = self.element.into();
         let monster: Monster = self.class.into();
         self.spell = monster.spell(threat, element).into();
-    }
-
-    #[inline]
-    fn set_spell(ref self: Mob, spell: Spell) {
-        self.spell = spell.into();
     }
 
     #[inline]
@@ -183,7 +178,7 @@ impl MobImpl of MobTrait {
 
     #[inline]
     fn finish(ref self: Mob) {
-        self.spell = Spell::Damage.into();
+        self.spell = Spell::Punch.into();
         self.stun -= core::cmp::min(self.stun, 1);
     }
 }
@@ -226,7 +221,7 @@ mod tests {
         assert_eq!(mob.index, INDEX);
         assert_eq!(mob.class, ROLE.into());
         assert_eq!(mob.element, ELEMENT.into());
-        assert_eq!(mob.spell, Spell::Damage.into());
+        assert_eq!(mob.spell, Spell::Punch.into());
         assert_eq!(mob.health, ROLE.health());
         assert_eq!(mob.shield, 0);
         assert_eq!(mob.stun, 0);
@@ -283,8 +278,8 @@ mod tests {
         let mut mob = MobTrait::new(
             DUNGEON_ID, TEAM_ID, INDEX, ROLE.into(), THREAT, ROLE.health(), ELEMENT
         );
-        mob.update(Spell::Stun);
-        assert_eq!(mob.spell, Spell::Stun.into());
+        mob.update(Spell::Heal);
+        assert_eq!(mob.spell, Spell::Heal.into());
     }
 
     #[test]
@@ -295,7 +290,7 @@ mod tests {
         mob.stun(1);
         mob.finish();
         assert_eq!(mob.stun, 0);
-        assert_eq!(mob.spell, Spell::Damage.into());
+        assert_eq!(mob.spell, Spell::Punch.into());
     }
 
     #[test]

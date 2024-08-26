@@ -21,9 +21,10 @@ mod elements {
     }
     mod roles {
         mod interface;
+        mod barbarian;
         mod knight;
-        mod ranger;
-        mod priest;
+        mod mage;
+        mod rogue;
     }
     mod elements {
         mod interface;
@@ -33,21 +34,21 @@ mod elements {
     }
     mod spells {
         mod interface;
-        mod buff;
-        mod buff_other;
-        mod buff_all;
-        mod damage;
-        mod damage_other;
-        mod damage_all;
+        mod punch;
+        mod kick;
         mod heal;
-        mod heal_other;
-        mod heal_all;
-        mod shield;
-        mod shield_other;
-        mod shield_all;
-        mod stun;
-        mod stun_other;
-        mod stun_all;
+        mod blizzard;
+        mod burst;
+        mod fireblade;
+        mod fireball;
+        mod holywater;
+        mod sacrifice;
+        mod smash;
+        mod stomp;
+        mod tornado;
+        mod volley;
+        mod waterfall;
+        mod zephyr;
     }
 }
 

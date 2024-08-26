@@ -3,37 +3,37 @@
 use rpg::constants::MOB_BASE_HEALTH;
 use rpg::elements::roles;
 use rpg::elements::monsters;
+use rpg::types::element::Element;
 use rpg::types::spell::Spell;
 
 #[derive(Copy, Drop)]
 enum Role {
     None,
+    Barbarian,
     Knight,
-    Ranger,
-    Priest,
+    Mage,
+    Rogue,
 }
 
 #[generate_trait]
 impl RoleImpl of RoleTrait {
     #[inline]
     fn count() -> u8 {
-        3
+        4
     }
     #[inline]
     fn health(self: Role) -> u8 {
-        match self {
-            Role::None => 0,
-            _ => MOB_BASE_HEALTH,
-        }
+        100
     }
 
     #[inline]
-    fn spell(self: Role) -> Spell {
+    fn spell(self: Role, element: Element) -> Spell {
         match self {
             Role::None => Spell::None,
-            Role::Knight => roles::knight::Knight::spell(),
-            Role::Ranger => roles::ranger::Ranger::spell(),
-            Role::Priest => roles::priest::Priest::spell(),
+            Role::Barbarian => roles::barbarian::Barbarian::spell(element),
+            Role::Knight => roles::knight::Knight::spell(element),
+            Role::Mage => roles::mage::Mage::spell(element),
+            Role::Rogue => roles::rogue::Rogue::spell(element),
         }
     }
 }
@@ -43,9 +43,10 @@ impl IntoRoleFelt252 of core::Into<Role, felt252> {
     fn into(self: Role) -> felt252 {
         match self {
             Role::None => 'NONE',
+            Role::Barbarian => 'BARBARIAN',
             Role::Knight => 'KNIGHT',
-            Role::Ranger => 'RANGER',
-            Role::Priest => 'PRIEST',
+            Role::Mage => 'MAGE',
+            Role::Rogue => 'ROGUE',
         }
     }
 }
@@ -55,9 +56,10 @@ impl IntoRoleU8 of core::Into<Role, u8> {
     fn into(self: Role) -> u8 {
         match self {
             Role::None => 0,
-            Role::Knight => 1,
-            Role::Ranger => 2,
-            Role::Priest => 3,
+            Role::Barbarian => 1,
+            Role::Knight => 2,
+            Role::Mage => 3,
+            Role::Rogue => 4,
         }
     }
 }
@@ -68,9 +70,10 @@ impl IntoU8Role of core::Into<u8, Role> {
         let card: felt252 = self.into();
         match card {
             0 => Role::None,
-            1 => Role::Knight,
-            2 => Role::Ranger,
-            3 => Role::Priest,
+            1 => Role::Barbarian,
+            2 => Role::Knight,
+            3 => Role::Mage,
+            4 => Role::Rogue,
             _ => Role::None,
         }
     }

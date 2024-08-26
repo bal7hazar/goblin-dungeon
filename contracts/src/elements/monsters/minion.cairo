@@ -14,19 +14,10 @@ impl Minion of MonsterTrait {
 
     #[inline]
     fn spell(threat: Threat, element: Element) -> Spell {
-        match threat {
-            Threat::Common => match element {
-                Element::Fire => Spell::Damage,
-                Element::Water => Spell::Damage,
-                Element::Air => Spell::Damage,
-                _ => Spell::None,
-            },
-            Threat::Elite => match element {
-                Element::Fire => Spell::Damage,
-                Element::Water => Spell::Damage,
-                Element::Air => Spell::Damage,
-                _ => Spell::None,
-            },
+        match element {
+            Element::Fire => Spell::Fireblade,
+            Element::Water => Spell::Holywater,
+            Element::Air => Spell::Tornado,
             _ => Spell::None,
         }
     }

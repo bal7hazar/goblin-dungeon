@@ -4,12 +4,12 @@ use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait, Role, Element}
 
 // Constants
 
-const HEALTH: u8 = 25;
+const DAMAGE: u8 = 20;
 
-impl Heal of SpellTrait {
+impl Punch of SpellTrait {
     #[inline]
     fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
-        caster.heal(HEALTH);
+        target.take(DAMAGE * caster.multiplier);
         caster.debuff();
     }
 

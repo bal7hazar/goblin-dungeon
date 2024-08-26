@@ -14,19 +14,10 @@ impl Warrior of MonsterTrait {
 
     #[inline]
     fn spell(threat: Threat, element: Element) -> Spell {
-        match threat {
-            Threat::Common => match element {
-                Element::Fire => Spell::StunOther,
-                Element::Water => Spell::Stun,
-                Element::Air => Spell::Stun,
-                _ => Spell::None,
-            },
-            Threat::Elite => match element {
-                Element::Fire => Spell::StunAll,
-                Element::Water => Spell::StunOther,
-                Element::Air => Spell::StunOther,
-                _ => Spell::None,
-            },
+        match element {
+            Element::Fire => Spell::Stomp,
+            Element::Water => Spell::Smash,
+            Element::Air => Spell::Burst,
             _ => Spell::None,
         }
     }

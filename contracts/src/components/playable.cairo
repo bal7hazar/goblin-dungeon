@@ -110,11 +110,11 @@ mod PlayableComponent {
             // [Effect] Create mobs
             // FIXME: Hardcoded mobs, could be configurable
             let knight = MobTrait::from_role(dungeon_id, team_id, 0, Role::Knight, Element::Fire);
-            let ranger = MobTrait::from_role(dungeon_id, team_id, 1, Role::Ranger, Element::Air);
-            let priest = MobTrait::from_role(dungeon_id, team_id, 2, Role::Priest, Element::Water);
-            team.mint(RoleTrait::spell(Role::Knight));
-            team.mint(RoleTrait::spell(Role::Ranger));
-            team.mint(RoleTrait::spell(Role::Priest));
+            let ranger = MobTrait::from_role(dungeon_id, team_id, 1, Role::Mage, Element::Air);
+            let priest = MobTrait::from_role(dungeon_id, team_id, 2, Role::Rogue, Element::Water);
+            team.mint(RoleTrait::spell(Role::Knight, Element::Fire));
+            team.mint(RoleTrait::spell(Role::Mage, Element::Air));
+            team.mint(RoleTrait::spell(Role::Rogue, Element::Water));
             store.set_mob(knight);
             store.set_mob(ranger);
             store.set_mob(priest);
@@ -256,7 +256,7 @@ mod PlayableComponent {
             // [Effect] Select caster
             let mut caster = store.get_mob(dungeon.id, team.id, caster_index);
             let spell: Spell = team.spell_at(spell_index);
-            caster.set_spell(spell);
+            caster.update(spell);
             store.set_mob(caster);
 
             // [Compute] Battle
@@ -332,7 +332,7 @@ mod PlayableComponent {
             store.set_challenge(challenge);
 
             // [Effect] Update team deck
-            team.mint(role.spell());
+            team.mint(role.spell(element));
             store.set_team(team);
         }
 

@@ -126,7 +126,7 @@ mod tests {
             ),
         ];
         let mut mate = mates.pop_front().unwrap();
-        mate.update(Spell::Stun);
+        mate.update(Spell::Stomp);
         let mut foe = foes.pop_front().unwrap();
         // [Fight]
         let mate_healh = mate.health;
@@ -136,6 +136,6 @@ mod tests {
         // [Fight]
         Battler::fight(ref mate, ref foe, false, ref mates, ref foes);
         // [Assert]
-        assert_eq!(foe.stun, 1);
+        assert_eq!(foe.stun, 2);
     }
 }

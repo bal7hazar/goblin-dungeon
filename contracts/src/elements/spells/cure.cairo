@@ -1,12 +1,12 @@
 // Internal imports
 
-use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait};
+use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait, Role, Element};
 
 // Constants
 
-const HEALTH: u8 = 30;
+const HEALTH: u8 = 10;
 
-impl HealOther of SpellTrait {
+impl Cure of SpellTrait {
     #[inline]
     fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
         let mut index = mates.len();

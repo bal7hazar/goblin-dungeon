@@ -1,12 +1,13 @@
 // Internal imports
 
-use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait};
+use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait, Role, Element};
 
 // Constants
 
-const HEALTH: u8 = 20;
+const HEALTH: u8 = 40;
+const HEALTH_OTHER: u8 = 10;
 
-impl HealAll of SpellTrait {
+impl Holywater of SpellTrait {
     #[inline]
     fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
         caster.heal(HEALTH);
@@ -16,10 +17,20 @@ impl HealAll of SpellTrait {
                 break;
             }
             let mut mate = mates.pop_front().unwrap();
-            mate.heal(HEALTH);
+            mate.heal(HEALTH_OTHER);
             mates.append(mate);
             index -= 1;
         };
         caster.debuff();
+    }
+
+    #[inline]
+    fn role() -> Role {
+        Role::Knight
+    }
+
+    #[inline]
+    fn element() -> Element {
+        Element::Water
     }
 }

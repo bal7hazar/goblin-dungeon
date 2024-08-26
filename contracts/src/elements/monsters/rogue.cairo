@@ -14,19 +14,10 @@ impl Rogue of MonsterTrait {
 
     #[inline]
     fn spell(threat: Threat, element: Element) -> Spell {
-        match threat {
-            Threat::Common => match element {
-                Element::Fire => Spell::Damage,
-                Element::Water => Spell::Damage,
-                Element::Air => Spell::DamageOther,
-                _ => Spell::None,
-            },
-            Threat::Elite => match element {
-                Element::Fire => Spell::DamageOther,
-                Element::Water => Spell::DamageOther,
-                Element::Air => Spell::DamageAll,
-                _ => Spell::None,
-            },
+        match element {
+            Element::Fire => Spell::Sacrifice,
+            Element::Water => Spell::Waterfall,
+            Element::Air => Spell::Volley,
             _ => Spell::None,
         }
     }

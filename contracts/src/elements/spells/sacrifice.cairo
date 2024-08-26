@@ -4,22 +4,24 @@ use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait, Role, Element}
 
 // Constants
 
-const HEALTH: u8 = 25;
+const DAMAGE_TARGET: u8 = 70;
+const DAMAGE_SELF: u8 = 20;
 
-impl Heal of SpellTrait {
+impl Sacrifice of SpellTrait {
     #[inline]
     fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
-        caster.heal(HEALTH);
+        target.take(DAMAGE_TARGET * caster.multiplier);
+        caster.take(DAMAGE_SELF * caster.multiplier);
         caster.debuff();
     }
 
     #[inline]
     fn role() -> Role {
-        Role::None
+        Role::Rogue
     }
 
     #[inline]
     fn element() -> Element {
-        Element::None
+        Element::Fire
     }
 }

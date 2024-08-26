@@ -2,13 +2,13 @@
 
 use rpg::elements::roles::interface::{RoleTrait, Element, Spell};
 
-impl Knight of RoleTrait {
+impl Mage of RoleTrait {
     #[inline]
     fn spell(element: Element) -> Spell {
         match element {
-            Element::Fire => Spell::Fireblade,
-            Element::Water => Spell::Holywater,
-            Element::Air => Spell::Tornado,
+            Element::Fire => Spell::Fireball,
+            Element::Water => Spell::Blizzard,
+            Element::Air => Spell::Zephyr,
             _ => Spell::None,
         }
     }
