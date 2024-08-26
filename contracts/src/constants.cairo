@@ -4,6 +4,7 @@ const FACTORY_ID: u32 = 1;
 
 // Team
 
+const ORDER_BIT_LENGTH: u8 = 4;
 const SPELL_BIT_LENGTH: u8 = 4;
 
 // Room

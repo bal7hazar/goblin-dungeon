@@ -206,6 +206,7 @@ mod PlayableComponent {
         fn attack(
             self: @ComponentState<TContractState>,
             world: IWorldDispatcher,
+            orders: u16,
             spell_index: u8,
             caster_index: u8
         ) {
@@ -241,7 +242,7 @@ mod PlayableComponent {
             store.set_mob(caster);
 
             // [Compute] Battle
-            let mut mates = store.get_mates(dungeon.id, team.id);
+            let mut mates = store.get_ordered_mates(dungeon.id, team.id, orders);
             let mut monsters = store.get_monsters(dungeon.id, team.id);
             Battler::start(ref mates, ref monsters);
 

@@ -44,7 +44,7 @@ fn test_actions_attack() {
     let foe_health: u16 = foe_1.health.into() + foe_2.health.into() + foe_3.health.into();
 
     // [Attack]
-    systems.actions.attack(0, 0);
+    systems.actions.attack(0x012, 0, 0);
 
     // [Assert] Teams health
     let player = store.get_player(PLAYER().into());

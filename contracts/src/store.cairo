@@ -6,6 +6,7 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 // Models imports
 
+use rpg::constants::ORDER_BIT_LENGTH;
 use rpg::models::factory::Factory;
 use rpg::models::player::Player;
 use rpg::models::dungeon::Dungeon;
@@ -13,6 +14,13 @@ use rpg::models::room::Room;
 use rpg::models::team::Team;
 use rpg::models::mob::Mob;
 use rpg::models::challenge::Challenge;
+use rpg::helpers::packer::Packer;
+
+// Errprs
+
+mod errors {
+    const STORE_INVALID_ORDER: felt252 = 'Store: invalid order';
+}
 
 // Structs
 
@@ -66,12 +74,39 @@ impl StoreImpl of StoreTrait {
     }
 
     #[inline]
-    fn get_mates(self: Store, dungeon_id: u32, team_id: u32) -> Array<Mob> {
-        array![
-            self.get_mob(dungeon_id, team_id, 0),
-            self.get_mob(dungeon_id, team_id, 1),
-            self.get_mob(dungeon_id, team_id, 2),
-        ]
+    fn get_ordered_mates(self: Store, dungeon_id: u32, team_id: u32, orders: u16) -> Array<Mob> {
+        let mut orders: Array<u8> = Packer::unpack(orders, ORDER_BIT_LENGTH);
+        let mut mates: Array<Mob> = array![];
+        // [Check] Indexes
+        let first = match orders.pop_front() {
+            Option::Some(index) => index,
+            Option::None => 0,
+        };
+        let second = match orders.pop_front() {
+            Option::Some(index) => index,
+            Option::None => 0,
+        };
+        let third = match orders.pop_front() {
+            Option::Some(index) => index,
+            Option::None => 0,
+        };
+        assert(first < 3 && first != second, errors::STORE_INVALID_ORDER);
+        assert(second < 3 && second != third, errors::STORE_INVALID_ORDER);
+        assert(third < 3 && third != first, errors::STORE_INVALID_ORDER);
+        // [Read] First mob
+        let mut mob = self.get_mob(dungeon_id, team_id, first);
+        mob.index = 0;
+        mates.append(mob);
+        // [Read] Second mob
+        let mut mob = self.get_mob(dungeon_id, team_id, second);
+        mob.index = 1;
+        mates.append(mob);
+        // [Read] Third mob
+        let mut mob = self.get_mob(dungeon_id, team_id, third);
+        mob.index = 2;
+        mates.append(mob);
+        // [Return] Ordered mates
+        mates
     }
 
     #[inline]
