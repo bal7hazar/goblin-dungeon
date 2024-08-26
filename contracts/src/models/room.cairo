@@ -4,10 +4,7 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::constants::{
-    MAX_MONSTER_COUNT, MONSTER_BIT_LENGTH, ATTRIBUTE_BIT_LENGTH, MONSTER_MAX_POWER,
-    ROOM_ADVENTURER_COUNT, ADVENTURER_BIT_LENGTH
-};
+use rpg::constants::{ROOM_MONSTER_COUNT, ROOM_ADVENTURER_COUNT, ADVENTURER_BIT_LENGTH};
 use rpg::models::index::Room;
 use rpg::helpers::seeder::Seeder;
 use rpg::helpers::packer::Packer;
@@ -53,21 +50,13 @@ impl RoomImpl of RoomTrait {
         // [Effect] Update the seed
         self.seed = seed;
         // [Effect] Define category
-        // let category: Category = CategoryTrait::from(seed);
-        // self.category = category.into();
-        // [Effect] Generate room content according to category
-        // match category {
-        //     Category::Monster => { self.monsters = self.compute_monsters(seed); },
-        //     Category::Item => { self.item = self.compute_item(seed); },
-        //     _ => {},
-        // }
-        // FIXME: Hardcoded to be a monster room
-        self.category = Category::Monster.into();
+        let category: Category = CategoryTrait::from(seed);
+        self.category = category.into();
     }
 
     #[inline]
     fn pick(self: Room, seed: felt252) -> u8 {
-        let mut dice: Dice = DiceTrait::new(MAX_MONSTER_COUNT, seed);
+        let mut dice: Dice = DiceTrait::new(ROOM_MONSTER_COUNT, seed);
         // [Compute] Random number between 4 and 6 to pick one of the 3 potential monsters
         dice.roll().into() + 3
     }
@@ -75,7 +64,7 @@ impl RoomImpl of RoomTrait {
     #[inline]
     fn compute_monsters(self: Room) -> Array<Monster> {
         // [Compute] Monster count to place
-        let mut dice: Dice = DiceTrait::new(MAX_MONSTER_COUNT, self.seed);
+        let mut dice: Dice = DiceTrait::new(ROOM_MONSTER_COUNT, self.seed);
         let mut count = dice.roll();
         // [Compute] Monster types and distribution
         let mut monsters: Array<Monster> = array![];
@@ -86,7 +75,7 @@ impl RoomImpl of RoomTrait {
             };
             // [Compute] Uniform random number between 0 and MULTIPLIER
             let random = Seeder::reseed(self.seed, index.into()).into() % MULTIPLIER;
-            let probability: u256 = count.into() * MULTIPLIER / (MAX_MONSTER_COUNT - index).into();
+            let probability: u256 = count.into() * MULTIPLIER / (ROOM_MONSTER_COUNT - index).into();
             // [Check] Probability of being a monster
             if random <= probability {
                 // [Compute] Monster attributes
