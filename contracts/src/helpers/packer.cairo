@@ -17,6 +17,7 @@ trait PackerTrait<T, U, V> {
     fn set(packed: T, index: u8, size: V, value: U) -> T;
     fn contains(packed: T, value: U, size: V) -> bool;
     fn unpack(packed: T, size: V) -> Array<U>;
+    fn remove_at(packed: T, index: U, size: V) -> T;
     fn remove(packed: T, item: U, size: V) -> T;
     fn replace(packed: T, index: u8, size: V, value: U) -> T;
     fn pack(unpacked: Array<U>, size: V) -> T;
@@ -117,6 +118,15 @@ impl Packer<
         Self::pack(result, size)
     }
 
+    fn remove_at(mut packed: T, index: U, size: V) -> T {
+        // [Compute] Mask
+        let upper_offset: T = Math::fast_power(
+            2_u8.into(), (index.into() + 1_u8.into()) * size.into()
+        );
+        let lower_offset: T = Math::fast_power(2_u8.into(), index.into() * size.into());
+        packed / upper_offset * lower_offset + packed % lower_offset
+    }
+
     fn replace(mut packed: T, index: u8, size: V, value: U) -> T {
         // [Compute] Mask
         let mut mask: T = Math::fast_power(2_u8.into(), size.into()) - 1_u8.into();
@@ -174,6 +184,15 @@ mod tests {
         let item: u8 = 0x6;
         let size: u8 = 4;
         let new_packed = Packer::remove(packed, item, size);
+        assert_eq!(new_packed, 0xab0598cfe1234d7);
+    }
+
+    #[test]
+    fn test_packer_remove_at() {
+        let packed: u64 = 0xab0598c6fe1234d7;
+        let index: u8 = 8;
+        let size: u8 = 4;
+        let new_packed = Packer::remove_at(packed, index, size);
         assert_eq!(new_packed, 0xab0598cfe1234d7);
     }
 }

@@ -2,6 +2,10 @@
 
 const FACTORY_ID: u32 = 1;
 
+// Team
+
+const SPELL_BIT_LENGTH: u8 = 4;
+
 // Room
 
 const MAX_MONSTER_COUNT: u8 = 3;

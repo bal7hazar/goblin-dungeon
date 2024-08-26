@@ -61,6 +61,11 @@ impl MobImpl of MobTrait {
     }
 
     #[inline]
+    fn set_spell(ref self: Mob, spell: Spell) {
+        self.spell = spell.into();
+    }
+
+    #[inline]
     fn clean(ref self: Mob) {
         self.class = 0;
         self.element = 0;

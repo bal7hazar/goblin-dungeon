@@ -14,7 +14,7 @@ trait IActions<TContractState> {
     fn rename(self: @TContractState, name: felt252);
     fn spawn(self: @TContractState);
     fn move(self: @TContractState, direction: u8);
-    fn attack(self: @TContractState);
+    fn attack(self: @TContractState, caster_index: u8, spell_index: u8);
 }
 
 // Contracts
@@ -84,8 +84,8 @@ mod actions {
             self.playable.move(self.world(), direction)
         }
 
-        fn attack(self: @ContractState) {
-            self.playable.attack(self.world())
+        fn attack(self: @ContractState, caster_index: u8, spell_index: u8) {
+            self.playable.attack(self.world(), caster_index, spell_index)
         }
     }
 }

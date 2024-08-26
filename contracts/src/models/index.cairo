@@ -48,6 +48,8 @@ pub struct Team {
     pub x: i32,
     pub y: i32,
     pub dead: bool,
+    pub deck: u64,
+    pub spells: u16,
     pub seed: felt252,
     pub player_id: felt252,
 }

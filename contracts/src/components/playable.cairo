@@ -25,16 +25,19 @@ mod PlayableComponent {
     use rpg::models::team::{Team, TeamTrait, TeamAssert};
     use rpg::models::mob::{Mob, MobTrait, MobAssert};
     use rpg::models::challenge::{Challenge, ChallengeTrait, ChallengeAssert};
-    use rpg::types::role::Role;
+    use rpg::types::role::{Role, RoleTrait};
     use rpg::types::monster::Monster;
     use rpg::types::element::Element;
     use rpg::types::direction::Direction;
+    use rpg::types::spell::Spell;
     use rpg::helpers::seeder::Seeder;
     use rpg::helpers::battler::Battler;
 
     // Errors
 
-    mod errors {}
+    mod errors {
+        const PLAYABLE_INVALID_CASTER_INDEX: felt252 = 'Playable: invalid caster index';
+    }
 
     // Storage
 
@@ -99,14 +102,17 @@ mod PlayableComponent {
 
             // [Effect] Assemble team
             let team_id = dungeon.spawn_team();
-            let team = TeamTrait::new(dungeon_id, team_id, dungeon.seed, player_id);
+            let mut team = TeamTrait::new(dungeon_id, team_id, dungeon.seed, player_id);
             player.assemble(team_id);
 
             // [Effect] Create mobs
-            // TODO: Hardcoded mobs, could be configurable
+            // FIXME: Hardcoded mobs, could be configurable
             let knight = MobTrait::from_role(dungeon_id, team_id, 0, Role::Knight, Element::Fire);
             let ranger = MobTrait::from_role(dungeon_id, team_id, 1, Role::Ranger, Element::Air);
             let priest = MobTrait::from_role(dungeon_id, team_id, 2, Role::Priest, Element::Water);
+            team.mint(RoleTrait::spell(Role::Knight));
+            team.mint(RoleTrait::spell(Role::Ranger));
+            team.mint(RoleTrait::spell(Role::Priest));
             store.set_mob(knight);
             store.set_mob(ranger);
             store.set_mob(priest);
@@ -190,11 +196,19 @@ mod PlayableComponent {
             let challenge = ChallengeTrait::new(dungeon.id, team.id, team.x, team.y);
             store.set_challenge(challenge);
 
+            // [Effect] Pick spells
+            team.pick(team.seed);
+
             // [Effect] Update team
             store.set_team(team);
         }
 
-        fn attack(self: @ComponentState<TContractState>, world: IWorldDispatcher) {
+        fn attack(
+            self: @ComponentState<TContractState>,
+            world: IWorldDispatcher,
+            spell_index: u8,
+            caster_index: u8
+        ) {
             // [Setup] Datastore
             let store: Store = StoreTrait::new(world);
 
@@ -217,6 +231,15 @@ mod PlayableComponent {
             let mut challenge = store.get_challenge(dungeon.id, team.id, team.x, team.y);
             challenge.assert_not_completed();
 
+            // [Check] Caster index
+            assert(caster_index < 3, errors::PLAYABLE_INVALID_CASTER_INDEX);
+
+            // [Effect] Select caster
+            let mut caster = store.get_mob(dungeon.id, team.id, caster_index);
+            let spell: Spell = team.spell_at(spell_index);
+            caster.set_spell(spell);
+            store.set_mob(caster);
+
             // [Compute] Battle
             let mut mates = store.get_mates(dungeon.id, team.id);
             let mut monsters = store.get_monsters(dungeon.id, team.id);
@@ -226,6 +249,7 @@ mod PlayableComponent {
             let mates_status = Battler::status(mates.clone());
             let monsters_status = Battler::status(monsters.clone());
             challenge.completed = mates_status && !monsters_status;
+            challenge.iter();
             store.set_challenge(challenge);
 
             // [Effect] Update mobs
@@ -234,6 +258,14 @@ mod PlayableComponent {
 
             // [Effect] Update team status
             team.dead = !mates_status;
+            // [Effect] Update spells if challenge is not completed
+            if challenge.completed {
+                team.clean();
+            } else {
+                let seed: felt252 = Seeder::reseed(team.seed, challenge.nonce.into());
+                team.pick(seed);
+                store.set_team(team);
+            }
             store.set_team(team);
         }
     }

@@ -84,6 +84,8 @@ mod systems {
 }
 
 mod helpers {
+    mod bitmap;
+    mod deck;
     mod dice;
     mod math;
     mod battler;

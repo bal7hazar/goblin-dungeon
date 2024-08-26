@@ -4,9 +4,15 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
+use rpg::constants::SPELL_BIT_LENGTH;
 use rpg::models::index::Team;
 use rpg::types::direction::Direction;
+use rpg::types::role::{Role, RoleTrait};
+use rpg::types::spell::Spell;
+use rpg::helpers::deck::{Deck, DeckTrait};
+use rpg::helpers::bitmap::Bitmap;
 use rpg::helpers::seeder::Seeder;
+use rpg::helpers::packer::Packer;
 
 mod errors {
     const TEAM_NOT_EXIST: felt252 = 'Team: does not exist';
@@ -20,7 +26,42 @@ impl TeamImpl of TeamTrait {
     #[inline]
     fn new(dungeon_id: u32, id: u32, seed: felt252, player_id: felt252) -> Team {
         // [Return] Team
-        Team { dungeon_id, id, x: 0, y: 0, dead: false, seed, player_id, }
+        Team { dungeon_id, id, x: 0, y: 0, dead: false, deck: 0, spells: 0, seed, player_id, }
+    }
+
+    #[inline]
+    fn spells(self: Team) -> Array<u8> {
+        Packer::unpack(self.spells, SPELL_BIT_LENGTH)
+    }
+
+    #[inline]
+    fn spell_at(self: Team, index: u8) -> Spell {
+        let spell: u8 = Packer::get(self.spells, index, SPELL_BIT_LENGTH);
+        spell.into()
+    }
+
+    #[inline]
+    fn mint(ref self: Team, spell: Spell) {
+        let mut spells: Array<u8> = Packer::unpack(self.deck, SPELL_BIT_LENGTH);
+        spells.append(spell.into());
+        self.deck = Packer::pack(spells, SPELL_BIT_LENGTH);
+    }
+
+    #[inline]
+    fn burn(ref self: Team, spell: Spell) {
+        let item: u8 = spell.into();
+        self.deck = Packer::remove(self.deck, item, SPELL_BIT_LENGTH);
+    }
+
+    #[inline]
+    fn pick(ref self: Team, seed: felt252) {
+        // [Compute] Spells
+        let mut spells: Array<u8> = Packer::unpack(self.deck, SPELL_BIT_LENGTH);
+        let count = spells.len();
+        let mut deck: Deck = DeckTrait::new(seed, count);
+        let spells = array![deck.draw(), deck.draw(), deck.draw(),];
+        // [Effect] Update spells
+        self.spells = Packer::pack(spells, SPELL_BIT_LENGTH);
     }
 
     #[inline]
@@ -38,6 +79,11 @@ impl TeamImpl of TeamTrait {
         }
         // [Effect] Reseed
         self.seed = Seeder::reseed(self.seed, direction_id.into());
+    }
+
+    #[inline]
+    fn clean(ref self: Team) {
+        self.spells = 0;
     }
 }
 
