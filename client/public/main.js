@@ -8,6 +8,7 @@ import { startFight } from './game/fight.js';
 import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader';
 import { addHero } from './game/hero.js';
 import { createStaticText } from './utils/text.js';
+import { dojo_attack, on_entity_update } from './utils/event.js';
 
 let timeoutUpdateFight
 let scene
@@ -18,8 +19,7 @@ let dojoData = {}
 let hero
 let currentFight
 
-document.body.addEventListener("entityUpdate", function(event) {
-    const data = event.data
+on_entity_update(function(data) {
     dojoData = data
     console.log(data)
     room = data.currentRoom
@@ -47,7 +47,7 @@ document.body.addEventListener("entityUpdate", function(event) {
             setTimeout(() => {
                 fight.startTurn(["fireball", "heal", "punch"], [room.enemies[0].spell.value,room.enemies[1].spell.value,room.enemies[2].spell.value])
                 
-                setTimeout(() => { document.body.dispatchEvent(new Event("dojo_attack")) }, 1000)
+                // setTimeout(() => { dojo_attack() }, 1000)
             }, 1000)
         }, 500)
     } else if (currentFight) {
@@ -61,7 +61,7 @@ document.body.addEventListener("entityUpdate", function(event) {
 function activateHeroMovement() {
     const fbxLoader = new FBXLoader()
     fbxLoader.load(
-        `assets/models/hero_idle.fbx`,
+        `assets/models/characters/adventurers/Characters/fbx/Knight.fbx`,
         (object) => {
             hero = addHero(scene, object, [0, 0, 0], [0, Math.PI * 0.5, 0])
         },

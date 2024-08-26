@@ -1,3 +1,5 @@
+import { dojo_entity_update, dojo_move, dojo_signup, dojo_spawn, setDojoListeners } from "../utils/event.js"
+
 let dojoData = {
     localPlayer: undefined,
     teams: {},
@@ -63,60 +65,23 @@ export async function initDojo() {
                 dojoData.challenges[entity.dungeon_id.value][entity.team_id.value][entity.y.value][entity.x.value] = entity
             }
         }
-        const event = new Event("entityUpdate")
-        event.data = dojoData
-        event.data.currentRoom = dojoData.getRoomInfo()
-        document.body.dispatchEvent(event)
+        dojo_entity_update(dojoData)
     });
 
+    setDojoListeners({
+        dojo_signup: (e) => [burnerAccount, actionAddress, 'signup', [`${Math.floor(e.name)}`]],
+        dojo_spawn: () => [burnerAccount, actionAddress, 'spawn', []],
+        dojo_attack: () => [burnerAccount, actionAddress, 'attack', []],
+        dojo_move: (e) => [burnerAccount, actionAddress, 'move', [`${Math.floor(e.direction)}`]]
+    })
+
     setTimeout(() => {
-        burnerAccount.executeRaw([{
-            to: actionAddress,
-            selector: 'signup',
-            calldata: [
-                '0x484848'
-            ]
-        }]);
+        dojo_signup('0x484848')
         setTimeout(() => {
-            burnerAccount.executeRaw([{
-                to: actionAddress,
-                selector: 'spawn',
-                calldata: []
-            }]);
+            dojo_spawn()
             setTimeout(() => {
-                burnerAccount.executeRaw([{
-                    to: actionAddress,
-                    selector: 'move',
-                    calldata: [
-                        `${Math.floor(2)}`
-                        
-                    ]
-                }]);
-            }, 1000)
-        }, 1000)
-
-        document.body.addEventListener('dojo_move', function(e) {
-            const direction = e.direction
-            setTimeout(() => {
-                burnerAccount.executeRaw([{
-                    to: actionAddress,
-                    selector: 'move',
-                    calldata: [
-                        `${Math.floor(direction)}`
-                    ]
-                }]);
-            }, 1000)
-        })
-
-        document.body.addEventListener('dojo_attack', function(e) {
-            console.log("calling contract attack in 3 sec")
-            setTimeout(() => {
-                burnerAccount.executeRaw([{
-                    to: actionAddress,
-                    selector: 'attack',
-                    calldata: []
-                }]);
-            }, 3000)
-        })
+                dojo_move(2)
+            }, 500)
+        }, 500)
     }, 1500);
 }

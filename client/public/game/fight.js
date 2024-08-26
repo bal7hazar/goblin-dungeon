@@ -1,31 +1,31 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader';
+import { on_click_swap } from '../utils/event.js';
 import { addCharacter } from './character.js';
 
-export function startFight(scene, charactersInfo, enemiesInfo) {
-    const fight = {
-        allies: {},
-        enemies: {},
-        turn: 0,
-        currentTurn: [],
-    }
+function setupFight(fight, scene, charactersInfo, enemiesInfo) {
     // place characters
     const fbxLoader = new FBXLoader()
     charactersInfo.forEach((character, i) => {
+        let className = "Knight"
+        switch (character.class.value) {
+            case 1:
+                className = "Knight"
+                break;
+            case 2:
+                className = "Mage"
+                break;
+            case 3:
+            default:
+                className = "RogueHooded"
+                break;
+        }
         fbxLoader.load(
-            `assets/models/model.fbx`,
+            `assets/models/characters/adventurers/Characters/fbx/${className}.fbx`,
             (object) => {
-                object = addCharacter(scene, object, 100, [-2, 0, -1.5 + (i * 1.5)], [0, Math.PI * 0.5, 0])
-
-                if (character.class.value === 1) {
-                    object.children[0].material.color.set('red');
-                }
-                if (character.class.value === 2) {
-                    object.children[0].material.color.set('beige');
-                }
-                if (character.class.value === 3) {
-                    object.children[0].material.color.set('blue');
-                }
+                object = addCharacter(scene, object, character.health.value, [-2, 0, -1.5 + (i * 1.5)], [0, Math.PI * 0.5, 0])
+                object.baseId = i
+                object.currentId = i
                 fight.allies[i] = object
             },
             undefined,
@@ -33,56 +33,17 @@ export function startFight(scene, charactersInfo, enemiesInfo) {
                 console.log(error)
             }
         )
-
-        setTimeout(() => {
-            const fbxLoader = new FBXLoader()
-            fbxLoader.load(
-                `assets/models/model_taking_punch.fbx`,
-                (object) => {
-                    const animation = fight.allies[i].animationMixer.clipAction(object.animations[0])
-                    fight.allies[i].animations.take_punch = animation
-                    animation.loop = THREE.LoopOnce
-                    animation.name = "take_punch"
-                },
-                undefined,
-                (error) => {
-                    console.log(error)
-                }
-            )
-            fbxLoader.load(
-                `assets/models/model_punch.fbx`,
-                (object) => {
-                    const animation = fight.allies[i].animationMixer.clipAction(object.animations[0])
-                    fight.allies[i].animations.punch = animation
-                    animation.loop = THREE.LoopOnce
-                    animation.name = "punch"
-                },
-                undefined,
-                (error) => {
-                    console.log(error)
-                }
-            )
-        }, 1000)
     })
         
     // place enemies
     enemiesInfo.forEach((enemy, i) => {
-        if (!enemy) return;
+        if (!enemy || enemy.class.value === 0) return;
+        const name = "Minion"
         fbxLoader.load(
-            'assets/models/model.fbx',
+            `assets/models/characters/monsters/Characters/fbx/Skeleton_${name}.fbx`,
             (object) => {
-                object = addCharacter(scene, object, 100, [2, 0, -1.5 + (i * 1.5)], [0, -Math.PI * 0.5, 0])
+                object = addCharacter(scene, object, enemy.health.value, [2, 0, -1.5 + (i * 1.5)], [0, -Math.PI * 0.5, 0])
 
-                if (enemy.class.value === 4) {
-                    object.children[0].material.color.set('green');
-                }
-                if (enemy.class.value === 5) {
-                    object.children[0].material.color.set('white');
-                }
-                if (enemy.class.value === 6) {
-                    object.children[0].material.color.set('black');
-                    object.scale.set(0.25,0.25,0.25)
-                }
                 fight.enemies[i] = object
             },
             undefined,
@@ -91,35 +52,89 @@ export function startFight(scene, charactersInfo, enemiesInfo) {
             }
         )
 
-        setTimeout(() => {
-            const fbxLoader = new FBXLoader()
-            fbxLoader.load(
-                `assets/models/model_taking_punch.fbx`,
-                (object) => {
-                    const animation = fight.enemies[i].animationMixer.clipAction(object.animations[0])
-                    fight.enemies[i].animations.take_punch = animation
-                    animation.loop = THREE.LoopOnce
-                    animation.name = "take_punch"
-                },
-                undefined,
-                (error) => {
-                    console.log(error)
-                }
-            )
-            fbxLoader.load(
-                `assets/models/model_punch.fbx`,
-                (object) => {
-                    const animation = fight.enemies[i].animationMixer.clipAction(object.animations[0])
-                    fight.enemies[i].animations.punch = animation
-                    animation.loop = THREE.LoopOnce
-                    animation.name = "punch"
-                },
-                undefined,
-                (error) => {
-                    console.log(error)
-                }
-            )
-        }, 1000)
+        // setTimeout(() => {
+        //     const fbxLoader = new FBXLoader()
+        //     fbxLoader.load(
+        //         `assets/models/model_taking_punch.fbx`,
+        //         (object) => {
+        //             const animation = fight.enemies[i].animationMixer.clipAction(object.animations[0])
+        //             fight.enemies[i].animations.take_punch = animation
+        //             animation.loop = THREE.LoopOnce
+        //             animation.name = "take_punch"
+        //         },
+        //         undefined,
+        //         (error) => {
+        //             console.log(error)
+        //         }
+        //     )
+        //     fbxLoader.load(
+        //         `assets/models/model_punch.fbx`,
+        //         (object) => {
+        //             const animation = fight.enemies[i].animationMixer.clipAction(object.animations[0])
+        //             fight.enemies[i].animations.punch = animation
+        //             animation.loop = THREE.LoopOnce
+        //             animation.name = "punch"
+        //         },
+        //         undefined,
+        //         (error) => {
+        //             console.log(error)
+        //         }
+        //     )
+        // }, 1000)
+    })
+}
+
+export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
+    const fight = {
+        state: "started",
+        setState: function(newState) {
+            if (newState === "swap") {
+                console.log("select a character to swap")
+            } else if (newState === "pickspells") {
+                
+            } else if (newState === "attack") {
+                
+            }
+            this.state = newState
+        },
+        allies: {},
+        enemies: {},
+        spellsList: spellsList,
+        turn: 0,
+        scene,
+        currentTurn: [],
+        swap1: undefined,
+        swap2: undefined
+    }
+    setupFight(fight, scene, charactersInfo, enemiesInfo)
+
+    const swapCharacters = function(id1, id2) {
+        const char1 = Object.values(fight.allies).filter((elem) => elem.currentId == id1)[0]
+        const char2 = Object.values(fight.allies).filter((elem) => elem.currentId == id2)[0]
+        char1.currentId = id2
+        char2.currentId = id1
+
+        const char1Position = [...char1.position]
+        char1.setPosition([...char2.position])
+        char2.setPosition(char1Position)
+    }
+
+    on_click_swap((id) => {
+        if (fight.state !== "swap") {
+            return
+        }
+        if (fight.swap1 === undefined) {
+            fight.swap1 = id
+            console.log("selected character", id)
+            return
+        }
+        if (id === -1 || id == fight.swap1) {
+            fight.swap1 = undefined
+            return
+        }
+        console.log("swaping character", fight.swap1, "and", id)
+        swapCharacters(fight.swap1, id)
+        fight.swap1 = undefined
     })
 
     fight.startTurn = function(spells, enemiesActions) {
@@ -128,50 +143,69 @@ export function startFight(scene, charactersInfo, enemiesInfo) {
             ally.prepare(2) // punch
         })
         enemiesActions.forEach((spellId, index) => {
-            this.enemies[index].prepare(spellId)
+            if (this.enemies[index]) {
+                this.enemies[index].prepare(spellId)
+            }
         })
     }
 
     fight.setTurnResult = function(room) {
-        console.log(this.enemies[0].hp - room.enemies[0].health.value, room.enemies[0].health.value)
-        console.log(this.allies[2].hp - room.allies[2].health.value, room.allies[2].health.value)
         fight.currentTurn = []
-        fight.currentTurn.push({
-            id: 0,
-            source: this.allies[0],
-            target: this.enemies[0],
-            dmg: this.enemies[0].hp - room.enemies[0].health.value
-        },
-        {
-            id: 1,
-            source: this.allies[1],
-            target: this.enemies[1],
-            dmg: this.enemies[1].hp - room.enemies[1].health.value
-        },
-        {
-            id: 2,
-            source: this.allies[2],
-            target: this.enemies[2],
-            dmg: this.enemies[2].hp - room.enemies[2].health.value
-        },
-        {
-            id: 3,
-            source: this.enemies[0],
-            target: this.allies[0],
-            dmg: this.allies[0].hp - room.allies[0].health.value
-        },
-        {
-            id: 4,
-            source: this.enemies[1],
-            target: this.allies[1],
-            dmg: this.allies[1].hp - room.allies[1].health.value
-        },
-        {
-            id: 5,
-            source: this.enemies[2],
-            target: this.allies[2],
-            dmg: this.allies[2].hp - room.allies[2].health.value
-        })
+        if (this.enemies[0]) {
+            fight.currentTurn.push({
+                source: this.allies[0],
+                target: this.enemies[0],
+                dmg: this.enemies[0].hp - room.enemies[0].health.value
+            }) 
+        } else {
+            fight.currentTurn.push(undefined)
+        }
+        if (this.enemies[1]) {
+            fight.currentTurn.push({
+                source: this.allies[1],
+                target: this.enemies[1],
+                dmg: this.enemies[1].hp - room.enemies[1].health.value
+            }) 
+        } else {
+            fight.currentTurn.push(undefined)
+        }
+        if (this.enemies[2]) {
+            fight.currentTurn.push({
+                source: this.allies[2],
+                target: this.enemies[2],
+                dmg: this.enemies[2].hp - room.enemies[2].health.value
+            }) 
+        } else {
+            fight.currentTurn.push(undefined)
+        }
+        if (this.enemies[0]) {
+            fight.currentTurn.push({
+                source: this.enemies[0],
+                target: this.allies[0],
+                dmg: this.allies[0].hp - room.allies[0].health.value
+            })
+        } else {
+            fight.currentTurn.push(undefined)
+        }
+        if (this.enemies[1]) {
+            fight.currentTurn.push({
+                target: this.allies[1],
+                source: this.enemies[1],
+                dmg: this.allies[1].hp - room.allies[1].health.value
+            })
+        } else {
+            fight.currentTurn.push(undefined)
+        }
+        if (this.enemies[2]) {
+            console.log(this.allies[2].hp, room.allies[2].health.value)
+            fight.currentTurn.push({
+                source: this.enemies[2],
+                target: this.allies[2],
+                dmg: this.allies[2].hp - room.allies[2].health.value
+            })
+        } else {
+            fight.currentTurn.push(undefined)
+        }
         this.executeTurn(0)
     }
 
@@ -211,5 +245,80 @@ export function startFight(scene, charactersInfo, enemiesInfo) {
         
         setTimeout(() => { this.executeTurn(step + 1) }, 1000)
     }
+
+    fight.setState("swap")
+
     return fight
 }
+
+
+
+    // const fbxLoader = new FBXLoader()
+    // charactersInfo.forEach((character, i) => {
+    //     let className = "Knight"
+    //     switch (character.class.value) {
+    //         case 1:
+    //             className = "Knight"
+    //             break;
+    //         case 2:
+    //             className = "Mage"
+    //             break;
+    //         case 3:
+    //         default:
+    //             className = "Rogue"
+    //             break;
+    //     }
+    //     fbxLoader.load(
+    //         `assets/models/characters/adventurers/Characters/fbx/${className}.fbx`,
+    //         (object) => {
+    //             object = addCharacter(scene, object, character.health.value, [-2, 0, -1.5 + (i * 1.5)], [0, Math.PI * 0.5, 0])
+    //             object.baseId = i
+    //             object.currentId = i
+                
+    //             // if (character.class.value === 1) {
+    //             //     object.children[0].material.color.set('red');
+    //             // }
+    //             // if (character.class.value === 2) {
+    //             //     object.children[0].material.color.set('beige');
+    //             // }
+    //             // if (character.class.value === 3) {
+    //             //     object.children[0].material.color.set('blue');
+    //             // }
+    //             fight.allies[i] = object
+    //         },
+    //         undefined,
+    //         (error) => {
+    //             console.log(error)
+    //         }
+    //     )
+
+    //     // setTimeout(() => {
+    //     //     const fbxLoader = new FBXLoader()
+    //     //     fbxLoader.load(
+    //     //         `assets/models/model_taking_punch.fbx`,
+    //     //         (object) => {
+    //     //             const animation = fight.allies[i].animationMixer.clipAction(object.animations[0])
+    //     //             fight.allies[i].animations.take_punch = animation
+    //     //             animation.loop = THREE.LoopOnce
+    //     //             animation.name = "take_punch"
+    //     //         },
+    //     //         undefined,
+    //     //         (error) => {
+    //     //             console.log(error)
+    //     //         }
+    //     //     )
+    //     //     fbxLoader.load(
+    //     //         `assets/models/model_punch.fbx`,
+    //     //         (object) => {
+    //     //             const animation = fight.allies[i].animationMixer.clipAction(object.animations[0])
+    //     //             fight.allies[i].animations.punch = animation
+    //     //             animation.loop = THREE.LoopOnce
+    //     //             animation.name = "punch"
+    //     //         },
+    //     //         undefined,
+    //     //         (error) => {
+    //     //             console.log(error)
+    //     //         }
+    //     //     )
+    //     // }, 1000)
+    // })

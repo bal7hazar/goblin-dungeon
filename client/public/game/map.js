@@ -1,4 +1,5 @@
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { clickDoor } from '../utils/event.js';
 
 export function initMap(scene) {
     const loader = new GLTFLoader();
@@ -38,6 +39,7 @@ export function initMap(scene) {
     loader.load('assets/models/GLB format/floor-detail.glb', function (gltf) {
         randomDetails.forEach(([i, j]) => {
             const copyModel = gltf.scene.clone();
+            copyModel.children[0].receiveShadow = true
             copyModel.position.set((i - 3), 0, (j - 3)); // Adjust the position for each copy
             scene.add(copyModel);
         })
@@ -85,26 +87,20 @@ export function initMap(scene) {
         door.position.set(0, 0, -3.75); // Adjust the position for each copy
         scene.add(door);
         door.children[0].children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "North"
-            document.body.dispatchEvent(event)
+            clickDoor("North")
         }
         door = gltf.scene.clone();
         door.position.set(0, 0, 3.75); // Adjust the position for each copy
         door.rotation.set(0,Math.PI, 0)
         door.children[0].children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "South"
-            document.body.dispatchEvent(event)
+            clickDoor("South")
         }
         scene.add(door);
         door = gltf.scene.clone();
         door.position.set(-3.75, 0, 0); // Adjust the position for each copy
         door.rotation.set(0,Math.PI * 0.5, 0)
         door.children[0].children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "West"
-            document.body.dispatchEvent(event)
+            clickDoor("West")
         }
         scene.add(door);
         door = gltf.scene.clone();
@@ -112,9 +108,7 @@ export function initMap(scene) {
         door.rotation.set(0,-Math.PI * 0.5, 0)
         scene.add(door);
         door.children[0].children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "East"
-            document.body.dispatchEvent(event)
+            clickDoor("East")
         }
     }, undefined, function (error) {
         console.error(error);
@@ -124,35 +118,30 @@ export function initMap(scene) {
         opening.position.set(0, 0, -4); // Adjust the position for each copy
         scene.add(opening);
         opening.children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "North"
-            document.body.dispatchEvent(event)
+            clickDoor("North")
         }
         opening = gltf.scene.clone();
         opening.position.set(0, 0, 4); // Adjust the position for each copy
         opening.rotation.set(0,Math.PI, 0)
         scene.add(opening);
         opening.children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "South"
-            document.body.dispatchEvent(event)
+            clickDoor("South")
+
         }
         opening = gltf.scene.clone();
         opening.position.set(-4, 0, 0); // Adjust the position for each copy
         opening.rotation.set(0,Math.PI * 0.5, 0)
         scene.add(opening);
         opening.children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "West"
-            document.body.dispatchEvent(event)
+            clickDoor("West")
+
         }
         opening = gltf.scene.clone();
         opening.position.set(4, 0, 0); // Adjust the position for each copy
         opening.rotation.set(0,Math.PI * 0.5, 0)
         scene.add(opening);
         opening.children[0].onClick = function() {
-            const event = new Event("clickDoor")
-            event.direction = "East"
+            clickDoor("East")
         }
     }, undefined, function (error) {
         console.error(error);

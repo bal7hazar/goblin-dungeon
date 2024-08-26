@@ -26,8 +26,8 @@ export function createStaticText(scene, text, position, needRefresh) {
     const depth = 0.01,
         size = 0.04,
         curveSegments = 10,
-        bevelThickness = 0.01,
-        bevelSize = 0;
+        bevelThickness = 0.04,
+        bevelSize = 0.;
     textGeo = new TextGeometry(text, {
         font: font,
         size: size,

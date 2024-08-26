@@ -20,7 +20,7 @@ export function initScene() {
 
     const light = new THREE.AmbientLight(0x999999); // soft white light
     scene.add(light);
-    const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    const directionalLight = new THREE.DirectionalLight( 0xaaaaaa, 1 );
     directionalLight.position.set(10, 200, 10); // Adjust light position as needed
     directionalLight.castShadow = true; // Enable shadows for this light
     scene.add(directionalLight);
@@ -43,6 +43,8 @@ export function initScene() {
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     
+    const controls = new OrbitControls(camera, renderer.domElement);
+
     function onPointerMove(event) {
         pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -52,7 +54,8 @@ export function initScene() {
     
     function gameLoop() {
         requestAnimationFrame(gameLoop)
-    
+        controls.update();
+
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
     
@@ -91,24 +94,11 @@ export function initScene() {
         callback(tween)
     }
 
-    const DIRECTIONS = ["None", "North", "East", "South", "West"]
-    document.body.addEventListener("clickDoor", function(event) {
-        const direction = event.direction
-        const e = new Event("dojo_move")
-        e.direction = DIRECTIONS.indexOf(direction)
-        if (e.direction === -1) {
-            console.log("invalid direction", direction)
-            return
-        }
-        document.body.dispatchEvent(e)
-    })
-
     window.addEventListener('click', (e) => {
         if (objectToInteract) {
             objectToInteract.onClick()
         }
     })
-  
     
     window.addEventListener('pointermove', onPointerMove);
     
