@@ -10,5 +10,6 @@ impl Stun of SpellTrait {
     #[inline]
     fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
         target.stun(STUN);
+        caster.debuff();
     }
 }

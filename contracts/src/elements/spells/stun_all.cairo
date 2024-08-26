@@ -19,6 +19,7 @@ impl StunAll of SpellTrait {
             foe.stun(STUN);
             foes.append(foe);
             index -= 1;
-        }
+        };
+        caster.debuff();
     }
 }

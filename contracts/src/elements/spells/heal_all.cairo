@@ -19,6 +19,7 @@ impl HealAll of SpellTrait {
             mate.heal(HEALTH);
             mates.append(mate);
             index -= 1;
-        }
+        };
+        caster.debuff();
     }
 }

@@ -10,5 +10,6 @@ impl Heal of SpellTrait {
     #[inline]
     fn apply(ref caster: Mob, ref target: Mob, ref mates: Array<Mob>, ref foes: Array<Mob>) {
         caster.heal(HEALTH);
+        caster.debuff();
     }
 }

@@ -19,6 +19,7 @@ impl ShieldAll of SpellTrait {
             mate.shield(SHIELD);
             mates.append(mate);
             index -= 1;
-        }
+        };
+        caster.debuff();
     }
 }
