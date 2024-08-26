@@ -1,11 +1,11 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader';
-import { on_click_swap } from '../utils/event.js';
+import { getModel } from '../utils/assets.js';
+import { dojo_attack, on_click_swap } from '../utils/event.js';
 import { addCharacter } from './character.js';
 
 function setupFight(fight, scene, charactersInfo, enemiesInfo) {
     // place characters
-    const fbxLoader = new FBXLoader()
     charactersInfo.forEach((character, i) => {
         let className = "Knight"
         switch (character.class.value) {
@@ -13,74 +13,25 @@ function setupFight(fight, scene, charactersInfo, enemiesInfo) {
                 className = "Knight"
                 break;
             case 2:
-                className = "Mage"
+                className = "RogueHooded"
                 break;
             case 3:
             default:
-                className = "RogueHooded"
+                className = "Mage"
                 break;
         }
-        fbxLoader.load(
-            `assets/models/characters/adventurers/Characters/fbx/${className}.fbx`,
-            (object) => {
-                object = addCharacter(scene, object, character.health.value, [-2, 0, -1.5 + (i * 1.5)], [0, Math.PI * 0.5, 0])
-                object.baseId = i
-                object.currentId = i
-                fight.allies[i] = object
-            },
-            undefined,
-            (error) => {
-                console.log(error)
-            }
-        )
+        const object = addCharacter(scene, getModel(className), character.health.value, [-2, 0, -1.5 + (i * 1.5)], [0, Math.PI * 0.5, 0])
+        object.baseId = i
+        object.currentId = i
+        fight.allies[i] = object
     })
         
     // place enemies
     enemiesInfo.forEach((enemy, i) => {
         if (!enemy || enemy.class.value === 0) return;
-        const name = "Minion"
-        fbxLoader.load(
-            `assets/models/characters/monsters/Characters/fbx/Skeleton_${name}.fbx`,
-            (object) => {
-                object = addCharacter(scene, object, enemy.health.value, [2, 0, -1.5 + (i * 1.5)], [0, -Math.PI * 0.5, 0])
-
-                fight.enemies[i] = object
-            },
-            undefined,
-            (error) => {
-                console.log(error)
-            }
-        )
-
-        // setTimeout(() => {
-        //     const fbxLoader = new FBXLoader()
-        //     fbxLoader.load(
-        //         `assets/models/model_taking_punch.fbx`,
-        //         (object) => {
-        //             const animation = fight.enemies[i].animationMixer.clipAction(object.animations[0])
-        //             fight.enemies[i].animations.take_punch = animation
-        //             animation.loop = THREE.LoopOnce
-        //             animation.name = "take_punch"
-        //         },
-        //         undefined,
-        //         (error) => {
-        //             console.log(error)
-        //         }
-        //     )
-        //     fbxLoader.load(
-        //         `assets/models/model_punch.fbx`,
-        //         (object) => {
-        //             const animation = fight.enemies[i].animationMixer.clipAction(object.animations[0])
-        //             fight.enemies[i].animations.punch = animation
-        //             animation.loop = THREE.LoopOnce
-        //             animation.name = "punch"
-        //         },
-        //         undefined,
-        //         (error) => {
-        //             console.log(error)
-        //         }
-        //     )
-        // }, 1000)
+        const className = enemy.class.value == 1 ? "Skeleton_Warrior" : (enemy.class.value == 2 ? "Skeleton_Mage" :  (enemy.class.value == 3 ? "Skeleton_Rogue" : "Skeleton_Minion"))
+        const object = addCharacter(scene, getModel(className), enemy.health.value, [2, 0, -1.5 + (i * 1.5)], [0, -Math.PI * 0.5, 0])
+        fight.enemies[i] = object
     })
 }
 
@@ -139,6 +90,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
 
     fight.startTurn = function(spells, enemiesActions) {
         this.turn++
+        console.log("SPELLS", spells)
         Object.values(this.allies).forEach((ally) => {
             ally.prepare(2) // punch
         })
@@ -155,6 +107,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             fight.currentTurn.push({
                 source: this.allies[0],
                 target: this.enemies[0],
+                spell: this.allies[0].currentSpell,
                 dmg: this.enemies[0].hp - room.enemies[0].health.value
             }) 
         } else {
@@ -164,6 +117,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             fight.currentTurn.push({
                 source: this.allies[1],
                 target: this.enemies[1],
+                spell: this.allies[1].currentSpell,
                 dmg: this.enemies[1].hp - room.enemies[1].health.value
             }) 
         } else {
@@ -173,6 +127,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             fight.currentTurn.push({
                 source: this.allies[2],
                 target: this.enemies[2],
+                spell: this.allies[2].currentSpell,
                 dmg: this.enemies[2].hp - room.enemies[2].health.value
             }) 
         } else {
@@ -182,6 +137,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             fight.currentTurn.push({
                 source: this.enemies[0],
                 target: this.allies[0],
+                spell: this.enemies[0].currentSpell,
                 dmg: this.allies[0].hp - room.allies[0].health.value
             })
         } else {
@@ -191,6 +147,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             fight.currentTurn.push({
                 target: this.allies[1],
                 source: this.enemies[1],
+                spell: this.enemies[1].currentSpell,
                 dmg: this.allies[1].hp - room.allies[1].health.value
             })
         } else {
@@ -201,11 +158,13 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             fight.currentTurn.push({
                 source: this.enemies[2],
                 target: this.allies[2],
+                spell: this.enemies[2].currentSpell,
                 dmg: this.allies[2].hp - room.allies[2].health.value
             })
         } else {
             fight.currentTurn.push(undefined)
         }
+        console.log(fight.currentTurn)
         this.executeTurn(0)
     }
 
@@ -218,7 +177,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             this.executeTurn(step + 1)
             return
         }
-        const spell = turnAction.source.currentSpell
+        const spell = turnAction.spell
         if (spell === 2) {
             turnAction.source.attack()
             scene.addTween(turnAction.source, "position", (tween) => {
@@ -237,8 +196,6 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
                     .start()
                 })
             }, 900)
-        } else if (spell === 5) {
-            console.log(spell)
         } else {
             console.log("spell not handled id:", spell)
         }

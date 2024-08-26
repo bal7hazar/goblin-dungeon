@@ -9,6 +9,7 @@ import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader'
 import { addHero } from './game/hero.js';
 import { createStaticText } from './utils/text.js';
 import { dojo_attack, on_entity_update } from './utils/event.js';
+import { loadModels } from './utils/assets.js';
 
 let timeoutUpdateFight
 let scene
@@ -45,10 +46,10 @@ on_entity_update(function(data) {
             )
             currentFight = fight
             setTimeout(() => {
-                fight.startTurn(["fireball", "heal", "punch"], [room.enemies[0].spell.value,room.enemies[1].spell.value,room.enemies[2].spell.value])
-                
+                const spells = [parseInt(room.deck.value.slice(2,3),16), parseInt(room.deck.value.slice(3,4),16),parseInt(room.deck.value.slice(4,5),16)]
+                fight.startTurn(spells, [room.enemies[0].spell.value,room.enemies[1].spell.value,room.enemies[2].spell.value])
                 // setTimeout(() => { dojo_attack() }, 1000)
-            }, 1000)
+            }, 2000)
         }, 500)
     } else if (currentFight) {
         if (timeoutUpdateFight) { clearTimeout(timeoutUpdateFight) }
@@ -84,12 +85,13 @@ loadFont(() => {
     setTimeout(() => {
         initDojo()   
     }, 1000)
-
+    
     scene = initScene()
     initMap(scene)
 
     initRoomUI()
-    activateHeroMovement() 
+    loadModels()
+    activateHeroMovement()
 });
 
 // const loader = new GLTFLoader();

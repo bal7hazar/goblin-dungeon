@@ -71,7 +71,7 @@ export async function initDojo() {
     setDojoListeners({
         dojo_signup: (e) => [burnerAccount, actionAddress, 'signup', [`${Math.floor(e.name)}`]],
         dojo_spawn: () => [burnerAccount, actionAddress, 'spawn', []],
-        dojo_attack: () => [burnerAccount, actionAddress, 'attack', []],
+        dojo_attack: () => [burnerAccount, actionAddress, 'attack', ["0x012", `${Math.floor(Math.random() * 3)}`, `${Math.floor(Math.random() * 3)}`]],
         dojo_move: (e) => [burnerAccount, actionAddress, 'move', [`${Math.floor(e.direction)}`]]
     })
 
@@ -80,7 +80,7 @@ export async function initDojo() {
         setTimeout(() => {
             dojo_spawn()
             setTimeout(() => {
-                dojo_move(2)
+                // dojo_move(2)
             }, 500)
         }, 500)
     }, 1500);

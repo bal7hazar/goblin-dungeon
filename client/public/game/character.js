@@ -20,16 +20,15 @@ export function addCharacter(scene, object, maxHp, _position, rotation) {
     const animationsList = {}
     for (const anim of object.animations) {
         animationsList[anim.name] = object.animationMixer.clipAction(anim)
-        console.log(anim.name)
     }
-    object.animations = animationsList
-    object.animations.Idle.play()
-    object.animations.Idle.loop = THREE.LoopPingPong
+    object.animationsList = animationsList
+    object.animationsList.Idle.play()
+    object.animationsList.Idle.loop = THREE.LoopPingPong
     object.animationMixer.addEventListener( 'finished', function( e	) {
         if (e.action.name === 'Idle') {
             return
         }
-        object.animations.Idle.play()
+        object.animationsList.Idle.play()
     });
 
     const clock = new THREE.Clock()
@@ -59,12 +58,12 @@ export function addCharacter(scene, object, maxHp, _position, rotation) {
     object.textHP = textHP
 
     object.attack = function() {
-        if (!object.animations.punch) {
+        if (!object.animationsList["1H_Melee_Attack_Slice_Horizontal"]) {
             return
         }
-        object.animations.Idle.stop()
-        object.animations["1H_Melee_Attack_Slice_Horizontal"].reset()
-        object.animations["1H_Melee_Attack_Slice_Horizontal"].play()
+        object.animationsList.Idle.stop()
+        object.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
+        object.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
     }
 
     object.hit = function(damage) {
@@ -79,19 +78,44 @@ export function addCharacter(scene, object, maxHp, _position, rotation) {
         if (object.hp <= 0) {
             object.hp = 0
         }
-        if (object.animations.Hit_A) {
-            object.animations.Idle.stop()
-            object.animations.Hit_A.reset()
-            object.animations.Hit_A.play()
+        if (object.animationsList.Hit_A) {
+            object.animationsList.Idle.stop()
+            object.animationsList.Hit_A.loop = THREE.LoopOnce
+            object.animationsList.Hit_A.reset()
+            object.animationsList.Hit_A.play()
         }
-        textHP.updateText(`${object.hp}/${object.maxHp}`)
+        textHP = textHP.updateText(`${object.hp}/${object.maxHp}`)
         createFightInfoText(scene, `-${damage} HP`, [position[0], 1.5, position[2]])
     }
 
+    const SPELLS = {
+        0: "None",
+        1: "Buff",
+        2: "Damage",
+        3: "Heal",
+        4: "Shield",
+        5: "Stun",
+        6: "BuffAll",
+        7: "DamageAll",
+        8: "HealAll",
+        9: "ShieldAll",
+        10: "StunAll",
+    };
+    let prevIcon
     object.prepare = async function(spellId) {
+        if (prevIcon) {
+            scene.remove(prevIcon)
+        }
+        console.log("prepare", spellId)
         object.currentSpell = spellId
-        const name = spellId == 2 ? "punch" : "stun";
-        const icon = await iconToSpellPreview(name, scene, position)
+        let name = SPELLS[spellId]
+        if (name.endsWith("All")) {
+            name = name.slice(0,name.length - 3)
+        }
+        if (name.endsWith("Other")) {
+            name = name.slice(0,name.length - 5)
+        }
+        prevIcon = await iconToSpellPreview(name, scene, position)
     }
 
     return object
