@@ -63,6 +63,7 @@ export function addCharacter(scene, object, maxHp, _position, rotation) {
         }
         object.animationsList.Idle.stop()
         object.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
+        object.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
         object.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
     }
 
