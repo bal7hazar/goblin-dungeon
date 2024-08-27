@@ -92,6 +92,10 @@ impl RoomImpl of RoomTrait {
 
     #[inline]
     fn compute_monsters(self: Room) -> Array<(Monster, Threat, Element)> {
+        // [Check] Room is a monster room
+        if self.category != Category::Monster.into() {
+            return array![];
+        };
         // [Compute] Monster count to place
         let mut dice: Dice = DiceTrait::new(ROOM_MONSTER_COUNT, self.seed);
         let mut count = dice.roll();
@@ -197,8 +201,8 @@ impl RoomAssert of AssertTrait {
     }
 
     #[inline]
-    fn assert_is_boss(self: Room) {
-        assert(self.category == Category::Boss.into(), errors::ROOM_NOT_BOSS);
+    fn assert_is_exit(self: Room) {
+        assert(self.category == Category::Exit.into(), errors::ROOM_NOT_BOSS);
     }
 }
 

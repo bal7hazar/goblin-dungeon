@@ -145,9 +145,9 @@ mod PlayableComponent {
             player.assert_is_created();
 
             // [Check] Dungeon is not done
-            let factory = store.get_factory(FACTORY_ID);
+            let mut factory = store.get_factory(FACTORY_ID);
             let dungeon_id = factory.dungeon_id();
-            let dungeon = store.get_dungeon(dungeon_id);
+            let mut dungeon = store.get_dungeon(dungeon_id);
             dungeon.assert_not_done();
 
             // [Check] Team is not dead
@@ -215,8 +215,27 @@ mod PlayableComponent {
             let challenge = ChallengeTrait::new(dungeon.id, team.id, team.x, team.y, status);
             store.set_challenge(challenge);
 
-            // [Effect] Pick spells
-            team.pick_spells(team.seed);
+            // [Effect] Assess the end of the dungeon
+            if room.category == Category::Exit.into() {
+                // [Effect] Update dungeon status
+                dungeon.claim(player.name);
+                store.set_dungeon(dungeon);
+                // [Effect] Create new dungeon
+                let dungeon_id = factory.generate();
+                let dungeon = DungeonTrait::new(dungeon_id, team.seed);
+                // [Effect] Create the spawn room
+                let mut room = RoomTrait::new(dungeon_id, 0, 0);
+                room.seed = dungeon.seed;
+                // [Effect] Store room
+                store.set_room(room);
+                // [Effect] Store dungeon
+                store.set_dungeon(dungeon);
+                // [Effect] Store factory
+                store.set_factory(factory);
+            } else if !challenge.completed {
+                // [Effect] Pick spells
+                team.pick_spells(team.seed);
+            }
 
             // [Effect] Update team
             store.set_team(team);

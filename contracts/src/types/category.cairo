@@ -6,7 +6,7 @@ enum Category {
     Fountain,
     Spell,
     Burn,
-    Boss,
+    Exit,
 }
 
 #[generate_trait]
@@ -15,7 +15,7 @@ impl CategoryImpl of CategoryTrait {
     fn from(seed: felt252) -> Category {
         let random: u256 = seed.into() % 1000;
         if random < 1 {
-            Category::Boss
+            Category::Exit
         } else if random < 41 {
             Category::Burn
         } else if random < 81 {
@@ -37,7 +37,7 @@ impl CategoryImpl of CategoryTrait {
             Category::Fountain => true,
             Category::Spell => true,
             Category::Burn => true,
-            Category::Boss => false,
+            Category::Exit => true,
             Category::None => false,
         }
     }
@@ -53,7 +53,7 @@ impl IntoCategoryFelt252 of core::Into<Category, felt252> {
             Category::Fountain => 'FOUNTAIN',
             Category::Spell => 'SPELL',
             Category::Burn => 'BURN',
-            Category::Boss => 'BOSS',
+            Category::Exit => 'EXIT',
         }
     }
 }
@@ -68,7 +68,7 @@ impl IntoCategoryU8 of core::Into<Category, u8> {
             Category::Spell => 3,
             Category::Adventurer => 4,
             Category::Burn => 5,
-            Category::Boss => 6,
+            Category::Exit => 6,
         }
     }
 }
@@ -84,7 +84,7 @@ impl IntoU8Category of core::Into<u8, Category> {
             3 => Category::Spell,
             4 => Category::Adventurer,
             5 => Category::Burn,
-            6 => Category::Boss,
+            6 => Category::Exit,
             _ => Category::None,
         }
     }
