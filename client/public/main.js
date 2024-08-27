@@ -36,7 +36,6 @@ on_entity_update((data) => {
         roomTexts.north = roomTexts.north.updateText(`(${Math.floor(x)};${Math.floor(y + 1)})`)
         roomTexts.south = roomTexts.south.updateText(`(${Math.floor(x)};${Math.floor(y - 1)})`)
 
-        console.log("new room")
         if (currentFight) {
             currentFight.clean()
         }
@@ -55,9 +54,8 @@ on_entity_update((data) => {
                 currentFight = fight
                 setTimeout(() => {
                     const spellHex = '0x' + room.spells.value.toString(16)
-                    console.log(spellHex)
                     const spells = [parseInt(spellHex.slice(2,3),16), parseInt(spellHex.slice(3,4),16),parseInt(spellHex.slice(4,5),16)]
-                    fight.startTurn(spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
+                    fight.startTurn(room, spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
                 }, 1000)
             } else {
                 console.log("Just entered", roomType)
@@ -68,9 +66,8 @@ on_entity_update((data) => {
         timeoutUpdateFight = setTimeout(() => {
             setTimeout(() => {
                 const spellHex = '0x' + room.spells.value.toString(16)
-                console.log(spellHex)
                 const spells = [parseInt(spellHex.slice(2,3),16), parseInt(spellHex.slice(3,4),16),parseInt(spellHex.slice(4,5),16)]
-                currentFight.startTurn(spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
+                currentFight.startTurn(room, spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
             }, 6000)
         }, 500)
     }

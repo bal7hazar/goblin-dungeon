@@ -71,6 +71,12 @@ export function addCharacter(scene, className, element, _position, rotation) {
         if (e.action.name === 'Idle') {
             return
         }
+        if (e.action.name === 'Death_A') {
+            setTimeout(() => {
+                scene.remove(object)
+            }, 1000)
+            return
+        }
         object.animationsList.Idle.play()
     });
 
@@ -96,18 +102,18 @@ export function addCharacter(scene, className, element, _position, rotation) {
         }
     }
 
-    object.maxHp = CHARACTERS_MAX_HP[className]
-    object.hp = object.maxHp
+    object.maxHP = CHARACTERS_MAX_HP[className]
+    object.hp = object.maxHP
 
-    let textHP = createStaticText(scene, `${object.hp}/${object.maxHp}`, [position[0], 1.2, position[2]])
+    let textHP = createStaticText(scene, `${object.hp}/${object.maxHP}`, [position[0], 1.2, position[2]])
     object.textHP = textHP
 
     object.setHP = function(newHP) {
-        if (newHP > object.maxHp) {
-            object.maxHp = newHP
+        if (newHP > object.maxHP) {
+            object.maxHP = newHP
         }
         object.hp = newHP
-        textHP = textHP.updateText(`${object.hp}/${object.maxHp}`)
+        textHP = textHP.updateText(`${object.hp}/${object.maxHP}`)
     }
 
     object.hit = function(damage) {
@@ -122,14 +128,41 @@ export function addCharacter(scene, className, element, _position, rotation) {
         if (object.hp <= 0) {
             object.hp = 0
         }
-        if (object.animationsList.Hit_A) {
+        textHP = textHP.updateText(`${object.hp}/${object.maxHP}`)
+        createFightInfoText(scene, `-${damage} HP`, [position[0], 1.5, position[2]])
+        if (object.hp > 0 && object.animationsList.Hit_A) {
             object.animationsList.Idle.stop()
             object.animationsList.Hit_A.loop = THREE.LoopOnce
             object.animationsList.Hit_A.reset()
             object.animationsList.Hit_A.play()
+        } else if (object.hp <= 0 && object.animationsList.Death_A) {
+            object.animationsList.Idle.stop()
+            object.animationsList.Death_A.loop = THREE.LoopOnce
+            object.animationsList.Death_A.reset()
+            object.animationsList.Death_A.play()
         }
-        textHP = textHP.updateText(`${object.hp}/${object.maxHp}`)
-        createFightInfoText(scene, `-${damage} HP`, [position[0], 1.5, position[2]])
+    }
+
+    object.heal = function(hp) {
+        if (hp <= 0) {
+            return
+        }
+        if (object.hp <= 0) {
+            console.error("already dead")
+            return;   
+        }
+        object.hp += hp
+        if (object.hp > object.maxHP) {
+            object.hp = object.maxHP
+        }
+        if (object.animationsList.Hit_B) {
+            object.animationsList.Idle.stop()
+            object.animationsList.Hit_B.loop = THREE.LoopOnce
+            object.animationsList.Hit_B.reset()
+            object.animationsList.Hit_B.play()
+        }
+        textHP = textHP.updateText(`${object.hp}/${object.maxHP}`)
+        createFightInfoText(scene, `+${hp} HP`, [position[0], 1.5, position[2]])
     }
 
     let prevIcon
@@ -151,7 +184,12 @@ export function addCharacter(scene, className, element, _position, rotation) {
 
     object.clean = function() {
         scene.remove(object)
-        scene.remove(prevIcon)
+        if (object.elementIcon) {
+            scene.remove(object.elementIcon)
+        }
+        if (prevIcon) {
+            scene.remove(prevIcon)
+        }
         scene.remove(textHP)
     }
 
