@@ -51,3 +51,21 @@ export const ROOM_TYPES = {
     5: "Burn",
     6: "Boss",
 }
+
+export const ELEMENTS = {
+    1: 'Fire',
+    2: 'Water',
+    3: 'Air',
+}
+
+export const ELEMENTS_STRENGTH = {
+    1: 'Air',
+    2: 'Fire',
+    3: 'Water',
+}
+
+export const ELEMENTS_WEAKNESS = {
+    1: 'Water',
+    2: 'Air',
+    3: 'Fire',
+}

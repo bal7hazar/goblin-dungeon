@@ -46,7 +46,6 @@ export async function initDojo() {
         for (const key in models) {
             const entity = models[key]
             if (key.endsWith('Room')) {
-                console.log("ROOOOM", entity)
                 dojoData.rooms[entity.dungeon_id.value] = dojoData.rooms[entity.dungeon_id.value] || {}
                 dojoData.rooms[entity.dungeon_id.value][entity.y.value] = dojoData.rooms[entity.dungeon_id.value][entity.y.value] || {}
                 dojoData.rooms[entity.dungeon_id.value][entity.y.value][entity.x.value] = entity
@@ -64,7 +63,6 @@ export async function initDojo() {
                 dojoData.teams[entity.id.value] = entity
             }
             if (key.endsWith('Room')) {
-                console.log("ROOOOM", entity)
                 dojoData.rooms[entity.dungeon_id.value] = dojoData.rooms[entity.dungeon_id.value] || {}
                 dojoData.rooms[entity.dungeon_id.value][entity.y.value] = dojoData.rooms[entity.dungeon_id.value][entity.y.value] || {}
                 dojoData.rooms[entity.dungeon_id.value][entity.y.value][entity.x.value] = entity

@@ -1,11 +1,12 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
-import { CHARACTERS_MAX_HP, SPELLS } from '../utils/constants.js';
+import { CHARACTERS_MAX_HP, ELEMENTS, ELEMENTS_STRENGTH, SPELLS } from '../utils/constants.js';
 import { click_character } from '../utils/event.js';
 import { createFightInfoText, createStaticText } from '../utils/text.js';
-import { iconToSpellPreview } from '../utils/ui.js';
+import { getSpellIcon, iconToSpellPreview } from '../utils/ui.js';
 import { getModel } from '../utils/assets.js';
+import { worldToScreenPosition } from '../utils/utils.js';
 
-export function addCharacter(scene, className, _position, rotation) {
+export function addCharacter(scene, className, element, _position, rotation) {
     const object = getModel(className)
 
     let position = _position
@@ -17,6 +18,44 @@ export function addCharacter(scene, className, _position, rotation) {
     object.position.set(position[0], position[1], position[2])
     object.rotation.set(rotation[0], rotation[1], rotation[2])
     object.scale.set(0.5,0.5,0.5)
+
+    getSpellIcon(ELEMENTS[element], 1, scene).then((elementIcon) => {
+        object.elementIcon = elementIcon
+        elementIcon.refresh = function() {
+            elementIcon.position.set(position[0], 0.055, position[2])    
+        }
+        elementIcon.rotation.set(-Math.PI * 0.5, 0, 0)
+        elementIcon.receiveShadow = true
+        elementIcon.traverse((node) => {
+            if (node.isMesh) {
+                node.receiveShadow = true
+            }
+        })
+        elementIcon.layers.set(0);
+        scene.tickCallbacks.push(() => {
+            elementIcon.refresh()
+        })
+    })
+
+    object.enemyElement = (targetElement) => {
+        const elementIcon = object.elementIcon
+        if (!elementIcon) {
+            setTimeout(() => {
+                object.enemyElement(targetElement)
+            }, 1000)
+            return
+        }
+        if (targetElement === undefined) {
+            elementIcon.scale.set(1, 1, 1)
+            return
+        }
+        if (ELEMENTS_STRENGTH[element] === ELEMENTS[targetElement]) {
+            elementIcon.scale.set(1.2,1.2,1.2)
+        } else {
+            elementIcon.scale.set(0.8,0.8,0.8)
+        }
+    }
+
     scene.add(object)
 
     // animations
@@ -47,11 +86,11 @@ export function addCharacter(scene, className, _position, rotation) {
 
     for (const child of object.children) {
         child.onClick = function() {
-            if (object.position.z > 0) {
+            if (object.position.z < 0) {
                 click_character(0)
             } else if (object.position.z === 0) {
                 click_character(1)
-            } else if (object.position.z < 0) {
+            } else if (object.position.z > 0) {
                 click_character(2)
             }
         }
@@ -64,20 +103,11 @@ export function addCharacter(scene, className, _position, rotation) {
     object.textHP = textHP
 
     object.setHP = function(newHP) {
+        if (newHP > object.maxHp) {
+            object.maxHp = newHP
+        }
         object.hp = newHP
         textHP = textHP.updateText(`${object.hp}/${object.maxHp}`)
-    }
-
-    object.attack = function() {
-        if (!object.animationsList["1H_Melee_Attack_Slice_Horizontal"]) {
-            return
-        }
-        object.animationsList.Idle.stop()
-        object.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
-        object.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
-        object.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
-        scene.remove(prevIcon)
-        prevIcon = undefined
     }
 
     object.hit = function(damage) {
@@ -106,14 +136,17 @@ export function addCharacter(scene, className, _position, rotation) {
     object.prepare = async function(spellId) {
         if (prevIcon) {
             scene.remove(prevIcon)
+            prevIcon = undefined
         }
         if (spellId === undefined) {
             return
         }
-        console.log("prepare", spellId)
         object.currentSpell = spellId
         let name = SPELLS[spellId]
         prevIcon = await iconToSpellPreview(name, scene, position)
+        prevIcon.onClick = () => {
+            click_character(object.currentId)
+        }
     }
 
     object.clean = function() {

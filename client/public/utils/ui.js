@@ -2,12 +2,11 @@ import * as THREE from '../node_modules/three/build/three.module.js';
 import { getIcon } from "./assets.js";
 import { worldToScreenPosition } from './utils.js';
 
-
 export function getSpellIcon(name, size, scene) {
     return new Promise(async (resolve, reject) =>{
         try {
             const texture = new THREE.CanvasTexture(await getIcon(name));
-            const material = new THREE.MeshBasicMaterial({ map: texture });
+            const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             const geometry = new THREE.PlaneGeometry(size, size);
             const icon = new THREE.Mesh(geometry, material);
             icon.layers.set(2);
