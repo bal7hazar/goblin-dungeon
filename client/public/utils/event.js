@@ -21,8 +21,12 @@ export function dojo_spawn() {
     document.body.dispatchEvent(new Event("dojo_spawn"))
 }
 
-export function dojo_attack() {
-    document.body.dispatchEvent(new Event("dojo_attack"))
+export function dojo_attack(characterOrder, spellId, caster) {
+    const event = new Event("dojo_attack")
+    event.characterOrder = characterOrder
+    event.spellId = spellId
+    event.caster = caster
+    document.body.dispatchEvent(event)
 }
 
 export function dojo_move(direction) {
@@ -55,14 +59,14 @@ export function on_entity_update(callback) {
 
 // Swap characters
 
-export function click_swap(id) {
-    const event = new Event("clickSwap")
+export function click_character(id) {
+    const event = new Event("clickCharacter")
     event.id = id
     document.body.dispatchEvent(event)    
 }
 
-export function on_click_swap(callback) {
-    document.body.addEventListener("clickSwap", function(event) {
+export function on_click_character(callback) {
+    document.body.addEventListener("clickCharacter", function(event) {
         callback(event.id)
     })
 }

@@ -1,36 +1,25 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
-import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader';
-import { getModel } from '../utils/assets.js';
-import { dojo_attack, on_click_swap } from '../utils/event.js';
+import { CLASSES, ENEMY_CLASSES, SPELLS } from '../utils/constants.js';
+import { dojo_attack, on_click_character } from '../utils/event.js';
+import { spellIconsChoices } from '../utils/ui.js';
 import { addCharacter } from './character.js';
 
 function setupFight(fight, scene, charactersInfo, enemiesInfo) {
-    // place characters
     charactersInfo.forEach((character, i) => {
-        let className = "Knight"
-        switch (character.class.value) {
-            case 1:
-                className = "Knight"
-                break;
-            case 2:
-                className = "RogueHooded"
-                break;
-            case 3:
-            default:
-                className = "Mage"
-                break;
-        }
-        const object = addCharacter(scene, getModel(className), character.health.value, [-2, 0, -1.5 + (i * 1.5)], [0, Math.PI * 0.5, 0])
+        if (!character || character.class.value === 0 || character.health.value === 0) return;
+        const className = CLASSES[character.class.value]
+        const object = addCharacter(scene, className, [-2, 0, 1.5 - (i * 1.5)], [0, Math.PI * 0.5, 0])
+        object.setHP(character.health.value)
         object.baseId = i
         object.currentId = i
         fight.allies[i] = object
     })
         
-    // place enemies
-    enemiesInfo.forEach((enemy, i) => {
-        if (!enemy || enemy.class.value === 0) return;
-        const className = enemy.class.value == 1 ? "Skeleton_Warrior" : (enemy.class.value == 2 ? "Skeleton_Mage" :  (enemy.class.value == 3 ? "Skeleton_Rogue" : "Skeleton_Minion"))
-        const object = addCharacter(scene, getModel(className), enemy.health.value, [2, 0, -1.5 + (i * 1.5)], [0, -Math.PI * 0.5, 0])
+    enemiesInfo.forEach((character, i) => {
+        if (!character || character.class.value === 0 || character.health.value === 0) return;
+        const className = "Skeleton_" + ENEMY_CLASSES[character.class.value]
+        const object = addCharacter(scene, className, [2, 0, 1.5 - (i * 1.5)], [0, -Math.PI * 0.5, 0])
+        object.setHP(character.health.value)
         fight.enemies[i] = object
     })
 }
@@ -39,12 +28,19 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
     const fight = {
         state: "started",
         setState: function(newState) {
-            if (newState === "swap") {
+            if (newState === "pickspell") {
+                console.log("select a spell")
+            } else if (newState === "pickcaster") {
+                console.log("select a character to cast this spell")
+            } else if (newState === "swap") {
                 console.log("select a character to swap")
-            } else if (newState === "pickspells") {
-                
             } else if (newState === "attack") {
-                
+                this.spellsDeck.forEach((icon) => {
+                    scene.remove(icon)
+                })
+                this.spellsDeck = []
+                console.log("calling dojo attack with", "0x012", `0x${Math.floor(this.selectedSpell)}`, `0x${Math.floor(this.selectedCaster)}`)
+                dojo_attack("0x012", `${Math.floor(this.selectedSpell)}`, `${Math.floor(this.selectedCaster)}`)
             }
             this.state = newState
         },
@@ -53,7 +49,10 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
         spellsList: spellsList,
         turn: 0,
         scene,
+        spellsDeck: [],
         currentTurn: [],
+        selectedSpell: -1,
+        selectedCaster: -1,
         swap1: undefined,
         swap2: undefined
     }
@@ -70,7 +69,15 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
         char2.setPosition(char1Position)
     }
 
-    on_click_swap((id) => {
+    on_click_character((id) => {
+        if (fight.state === "pickcaster") {
+            fight.selectedCaster = id
+            fight.allies[id].prepare(fight.spellsDeck[fight.selectedSpell].spellId)
+            setTimeout(() => {
+                fight.setState("attack")
+            }, 1000)
+            return
+        }
         if (fight.state !== "swap") {
             return
         }
@@ -88,17 +95,38 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
         fight.swap1 = undefined
     })
 
-    fight.startTurn = function(spells, enemiesActions) {
+    fight.startTurn = async function(spells, enemiesActions) {
         this.turn++
         console.log("SPELLS", spells)
+        const [icon1, icon2, icon3] = await spellIconsChoices(scene, [SPELLS[spells[0]], SPELLS[spells[1]], SPELLS[spells[2]]])
+        icon1.spellId = spells[0]
+        icon1.onClick = () => {
+            fight.selectedSpell = 0
+            fight.setState("pickcaster")
+            console.log("select", spells[0], SPELLS[spells[0]])
+        }
+        icon2.spellId = spells[1]
+        icon2.onClick = () => {
+            fight.selectedSpell = 1
+            fight.setState("pickcaster")
+            console.log("select", spells[1], SPELLS[spells[1]])
+        }
+        icon3.spellId = spells[2]
+        icon3.onClick = () => {
+            fight.selectedSpell = 2
+            fight.setState("pickcaster")
+            console.log("select", spells[2], SPELLS[spells[2]])
+        }
+        fight.spellsDeck = [icon1, icon2, icon3]
         Object.values(this.allies).forEach((ally) => {
-            ally.prepare(2) // punch
+            ally.prepare(1)
         })
         enemiesActions.forEach((spellId, index) => {
             if (this.enemies[index]) {
                 this.enemies[index].prepare(spellId)
             }
         })
+        fight.setState("pickspell")
     }
 
     fight.setTurnResult = function(room) {
@@ -106,62 +134,76 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
         if (this.enemies[0]) {
             fight.currentTurn.push({
                 source: this.allies[0],
-                target: this.enemies[0],
+                targets: [ { object: this.enemies[0], dmg:  this.enemies[0].hp - room.enemies[0].health.value }],
                 spell: this.allies[0].currentSpell,
                 dmg: this.enemies[0].hp - room.enemies[0].health.value
             }) 
         } else {
+            if (this.allies[0]) {
+                this.allies[0].prepare()
+            }
             fight.currentTurn.push(undefined)
         }
         if (this.enemies[1]) {
             fight.currentTurn.push({
                 source: this.allies[1],
-                target: this.enemies[1],
+                targets: [ { object: this.enemies[1], dmg:  this.enemies[1].hp - room.enemies[1].health.value }],
                 spell: this.allies[1].currentSpell,
                 dmg: this.enemies[1].hp - room.enemies[1].health.value
             }) 
         } else {
+            if (this.allies[1]) {
+                this.allies[1].prepare()
+            }
             fight.currentTurn.push(undefined)
         }
         if (this.enemies[2]) {
             fight.currentTurn.push({
                 source: this.allies[2],
-                target: this.enemies[2],
+                targets: [ { object: this.enemies[2], dmg:  this.enemies[2].hp - room.enemies[2].health.value }],
                 spell: this.allies[2].currentSpell,
-                dmg: this.enemies[2].hp - room.enemies[2].health.value
             }) 
         } else {
+            if (this.allies[2]) {
+                this.allies[2].prepare()
+            }
             fight.currentTurn.push(undefined)
         }
         if (this.enemies[0]) {
             fight.currentTurn.push({
                 source: this.enemies[0],
-                target: this.allies[0],
+                targets: [ { object: this.allies[0], dmg:  this.allies[0].hp - room.allies[0].health.value }],
                 spell: this.enemies[0].currentSpell,
-                dmg: this.allies[0].hp - room.allies[0].health.value
             })
         } else {
+            if (this.enemies[0]) {
+                this.enemies[0].prepare()
+            }
             fight.currentTurn.push(undefined)
         }
         if (this.enemies[1]) {
             fight.currentTurn.push({
-                target: this.allies[1],
+                targets: [ { object: this.allies[1], dmg: this.allies[1].hp - room.allies[1].health.value }],
                 source: this.enemies[1],
                 spell: this.enemies[1].currentSpell,
-                dmg: this.allies[1].hp - room.allies[1].health.value
             })
         } else {
+            if (this.enemies[1]) {
+                this.enemies[1].prepare()
+            }
             fight.currentTurn.push(undefined)
         }
         if (this.enemies[2]) {
             console.log(this.allies[2].hp, room.allies[2].health.value)
             fight.currentTurn.push({
                 source: this.enemies[2],
-                target: this.allies[2],
+                targets: [ { object: this.allies[2], dmg:  this.allies[2].hp - room.allies[2].health.value }],
                 spell: this.enemies[2].currentSpell,
-                dmg: this.allies[2].hp - room.allies[2].health.value
             })
         } else {
+            if (this.enemies[2]) {
+                this.enemies[2].prepare()
+            }
             fight.currentTurn.push(undefined)
         }
         console.log(fight.currentTurn)
@@ -170,6 +212,7 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
 
     fight.executeTurn = function(step) {
         if (step >= 6) {
+            fight.setState("pickspell")
             return
         }
         const turnAction = this.currentTurn[step]
@@ -178,19 +221,19 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
             return
         }
         const spell = turnAction.spell
-        if (spell === 2) {
+        if (spell > 0) {
             turnAction.source.attack()
             scene.addTween(turnAction.source, "position", (tween) => {
                 tween.to({
-                    x: turnAction.target.position.x + (turnAction.source.position.x < turnAction.target.position.x ? -1 : 1),
+                    x: turnAction.targets[0].object.position.x + (turnAction.source.position.x < turnAction.targets[0].object.position.x ? -1 : 1),
                 }, 400)
                 .start()
             })
             setTimeout(() => {
-                turnAction.target.hit(turnAction.dmg)
+                turnAction.targets.forEach((t) => t.object.hit(t.dmg))
                 scene.addTween(turnAction.source, "position", (tween) => {
                     tween.to({
-                        x: -turnAction.target.position.x,
+                        x: -turnAction.targets[0].object.position.x,
                     }, 100)
                     .delay(300)
                     .start()
@@ -203,7 +246,16 @@ export function startFight(scene, charactersInfo, enemiesInfo, spellsList) {
         setTimeout(() => { this.executeTurn(step + 1) }, 1000)
     }
 
-    fight.setState("swap")
+    fight.clean = function() {
+        for (let i = 0; i < 3; i++) {
+            if (fight.allies[i]) {
+                fight.allies[i].clean()
+            }
+            if (fight.enemies[i]) {
+                fight.enemies[i].clean()
+            }
+        }
+    }
 
     return fight
 }

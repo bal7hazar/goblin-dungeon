@@ -1,15 +1,14 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
-// import Stats from '../node_modules/three/examples/jsm/libs/stats.module'
 import { initDojo } from './dojo/dojo.js';
 import { initScene } from './game/scene.js';
 import { initMap } from './game/map.js';
 import { loadFont } from './utils/text.js';
 import { startFight } from './game/fight.js';
-import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader';
 import { addHero } from './game/hero.js';
 import { createStaticText } from './utils/text.js';
-import { dojo_attack, on_entity_update } from './utils/event.js';
-import { loadModels } from './utils/assets.js';
+import { on_entity_update } from './utils/event.js';
+import { getModel, loadModels } from './utils/assets.js';
+import { ROOM_TYPES } from './utils/constants.js';
 
 let timeoutUpdateFight
 let scene
@@ -20,7 +19,7 @@ let dojoData = {}
 let hero
 let currentFight
 
-on_entity_update(function(data) {
+on_entity_update((data) => {
     dojoData = data
     console.log(data)
     room = data.currentRoom
@@ -35,42 +34,44 @@ on_entity_update(function(data) {
         roomTexts.south = roomTexts.south.updateText(`(${Math.floor(x)};${Math.floor(y - 1)})`)
 
         console.log("new room")
+        if (currentFight) {
+            currentFight.clean()
+        }
         setTimeout(() => {
-            if (hero) {
-                hero.position.set([-4,0,0])
+            const roomInfo = data.rooms[data.currentRoom.dungeon_id.value][data.currentRoom.y.value][data.currentRoom.x.value]
+            const roomType = ROOM_TYPES[roomInfo.category.value]
+            if (roomType === "Monster") {
+                if (hero) {
+                    hero.position.set([-4,0,0])
+                }
+                const fight = startFight(
+                    scene,
+                    room.allies,
+                    room.enemies
+                )
+                currentFight = fight
+                setTimeout(() => {
+                    const spells = [parseInt(room.deck.value.slice(2,3),16), parseInt(room.deck.value.slice(3,4),16),parseInt(room.deck.value.slice(4,5),16)]
+                    fight.startTurn(spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
+                }, 1000)
+            } else {
+                console.log("Just entered", roomType)
             }
-            const fight = startFight(
-                scene,
-                room.allies,
-                room.enemies
-            )
-            currentFight = fight
-            setTimeout(() => {
-                const spells = [parseInt(room.deck.value.slice(2,3),16), parseInt(room.deck.value.slice(3,4),16),parseInt(room.deck.value.slice(4,5),16)]
-                fight.startTurn(spells, [room.enemies[0].spell.value,room.enemies[1].spell.value,room.enemies[2].spell.value])
-                // setTimeout(() => { dojo_attack() }, 1000)
-            }, 2000)
         }, 500)
     } else if (currentFight) {
         if (timeoutUpdateFight) { clearTimeout(timeoutUpdateFight) }
         timeoutUpdateFight = setTimeout(() => {
             currentFight.setTurnResult(data.currentRoom)
+            setTimeout(() => {
+                const spells = [parseInt(room.deck.value.slice(2,3),16), parseInt(room.deck.value.slice(3,4),16),parseInt(room.deck.value.slice(4,5),16)]
+                currentFight.startTurn(spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
+            }, 6000)
         }, 500)
     }
 })
 
 function activateHeroMovement() {
-    const fbxLoader = new FBXLoader()
-    fbxLoader.load(
-        `assets/models/characters/adventurers/Characters/fbx/Knight.fbx`,
-        (object) => {
-            hero = addHero(scene, object, [0, 0, 0], [0, Math.PI * 0.5, 0])
-        },
-        undefined,
-        (error) => {
-            console.log(error)
-        }
-    )
+    hero = addHero(scene, getModel("Knight"), [0, 0, 0], [0, Math.PI * 0.5, 0])
 }
 
 function initRoomUI() {
@@ -81,17 +82,14 @@ function initRoomUI() {
     roomTexts.north = createStaticText(scene, `(0;1)`, [-1.25, 0, -9])
 }
 
-loadFont(() => {
-    setTimeout(() => {
-        initDojo()   
-    }, 1000)
-    
+loadFont(async () => {
+    initDojo()
     scene = initScene()
     initMap(scene)
-
-    initRoomUI()
-    loadModels()
-    activateHeroMovement()
+    loadModels().then(() => {
+        initRoomUI()
+        activateHeroMovement()    
+    })
 });
 
 // const loader = new GLTFLoader();

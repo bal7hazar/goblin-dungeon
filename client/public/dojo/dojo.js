@@ -16,6 +16,9 @@ let dojoData = {
         const enemies = [this.mobs[player.team_id.value][3],this.mobs[player.team_id.value][4],this.mobs[player.team_id.value][5]]
         team.allies = allies
         team.enemies = enemies
+        if (this.rooms[player.team_id.value] && this.rooms[player.team_id.value][team.y.value]) {
+            team.roomInfo = this.rooms[player.team_id.value][team.y.value][team.x.value]
+        }
         return team
     }
 }
@@ -38,27 +41,39 @@ export async function initDojo() {
     const privateKey = wasm_bindgen.signingKeyNew();
     const burnerAccount = await masterAccount.deployBurner(privateKey);
 
-    // const entities = await client.getEntities({ limit: 100, offset: 0 });
-    // console.log("Entities", entities);
+    const entities = await client.getEntities({ limit: 1000, offset: 0 });
+    Object.values(entities).forEach((models) => {
+        for (const key in models) {
+            const entity = models[key]
+            if (key.endsWith('Room')) {
+                console.log("ROOOOM", entity)
+                dojoData.rooms[entity.dungeon_id.value] = dojoData.rooms[entity.dungeon_id.value] || {}
+                dojoData.rooms[entity.dungeon_id.value][entity.y.value] = dojoData.rooms[entity.dungeon_id.value][entity.y.value] || {}
+                dojoData.rooms[entity.dungeon_id.value][entity.y.value][entity.x.value] = entity
+            }
+        }
+    })
 
     subscription = await client.onEntityUpdated([], (entityKey, models) => {
         for (const key in models) {
             const entity = models[key]
-            if (key.endsWith('-Player') && entity.id.value == burnerAccount.address()) {
+            if (key.endsWith('Player') && entity.id.value == burnerAccount.address()) {
                 dojoData.localPlayer = entity
             }
-            if (key.endsWith('-Team')) {
+            if (key.endsWith('Team')) {
                 dojoData.teams[entity.id.value] = entity
             }
-            if (key.endsWith('-Room')) {
+            if (key.endsWith('Room')) {
+                console.log("ROOOOM", entity)
                 dojoData.rooms[entity.dungeon_id.value] = dojoData.rooms[entity.dungeon_id.value] || {}
-                dojoData.rooms[entity.dungeon_id.value][entity.id.value] = entity
+                dojoData.rooms[entity.dungeon_id.value][entity.y.value] = dojoData.rooms[entity.dungeon_id.value][entity.y.value] || {}
+                dojoData.rooms[entity.dungeon_id.value][entity.y.value][entity.x.value] = entity
             }
-            if (key.endsWith('-Mob')) {
+            if (key.endsWith('Mob')) {
                 dojoData.mobs[entity.team_id.value] = dojoData.mobs[entity.team_id.value] || {}
                 dojoData.mobs[entity.team_id.value][entity.index.value] = entity
             }
-            if (key.endsWith('-Challenge')) {
+            if (key.endsWith('Challenge')) {
                 dojoData.challenges[entity.dungeon_id.value] = dojoData.challenges[entity.dungeon_id.value] || {}
                 dojoData.challenges[entity.dungeon_id.value][entity.team_id.value] = dojoData.challenges[entity.dungeon_id.value][entity.team_id.value] || {}
                 dojoData.challenges[entity.dungeon_id.value][entity.team_id.value][entity.y.value] = dojoData.challenges[entity.dungeon_id.value][entity.team_id.value][entity.y.value] || {}
@@ -71,7 +86,7 @@ export async function initDojo() {
     setDojoListeners({
         dojo_signup: (e) => [burnerAccount, actionAddress, 'signup', [`${Math.floor(e.name)}`]],
         dojo_spawn: () => [burnerAccount, actionAddress, 'spawn', []],
-        dojo_attack: () => [burnerAccount, actionAddress, 'attack', ["0x012", `${Math.floor(Math.random() * 3)}`, `${Math.floor(Math.random() * 3)}`]],
+        dojo_attack: (e) => [burnerAccount, actionAddress, 'attack', [e.characterOrder, e.spellId, e.caster]],
         dojo_move: (e) => [burnerAccount, actionAddress, 'move', [`${Math.floor(e.direction)}`]]
     })
 
@@ -81,7 +96,7 @@ export async function initDojo() {
             dojo_spawn()
             setTimeout(() => {
                 // dojo_move(2)
-            }, 500)
-        }, 500)
-    }, 1500);
+            }, 1000)
+        }, 1000)
+    }, 1000);
 }

@@ -22,7 +22,7 @@ export async function getIcon(name) {
 const models = {}
 const MODELS_TO_LOAD = [
     "characters/adventurers/Characters/fbx/Knight",
-    "characters/adventurers/Characters/fbx/RogueHooded",
+    "characters/adventurers/Characters/fbx/Rogue",
     "characters/adventurers/Characters/fbx/Barbarian",
     "characters/adventurers/Characters/fbx/Mage",
     "characters/monsters/Characters/fbx/Skeleton_Mage",

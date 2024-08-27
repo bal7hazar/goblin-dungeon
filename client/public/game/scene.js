@@ -2,7 +2,7 @@ import * as THREE from '../node_modules/three/build/three.module.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls'
 import TWEEN from '../node_modules/@tweenjs/tween.js'
 
-let objectToInteract
+let objectToInteract, uiObjectToInteract
 const tweens = []
 
 export function initScene() {
@@ -56,13 +56,27 @@ export function initScene() {
         requestAnimationFrame(gameLoop)
         controls.update();
 
+        // Scene raycast
         raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(scene.children);
+        raycaster.layers.enableAll();
+        let intersects = raycaster.intersectObjects(scene.children);
     
         objectToInteract = undefined
         for ( let i = 0; i < intersects.length; i ++ ) {
             if (intersects[i].object.onClick) {
                 objectToInteract = intersects[i].object
+            }
+        }
+
+        // UI Raycast
+        raycaster.setFromCamera(pointer, uiCamera);
+        raycaster.layers.set(2);
+        intersects = raycaster.intersectObjects(scene.children);
+    
+        uiObjectToInteract = undefined
+        for ( let i = 0; i < intersects.length; i ++ ) {
+            if (intersects[i].object.onClick) {
+                uiObjectToInteract = intersects[i].object
             }
         }
     
@@ -95,6 +109,11 @@ export function initScene() {
     }
 
     window.addEventListener('click', (e) => {
+        if (uiObjectToInteract) {
+            uiObjectToInteract.onClick()
+            return
+        }
+
         if (objectToInteract) {
             objectToInteract.onClick()
         }
