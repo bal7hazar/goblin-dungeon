@@ -1,5 +1,17 @@
 import { dojo_entity_update, dojo_move, dojo_signup, dojo_spawn, setDojoListeners } from "../utils/event.js"
 
+import { config } from './env.js';
+
+const {
+    NODE_URL,
+    TORII_URL,
+    RELAY_URL,
+    WORLD_ADDRESS,
+    SYSTEM_ADDRESS,
+    MASTER_ADDRESS,
+    MASTER_PRIVATE_KEY,
+} = config;
+
 let dojoData = {
     localPlayer: undefined,
     teams: {},
@@ -28,15 +40,18 @@ let subscription
 export async function initDojo() {
     await wasm_bindgen();
     const client = await wasm_bindgen.createClient({
-        rpcUrl: "http://localhost:5050",
-        toriiUrl: "http://localhost:8080",
-        relayUrl: "/ip4/127.0.0.1/tcp/9090",
-        worldAddress: "0x3b092891f7d869d9255225311da9ffd7a090c851b7ea5de92ea162e5b4dfcd6",
+        rpcUrl: NODE_URL,
+        toriiUrl: TORII_URL,
+        relayUrl: RELAY_URL,
+        worldAddress: WORLD_ADDRESS,
     });
-    const actionAddress = '0x03022cd638babf65f15e26ebc9e85a2413bedd9b6580db12b8dd0a8516c4bcfa'
+    const actionAddress = SYSTEM_ADDRESS;
 
-    const provider = wasm_bindgen.createProvider("http://localhost:5050");
-    const masterAccount = await provider.createAccount("0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a", "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca");
+    const provider = wasm_bindgen.createProvider(NODE_URL);
+    const masterAccount = await provider.createAccount(
+        MASTER_PRIVATE_KEY,
+        MASTER_ADDRESS,
+    );
 
     const privateKey = wasm_bindgen.signingKeyNew();
     const burnerAccount = await masterAccount.deployBurner(privateKey);
