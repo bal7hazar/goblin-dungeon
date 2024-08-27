@@ -1,0 +1,21 @@
+kind = "DojoContract"
+class_hash = "0x4b1f794afbbbca9ff168d2bd0bb28730cdbc1349e7c04e4c541d1222af34ed8"
+original_class_hash = "0x4b1f794afbbbca9ff168d2bd0bb28730cdbc1349e7c04e4c541d1222af34ed8"
+base_class_hash = "0x0"
+abi = "manifests/slot/base/abis/contracts/grimscape-actions-18ec7a89.json"
+reads = []
+writes = []
+init_calldata = []
+tag = "grimscape-actions"
+systems = [
+    "signup",
+    "rename",
+    "spawn",
+    "move",
+    "attack",
+    "hire",
+    "pickup",
+    "burn",
+    "heal",
+]
+manifest_name = "grimscape-actions-18ec7a89"

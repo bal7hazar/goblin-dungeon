@@ -1,10 +1,10 @@
 kind = "DojoModel"
-class_hash = "0x24ec352f9a463e68daa768c5745eb2db5d5bf152569054c5ba164455ad05176"
-original_class_hash = "0x24ec352f9a463e68daa768c5745eb2db5d5bf152569054c5ba164455ad05176"
-abi = "manifests/slot/base/abis/models/grimscape-Mob-57fe6720.json"
+class_hash = "0x310c9f841c0f3595eb7838b8e3f12590eb8e759e57c96e9c3f3b5be7d898cf2"
+original_class_hash = "0x310c9f841c0f3595eb7838b8e3f12590eb8e759e57c96e9c3f3b5be7d898cf2"
+abi = "manifests/slot/base/abis/models/grimscape-Mob-3a6da169.json"
 tag = "grimscape-Mob"
 qualified_path = "grimscape::models::index::mob"
-manifest_name = "grimscape-Mob-57fe6720"
+manifest_name = "grimscape-Mob-3a6da169"
 
 [[members]]
 name = "dungeon_id"
