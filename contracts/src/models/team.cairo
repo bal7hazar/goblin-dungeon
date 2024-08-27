@@ -27,8 +27,18 @@ mod errors {
 impl TeamImpl of TeamTrait {
     #[inline]
     fn new(dungeon_id: u32, id: u32, seed: felt252, player_id: felt252) -> Team {
+        // [Compute] Default deck
+        let spells: Array<u8> = array![
+            Spell::Kick.into(),
+            Spell::Kick.into(),
+            Spell::Kick.into(),
+            Spell::Heal.into(),
+            Spell::Heal.into(),
+            Spell::Heal.into(),
+        ];
+        let deck: u64 = Packer::pack(spells, SPELL_BIT_LENGTH);
         // [Return] Team
-        Team { dungeon_id, id, x: 0, y: 0, dead: false, deck: 0, spells: 0, seed, player_id, }
+        Team { dungeon_id, id, x: 0, y: 0, dead: false, deck, spells: 0, seed, player_id, }
     }
 
     #[inline]
