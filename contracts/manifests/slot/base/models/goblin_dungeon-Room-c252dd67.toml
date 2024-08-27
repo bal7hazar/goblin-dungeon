@@ -1,0 +1,42 @@
+kind = "DojoModel"
+class_hash = "0x3debc07993e83546ac70e898ae5ae37c7cba09513053a79f304a87555d55944"
+original_class_hash = "0x3debc07993e83546ac70e898ae5ae37c7cba09513053a79f304a87555d55944"
+abi = "manifests/slot/base/abis/models/grimscape-Room-c252dd67.json"
+tag = "grimscape-Room"
+qualified_path = "grimscape::models::index::room"
+manifest_name = "grimscape-Room-c252dd67"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "x"
+type = "i32"
+key = true
+
+[[members]]
+name = "y"
+type = "i32"
+key = true
+
+[[members]]
+name = "category"
+type = "u8"
+key = false
+
+[[members]]
+name = "adventurers"
+type = "u16"
+key = false
+
+[[members]]
+name = "spell"
+type = "u8"
+key = false
+
+[[members]]
+name = "seed"
+type = "felt252"
+key = false

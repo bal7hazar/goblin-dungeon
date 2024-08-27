@@ -1,9 +1,9 @@
 // Internal imports
 
-use rpg::elements::spells;
-use rpg::models::mob::Mob;
-use rpg::types::role::Role;
-use rpg::types::element::Element;
+use grimscape::elements::spells;
+use grimscape::models::mob::Mob;
+use grimscape::types::role::Role;
+use grimscape::types::element::Element;
 
 #[derive(Copy, Drop)]
 enum Spell {

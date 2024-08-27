@@ -4,7 +4,7 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::models::index::Dungeon;
+use grimscape::models::index::Dungeon;
 
 mod errors {
     const DUNGEON_NOT_CLAIMED: felt252 = 'Dungeon: not claimed';

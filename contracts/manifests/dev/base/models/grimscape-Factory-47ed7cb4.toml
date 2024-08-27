@@ -1,0 +1,17 @@
+kind = "DojoModel"
+class_hash = "0x2a5fb56491e97bd613e2609235da1ff0b6c6c2551b49ec2bfd94c65afb7f05b"
+original_class_hash = "0x2a5fb56491e97bd613e2609235da1ff0b6c6c2551b49ec2bfd94c65afb7f05b"
+abi = "manifests/dev/base/abis/models/grimscape-Factory-47ed7cb4.json"
+tag = "grimscape-Factory"
+qualified_path = "grimscape::models::index::factory"
+manifest_name = "grimscape-Factory-47ed7cb4"
+
+[[members]]
+name = "id"
+type = "u32"
+key = true
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = false

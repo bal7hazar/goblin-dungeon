@@ -364,11 +364,11 @@
   {
     "type": "impl",
     "name": "mobImpl",
-    "interface_name": "rpg::models::index::Imob"
+    "interface_name": "grimscape::models::index::Imob"
   },
   {
     "type": "struct",
-    "name": "rpg::models::index::Mob",
+    "name": "grimscape::models::index::Mob",
     "members": [
       {
         "name": "dungeon_id",
@@ -414,7 +414,7 @@
   },
   {
     "type": "interface",
-    "name": "rpg::models::index::Imob",
+    "name": "grimscape::models::index::Imob",
     "items": [
       {
         "type": "function",
@@ -422,7 +422,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "rpg::models::index::Mob"
+            "type": "grimscape::models::index::Mob"
           }
         ],
         "outputs": [],
@@ -432,7 +432,7 @@
   },
   {
     "type": "event",
-    "name": "rpg::models::index::mob::Event",
+    "name": "grimscape::models::index::mob::Event",
     "kind": "enum",
     "variants": []
   }

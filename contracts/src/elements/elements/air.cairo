@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::elements::elements::interface::{Element, ElementTrait};
+use grimscape::elements::elements::interface::{Element, ElementTrait};
 
 impl Air of ElementTrait {
     #[inline]

@@ -12,14 +12,14 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 // Internal imports
 
-use rpg::constants;
-use rpg::store::{Store, StoreTrait};
-use rpg::models::player::{Player, PlayerTrait};
-use rpg::models::factory::{Factory, FactoryTrait};
-use rpg::models::dungeon::{Dungeon, DungeonTrait};
-use rpg::types::direction::Direction;
-use rpg::systems::actions::IActionsDispatcherTrait;
-use rpg::tests::setup::{setup, setup::{Systems, PLAYER}};
+use grimscape::constants;
+use grimscape::store::{Store, StoreTrait};
+use grimscape::models::player::{Player, PlayerTrait};
+use grimscape::models::factory::{Factory, FactoryTrait};
+use grimscape::models::dungeon::{Dungeon, DungeonTrait};
+use grimscape::types::direction::Direction;
+use grimscape::systems::actions::IActionsDispatcherTrait;
+use grimscape::tests::setup::{setup, setup::{Systems, PLAYER}};
 
 #[test]
 fn test_actions_move() {

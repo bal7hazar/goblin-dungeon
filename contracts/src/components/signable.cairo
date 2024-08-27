@@ -14,8 +14,8 @@ mod SignableComponent {
 
     // Internal imports
 
-    use rpg::store::{Store, StoreTrait};
-    use rpg::models::player::{Player, PlayerTrait, PlayerAssert};
+    use grimscape::store::{Store, StoreTrait};
+    use grimscape::models::player::{Player, PlayerTrait, PlayerAssert};
 
     // Errors
 

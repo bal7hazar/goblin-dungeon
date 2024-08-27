@@ -1,10 +1,10 @@
 kind = "DojoModel"
-class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
-original_class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
-abi = "manifests/dev/base/abis/models/goblin_dungeon-Mob-57fe6720.json"
-tag = "goblin_dungeon-Mob"
-qualified_path = "rpg::models::index::mob"
-manifest_name = "goblin_dungeon-Mob-57fe6720"
+class_hash = "0x310c9f841c0f3595eb7838b8e3f12590eb8e759e57c96e9c3f3b5be7d898cf2"
+original_class_hash = "0x310c9f841c0f3595eb7838b8e3f12590eb8e759e57c96e9c3f3b5be7d898cf2"
+abi = "manifests/dev/base/abis/models/grimscape-Mob-3a6da169.json"
+tag = "grimscape-Mob"
+qualified_path = "grimscape::models::index::mob"
+manifest_name = "grimscape-Mob-3a6da169"
 
 [[members]]
 name = "dungeon_id"
@@ -23,6 +23,11 @@ key = true
 
 [[members]]
 name = "class"
+type = "u8"
+key = false
+
+[[members]]
+name = "threat"
 type = "u8"
 key = false
 

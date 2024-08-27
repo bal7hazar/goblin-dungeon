@@ -1,0 +1,62 @@
+kind = "DojoModel"
+class_hash = "0x24ec352f9a463e68daa768c5745eb2db5d5bf152569054c5ba164455ad05176"
+original_class_hash = "0x24ec352f9a463e68daa768c5745eb2db5d5bf152569054c5ba164455ad05176"
+abi = "manifests/slot/base/abis/models/grimscape-Mob-57fe6720.json"
+tag = "grimscape-Mob"
+qualified_path = "grimscape::models::index::mob"
+manifest_name = "grimscape-Mob-57fe6720"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "team_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "index"
+type = "u8"
+key = true
+
+[[members]]
+name = "class"
+type = "u8"
+key = false
+
+[[members]]
+name = "threat"
+type = "u8"
+key = false
+
+[[members]]
+name = "element"
+type = "u8"
+key = false
+
+[[members]]
+name = "spell"
+type = "u8"
+key = false
+
+[[members]]
+name = "health"
+type = "u8"
+key = false
+
+[[members]]
+name = "shield"
+type = "u8"
+key = false
+
+[[members]]
+name = "stun"
+type = "u8"
+key = false
+
+[[members]]
+name = "multiplier"
+type = "u8"
+key = false

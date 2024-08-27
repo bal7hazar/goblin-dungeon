@@ -12,20 +12,20 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 // Internal imports
 
-use rpg::constants;
-use rpg::store::{Store, StoreTrait};
-use rpg::models::player::{Player, PlayerTrait};
-use rpg::models::factory::{Factory, FactoryTrait};
-use rpg::models::dungeon::{Dungeon, DungeonTrait};
-use rpg::models::room::{Room, RoomTrait};
-use rpg::types::direction::Direction;
-use rpg::types::category::Category;
-use rpg::types::spell::Spell;
-use rpg::types::element::Element;
-use rpg::types::monster::Monster;
-use rpg::types::role::Role;
-use rpg::systems::actions::IActionsDispatcherTrait;
-use rpg::tests::setup::{setup, setup::{Systems, PLAYER, next}};
+use grimscape::constants;
+use grimscape::store::{Store, StoreTrait};
+use grimscape::models::player::{Player, PlayerTrait};
+use grimscape::models::factory::{Factory, FactoryTrait};
+use grimscape::models::dungeon::{Dungeon, DungeonTrait};
+use grimscape::models::room::{Room, RoomTrait};
+use grimscape::types::direction::Direction;
+use grimscape::types::category::Category;
+use grimscape::types::spell::Spell;
+use grimscape::types::element::Element;
+use grimscape::types::monster::Monster;
+use grimscape::types::role::Role;
+use grimscape::systems::actions::IActionsDispatcherTrait;
+use grimscape::tests::setup::{setup, setup::{Systems, PLAYER, next}};
 
 
 #[test]

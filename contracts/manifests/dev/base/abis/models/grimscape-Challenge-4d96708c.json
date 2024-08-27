@@ -363,26 +363,56 @@
   },
   {
     "type": "impl",
-    "name": "factoryImpl",
-    "interface_name": "rpg::models::index::Ifactory"
+    "name": "challengeImpl",
+    "interface_name": "grimscape::models::index::Ichallenge"
+  },
+  {
+    "type": "enum",
+    "name": "core::bool",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
   },
   {
     "type": "struct",
-    "name": "rpg::models::index::Factory",
+    "name": "grimscape::models::index::Challenge",
     "members": [
       {
-        "name": "id",
+        "name": "dungeon_id",
         "type": "core::integer::u32"
       },
       {
-        "name": "dungeon_id",
+        "name": "team_id",
+        "type": "core::integer::u32"
+      },
+      {
+        "name": "x",
+        "type": "core::integer::i32"
+      },
+      {
+        "name": "y",
+        "type": "core::integer::i32"
+      },
+      {
+        "name": "completed",
+        "type": "core::bool"
+      },
+      {
+        "name": "nonce",
         "type": "core::integer::u32"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "rpg::models::index::Ifactory",
+    "name": "grimscape::models::index::Ichallenge",
     "items": [
       {
         "type": "function",
@@ -390,7 +420,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "rpg::models::index::Factory"
+            "type": "grimscape::models::index::Challenge"
           }
         ],
         "outputs": [],
@@ -400,7 +430,7 @@
   },
   {
     "type": "event",
-    "name": "rpg::models::index::factory::Event",
+    "name": "grimscape::models::index::challenge::Event",
     "kind": "enum",
     "variants": []
   }

@@ -1,10 +1,10 @@
 kind = "DojoModel"
 class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
 original_class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
-abi = "manifests/dev/base/abis/models/goblin_dungeon-Player-25b86644.json"
-tag = "goblin_dungeon-Player"
-qualified_path = "rpg::models::index::player"
-manifest_name = "goblin_dungeon-Player-25b86644"
+abi = "manifests/slot/base/abis/models/grimscape-Player-25b86644.json"
+tag = "grimscape-Player"
+qualified_path = "grimscape::models::index::player"
+manifest_name = "grimscape-Player-25b86644"
 
 [[members]]
 name = "id"

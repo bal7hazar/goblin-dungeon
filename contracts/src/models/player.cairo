@@ -4,7 +4,7 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::models::index::Player;
+use grimscape::models::index::Player;
 
 mod errors {
     const PLAYER_NOT_CREATED: felt252 = 'Player: does not exist';

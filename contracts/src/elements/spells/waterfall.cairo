@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::elements::spells::interface::{SpellTrait, Mob, MobTrait, Role, Element};
+use grimscape::elements::spells::interface::{SpellTrait, Mob, MobTrait, Role, Element};
 
 // Constants
 

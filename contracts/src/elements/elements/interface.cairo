@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::types::element::Element;
+use grimscape::types::element::Element;
 
 trait ElementTrait {
     fn weakness() -> Element;

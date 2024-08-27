@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::helpers::math::Math;
+use grimscape::helpers::math::Math;
 
 #[generate_trait]
 pub impl Bitmap<

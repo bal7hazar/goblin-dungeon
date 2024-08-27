@@ -4,15 +4,15 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::models::index::Mob;
-use rpg::types::direction::Direction;
-use rpg::types::role::{Role, RoleTrait};
-use rpg::types::element::{Element, ElementTrait};
-use rpg::types::spell::{Spell, SpellTrait};
-use rpg::types::monster::{Monster, MonsterTrait};
-use rpg::types::threat::{Threat, ThreatTrait};
-use rpg::helpers::packer::Packer;
-use rpg::helpers::seeder::Seeder;
+use grimscape::models::index::Mob;
+use grimscape::types::direction::Direction;
+use grimscape::types::role::{Role, RoleTrait};
+use grimscape::types::element::{Element, ElementTrait};
+use grimscape::types::spell::{Spell, SpellTrait};
+use grimscape::types::monster::{Monster, MonsterTrait};
+use grimscape::types::threat::{Threat, ThreatTrait};
+use grimscape::helpers::packer::Packer;
+use grimscape::helpers::seeder::Seeder;
 
 mod errors {
     const MOB_NOT_EXIST: felt252 = 'Mob: does not exist';

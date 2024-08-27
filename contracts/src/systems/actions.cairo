@@ -27,8 +27,8 @@ trait IActions<TContractState> {
 mod actions {
     // Component imports
 
-    use rpg::components::signable::SignableComponent;
-    use rpg::components::playable::PlayableComponent;
+    use grimscape::components::signable::SignableComponent;
+    use grimscape::components::playable::PlayableComponent;
 
     // Local imports
 

@@ -364,7 +364,7 @@
   {
     "type": "impl",
     "name": "teamImpl",
-    "interface_name": "rpg::models::index::Iteam"
+    "interface_name": "grimscape::models::index::Iteam"
   },
   {
     "type": "enum",
@@ -382,7 +382,7 @@
   },
   {
     "type": "struct",
-    "name": "rpg::models::index::Team",
+    "name": "grimscape::models::index::Team",
     "members": [
       {
         "name": "dungeon_id",
@@ -416,7 +416,7 @@
   },
   {
     "type": "interface",
-    "name": "rpg::models::index::Iteam",
+    "name": "grimscape::models::index::Iteam",
     "items": [
       {
         "type": "function",
@@ -424,7 +424,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "rpg::models::index::Team"
+            "type": "grimscape::models::index::Team"
           }
         ],
         "outputs": [],
@@ -434,7 +434,7 @@
   },
   {
     "type": "event",
-    "name": "rpg::models::index::team::Event",
+    "name": "grimscape::models::index::team::Event",
     "kind": "enum",
     "variants": []
   }

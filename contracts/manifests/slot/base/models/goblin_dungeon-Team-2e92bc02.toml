@@ -1,0 +1,52 @@
+kind = "DojoModel"
+class_hash = "0x7219f9bbfb80db0e7bf25a250bebebf5343b0732f209a127a7bb133f3cf3107"
+original_class_hash = "0x7219f9bbfb80db0e7bf25a250bebebf5343b0732f209a127a7bb133f3cf3107"
+abi = "manifests/slot/base/abis/models/grimscape-Team-2e92bc02.json"
+tag = "grimscape-Team"
+qualified_path = "grimscape::models::index::team"
+manifest_name = "grimscape-Team-2e92bc02"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "id"
+type = "u32"
+key = true
+
+[[members]]
+name = "x"
+type = "i32"
+key = false
+
+[[members]]
+name = "y"
+type = "i32"
+key = false
+
+[[members]]
+name = "dead"
+type = "bool"
+key = false
+
+[[members]]
+name = "deck"
+type = "u64"
+key = false
+
+[[members]]
+name = "spells"
+type = "u16"
+key = false
+
+[[members]]
+name = "seed"
+type = "felt252"
+key = false
+
+[[members]]
+name = "player_id"
+type = "felt252"
+key = false

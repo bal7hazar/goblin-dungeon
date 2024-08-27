@@ -1,10 +1,10 @@
 // Internal imports
 
-use rpg::constants::MOB_BASE_HEALTH;
-use rpg::elements::roles;
-use rpg::elements::monsters;
-use rpg::types::element::Element;
-use rpg::types::spell::Spell;
+use grimscape::constants::MOB_BASE_HEALTH;
+use grimscape::elements::roles;
+use grimscape::elements::monsters;
+use grimscape::types::element::Element;
+use grimscape::types::spell::Spell;
 
 #[derive(Copy, Drop)]
 enum Role {

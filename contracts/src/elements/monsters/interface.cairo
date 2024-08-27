@@ -1,8 +1,8 @@
 // Internal imports
 
-use rpg::types::element::Element;
-use rpg::types::spell::Spell;
-use rpg::types::threat::Threat;
+use grimscape::types::element::Element;
+use grimscape::types::spell::Spell;
+use grimscape::types::threat::Threat;
 
 trait MonsterTrait {
     fn health(threat: Threat) -> u8;

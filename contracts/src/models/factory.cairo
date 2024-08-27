@@ -4,7 +4,7 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::models::index::Factory;
+use grimscape::models::index::Factory;
 
 mod errors {}
 

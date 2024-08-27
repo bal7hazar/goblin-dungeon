@@ -1,6 +1,6 @@
 [package]
 cairo-version = "=2.7.0"
-name = "rpg"
+name = "grimscape"
 version = "0.0.0"
 
 [cairo]

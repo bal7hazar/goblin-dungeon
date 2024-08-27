@@ -6,7 +6,7 @@ abi = "manifests/dev/deployment/abis/dojo-world.json"
 address = "0x3b092891f7d869d9255225311da9ffd7a090c851b7ea5de92ea162e5b4dfcd6"
 transaction_hash = "0x1d913752dde6b801850d3137739a55b7d7c005884164a25681ffb2fe156ae17"
 block_number = 3
-seed = "goblin_dungeon"
+seed = "grimscape"
 manifest_name = "dojo-world"
 
 [world.metadata]
@@ -27,36 +27,30 @@ address = "0x3022cd638babf65f15e26ebc9e85a2413bedd9b6580db12b8dd0a8516c4bcfa"
 class_hash = "0x1b8477f1c6a4491dfccbc7eb1c84e8eafec34d12035ef99e7b56fa98148e3f4"
 original_class_hash = "0x1b8477f1c6a4491dfccbc7eb1c84e8eafec34d12035ef99e7b56fa98148e3f4"
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
-abi = "manifests/dev/deployment/abis/contracts/goblin_dungeon-actions-bc726048.json"
+abi = "manifests/dev/deployment/abis/contracts/grimscape-actions-bc726048.json"
 reads = []
 writes = [
-    "goblin_dungeon-Player",
-    "goblin_dungeon-Factory",
-    "goblin_dungeon-Dungeon",
-    "goblin_dungeon-Room",
-    "goblin_dungeon-Team",
-    "goblin_dungeon-Mob",
-    "goblin_dungeon-Challenge",
+    "grimscape-Player",
+    "grimscape-Factory",
+    "grimscape-Dungeon",
+    "grimscape-Room",
+    "grimscape-Team",
+    "grimscape-Mob",
+    "grimscape-Challenge",
 ]
 init_calldata = []
-tag = "goblin_dungeon-actions"
-systems = [
-    "signup",
-    "rename",
-    "spawn",
-    "move",
-    "attack",
-]
-manifest_name = "goblin_dungeon-actions-bc726048"
+tag = "grimscape-actions"
+systems = ["signup", "rename", "spawn", "move", "attack"]
+manifest_name = "grimscape-actions-bc726048"
 
 [[models]]
 kind = "DojoModel"
 class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
 original_class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
-abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Challenge-6cbc441e.json"
-tag = "goblin_dungeon-Challenge"
-qualified_path = "rpg::models::index::challenge"
-manifest_name = "goblin_dungeon-Challenge-6cbc441e"
+abi = "manifests/dev/deployment/abis/models/grimscape-Challenge-6cbc441e.json"
+tag = "grimscape-Challenge"
+qualified_path = "grimscape::models::index::challenge"
+manifest_name = "grimscape-Challenge-6cbc441e"
 
 [[models.members]]
 name = "dungeon_id"
@@ -92,10 +86,10 @@ key = false
 kind = "DojoModel"
 class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
 original_class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
-abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Dungeon-6a08af97.json"
-tag = "goblin_dungeon-Dungeon"
-qualified_path = "rpg::models::index::dungeon"
-manifest_name = "goblin_dungeon-Dungeon-6a08af97"
+abi = "manifests/dev/deployment/abis/models/grimscape-Dungeon-6a08af97.json"
+tag = "grimscape-Dungeon"
+qualified_path = "grimscape::models::index::dungeon"
+manifest_name = "grimscape-Dungeon-6a08af97"
 
 [[models.members]]
 name = "id"
@@ -121,10 +115,10 @@ key = false
 kind = "DojoModel"
 class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
 original_class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
-abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Factory-2a440efa.json"
-tag = "goblin_dungeon-Factory"
-qualified_path = "rpg::models::index::factory"
-manifest_name = "goblin_dungeon-Factory-2a440efa"
+abi = "manifests/dev/deployment/abis/models/grimscape-Factory-2a440efa.json"
+tag = "grimscape-Factory"
+qualified_path = "grimscape::models::index::factory"
+manifest_name = "grimscape-Factory-2a440efa"
 
 [[models.members]]
 name = "id"
@@ -140,10 +134,10 @@ key = false
 kind = "DojoModel"
 class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
 original_class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
-abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Mob-57fe6720.json"
-tag = "goblin_dungeon-Mob"
-qualified_path = "rpg::models::index::mob"
-manifest_name = "goblin_dungeon-Mob-57fe6720"
+abi = "manifests/dev/deployment/abis/models/grimscape-Mob-57fe6720.json"
+tag = "grimscape-Mob"
+qualified_path = "grimscape::models::index::mob"
+manifest_name = "grimscape-Mob-57fe6720"
 
 [[models.members]]
 name = "dungeon_id"
@@ -199,10 +193,10 @@ key = false
 kind = "DojoModel"
 class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
 original_class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
-abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Player-25b86644.json"
-tag = "goblin_dungeon-Player"
-qualified_path = "rpg::models::index::player"
-manifest_name = "goblin_dungeon-Player-25b86644"
+abi = "manifests/dev/deployment/abis/models/grimscape-Player-25b86644.json"
+tag = "grimscape-Player"
+qualified_path = "grimscape::models::index::player"
+manifest_name = "grimscape-Player-25b86644"
 
 [[models.members]]
 name = "id"
@@ -223,10 +217,10 @@ key = false
 kind = "DojoModel"
 class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
 original_class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
-abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Room-c252dd67.json"
-tag = "goblin_dungeon-Room"
-qualified_path = "rpg::models::index::room"
-manifest_name = "goblin_dungeon-Room-c252dd67"
+abi = "manifests/dev/deployment/abis/models/grimscape-Room-c252dd67.json"
+tag = "grimscape-Room"
+qualified_path = "grimscape::models::index::room"
+manifest_name = "grimscape-Room-c252dd67"
 
 [[models.members]]
 name = "dungeon_id"
@@ -272,10 +266,10 @@ key = false
 kind = "DojoModel"
 class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
 original_class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
-abi = "manifests/dev/deployment/abis/models/goblin_dungeon-Team-2e92bc02.json"
-tag = "goblin_dungeon-Team"
-qualified_path = "rpg::models::index::team"
-manifest_name = "goblin_dungeon-Team-2e92bc02"
+abi = "manifests/dev/deployment/abis/models/grimscape-Team-2e92bc02.json"
+tag = "grimscape-Team"
+qualified_path = "grimscape::models::index::team"
+manifest_name = "grimscape-Team-2e92bc02"
 
 [[models.members]]
 name = "dungeon_id"

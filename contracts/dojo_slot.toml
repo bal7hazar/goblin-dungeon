@@ -1,10 +1,10 @@
 [world]
-name = "Goblin Dungeon"
+name = "Gimscape"
 description = "A fully onchain RPG game."
 cover_uri = "file://assets/cover.png"
 icon_uri = "file://assets/icon.png"
 website = "https://github.com/dojoengine/dojo-starter"
-seed = "goblin_dungeon"
+seed = "grimscape"
 
 [world.socials]
 x = "https://x.com/ohayo_dojo"
@@ -13,9 +13,9 @@ github = "https://github.com/dojoengine/starter-rpg"
 telegram = "https://t.me/dojoengine"
 
 [namespace]
-default = "goblin_dungeon"
+default = "grimscape"
 
 [env]
 rpc_url = "http://localhost:5050/"
-account_address = "0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca"
-private_key = "0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a"
+account_address = "0x2d183f81086e5cbff082e3a827720f2fe0c838195295d59eb437d114c37a0e3"
+private_key = "0x4767f45a89c834665441f166f72169586b0d96014708649832fc2c174d2af97"

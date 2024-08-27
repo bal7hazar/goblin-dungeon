@@ -364,11 +364,11 @@
   {
     "type": "impl",
     "name": "roomImpl",
-    "interface_name": "rpg::models::index::Iroom"
+    "interface_name": "grimscape::models::index::Iroom"
   },
   {
     "type": "struct",
-    "name": "rpg::models::index::Room",
+    "name": "grimscape::models::index::Room",
     "members": [
       {
         "name": "dungeon_id",
@@ -406,7 +406,7 @@
   },
   {
     "type": "interface",
-    "name": "rpg::models::index::Iroom",
+    "name": "grimscape::models::index::Iroom",
     "items": [
       {
         "type": "function",
@@ -414,7 +414,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "rpg::models::index::Room"
+            "type": "grimscape::models::index::Room"
           }
         ],
         "outputs": [],
@@ -424,7 +424,7 @@
   },
   {
     "type": "event",
-    "name": "rpg::models::index::room::Event",
+    "name": "grimscape::models::index::room::Event",
     "kind": "enum",
     "variants": []
   }

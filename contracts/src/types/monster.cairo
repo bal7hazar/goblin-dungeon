@@ -1,10 +1,10 @@
 // Internal imports
 
-use rpg::elements::roles;
-use rpg::elements::monsters;
-use rpg::types::spell::Spell;
-use rpg::types::element::Element;
-use rpg::types::threat::Threat;
+use grimscape::elements::roles;
+use grimscape::elements::monsters;
+use grimscape::types::spell::Spell;
+use grimscape::types::element::Element;
+use grimscape::types::threat::Threat;
 
 
 #[derive(Copy, Drop)]

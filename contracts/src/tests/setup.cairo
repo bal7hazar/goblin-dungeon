@@ -15,11 +15,13 @@ mod setup {
 
     // Internal imports
 
-    use rpg::models::index;
-    use rpg::types::direction::Direction;
-    use rpg::types::category::Category;
-    use rpg::helpers::seeder::Seeder;
-    use rpg::systems::actions::{actions, IActions, IActionsDispatcher, IActionsDispatcherTrait};
+    use grimscape::models::index;
+    use grimscape::types::direction::Direction;
+    use grimscape::types::category::Category;
+    use grimscape::helpers::seeder::Seeder;
+    use grimscape::systems::actions::{
+        actions, IActions, IActionsDispatcher, IActionsDispatcherTrait
+    };
 
     // Constants
 
@@ -85,7 +87,7 @@ mod setup {
             index::mob::TEST_CLASS_HASH,
             index::challenge::TEST_CLASS_HASH,
         ];
-        let world = spawn_test_world(array!["goblin_dungeon"].span(), models.span());
+        let world = spawn_test_world(array!["grimscape"].span(), models.span());
 
         // [Setup] Systems
         let actions_address = world
@@ -93,14 +95,14 @@ mod setup {
         let systems = Systems {
             actions: IActionsDispatcher { contract_address: actions_address },
         };
-        world.grant_writer(dojo::utils::bytearray_hash(@"goblin_dungeon"), actions_address);
-        world.grant_writer(dojo::utils::bytearray_hash(@"goblin_dungeon"), PLAYER());
+        world.grant_writer(dojo::utils::bytearray_hash(@"grimscape"), actions_address);
+        world.grant_writer(dojo::utils::bytearray_hash(@"grimscape"), PLAYER());
 
         // [Setup] Initialize
         set_block_timestamp(1);
         world
             .init_contract(
-                dojo::utils::selector_from_names(@"goblin_dungeon", @"actions"), array![].span()
+                dojo::utils::selector_from_names(@"grimscape", @"actions"), array![].span()
             );
 
         // [Setup] Context

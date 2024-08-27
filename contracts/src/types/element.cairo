@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::elements::elements;
+use grimscape::elements::elements;
 
 #[derive(Copy, Drop)]
 enum Element {

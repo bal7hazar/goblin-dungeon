@@ -10,15 +10,15 @@ use dojo::world::{IWorldDispatcher, IWorldDispatcherTrait};
 
 // Models imports
 
-use rpg::constants::ORDER_BIT_LENGTH;
-use rpg::models::factory::Factory;
-use rpg::models::player::Player;
-use rpg::models::dungeon::Dungeon;
-use rpg::models::room::Room;
-use rpg::models::team::Team;
-use rpg::models::mob::Mob;
-use rpg::models::challenge::Challenge;
-use rpg::helpers::packer::Packer;
+use grimscape::constants::ORDER_BIT_LENGTH;
+use grimscape::models::factory::Factory;
+use grimscape::models::player::Player;
+use grimscape::models::dungeon::Dungeon;
+use grimscape::models::room::Room;
+use grimscape::models::team::Team;
+use grimscape::models::mob::Mob;
+use grimscape::models::challenge::Challenge;
+use grimscape::helpers::packer::Packer;
 
 // Errprs
 

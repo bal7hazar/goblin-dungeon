@@ -1,0 +1,37 @@
+kind = "DojoModel"
+class_hash = "0x1a492c129ec892bf0b2b5dfea09932b14590036adb332b9bf9eb9360ccd3"
+original_class_hash = "0x1a492c129ec892bf0b2b5dfea09932b14590036adb332b9bf9eb9360ccd3"
+abi = "manifests/dev/base/abis/models/grimscape-Challenge-4d96708c.json"
+tag = "grimscape-Challenge"
+qualified_path = "grimscape::models::index::challenge"
+manifest_name = "grimscape-Challenge-4d96708c"
+
+[[members]]
+name = "dungeon_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "team_id"
+type = "u32"
+key = true
+
+[[members]]
+name = "x"
+type = "i32"
+key = true
+
+[[members]]
+name = "y"
+type = "i32"
+key = true
+
+[[members]]
+name = "completed"
+type = "bool"
+key = false
+
+[[members]]
+name = "nonce"
+type = "u32"
+key = false

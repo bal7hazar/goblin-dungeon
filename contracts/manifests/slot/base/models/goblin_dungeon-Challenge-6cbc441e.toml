@@ -1,10 +1,10 @@
 kind = "DojoModel"
 class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
 original_class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
-abi = "manifests/dev/base/abis/models/goblin_dungeon-Challenge-6cbc441e.json"
-tag = "goblin_dungeon-Challenge"
-qualified_path = "rpg::models::index::challenge"
-manifest_name = "goblin_dungeon-Challenge-6cbc441e"
+abi = "manifests/slot/base/abis/models/grimscape-Challenge-6cbc441e.json"
+tag = "grimscape-Challenge"
+qualified_path = "grimscape::models::index::challenge"
+manifest_name = "grimscape-Challenge-6cbc441e"
 
 [[members]]
 name = "dungeon_id"

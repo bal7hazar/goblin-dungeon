@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::elements::roles::interface::{RoleTrait, Element, Spell};
+use grimscape::elements::roles::interface::{RoleTrait, Element, Spell};
 
 impl Barbarian of RoleTrait {
     #[inline]

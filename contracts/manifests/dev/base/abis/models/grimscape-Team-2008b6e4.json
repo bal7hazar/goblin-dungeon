@@ -363,30 +363,68 @@
   },
   {
     "type": "impl",
-    "name": "playerImpl",
-    "interface_name": "rpg::models::index::Iplayer"
+    "name": "teamImpl",
+    "interface_name": "grimscape::models::index::Iteam"
+  },
+  {
+    "type": "enum",
+    "name": "core::bool",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
   },
   {
     "type": "struct",
-    "name": "rpg::models::index::Player",
+    "name": "grimscape::models::index::Team",
     "members": [
       {
-        "name": "id",
-        "type": "core::felt252"
-      },
-      {
-        "name": "team_id",
+        "name": "dungeon_id",
         "type": "core::integer::u32"
       },
       {
-        "name": "name",
+        "name": "id",
+        "type": "core::integer::u32"
+      },
+      {
+        "name": "x",
+        "type": "core::integer::i32"
+      },
+      {
+        "name": "y",
+        "type": "core::integer::i32"
+      },
+      {
+        "name": "dead",
+        "type": "core::bool"
+      },
+      {
+        "name": "deck",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "spells",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "seed",
+        "type": "core::felt252"
+      },
+      {
+        "name": "player_id",
         "type": "core::felt252"
       }
     ]
   },
   {
     "type": "interface",
-    "name": "rpg::models::index::Iplayer",
+    "name": "grimscape::models::index::Iteam",
     "items": [
       {
         "type": "function",
@@ -394,7 +432,7 @@
         "inputs": [
           {
             "name": "model",
-            "type": "rpg::models::index::Player"
+            "type": "grimscape::models::index::Team"
           }
         ],
         "outputs": [],
@@ -404,7 +442,7 @@
   },
   {
     "type": "event",
-    "name": "rpg::models::index::player::Event",
+    "name": "grimscape::models::index::team::Event",
     "kind": "enum",
     "variants": []
   }

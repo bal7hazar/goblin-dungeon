@@ -1,6 +1,6 @@
 // Internal imports
 
-use rpg::elements::monsters::interface::{MonsterTrait, Spell, Element, Threat};
+use grimscape::elements::monsters::interface::{MonsterTrait, Spell, Element, Threat};
 
 impl Warrior of MonsterTrait {
     #[inline]

@@ -16,24 +16,24 @@ mod PlayableComponent {
 
     // Internal imports
 
-    use rpg::constants::FACTORY_ID;
-    use rpg::store::{Store, StoreTrait};
-    use rpg::models::factory::{Factory, FactoryTrait};
-    use rpg::models::player::{Player, PlayerTrait, PlayerAssert};
-    use rpg::models::dungeon::{Dungeon, DungeonTrait, DungeonAssert};
-    use rpg::models::room::{Room, RoomTrait, RoomAssert};
-    use rpg::models::team::{Team, TeamTrait, TeamAssert};
-    use rpg::models::mob::{Mob, MobTrait, MobAssert};
-    use rpg::models::challenge::{Challenge, ChallengeTrait, ChallengeAssert};
-    use rpg::types::category::{Category, CategoryTrait};
-    use rpg::types::role::{Role, RoleTrait};
-    use rpg::types::monster::Monster;
-    use rpg::types::threat::Threat;
-    use rpg::types::element::Element;
-    use rpg::types::direction::Direction;
-    use rpg::types::spell::Spell;
-    use rpg::helpers::seeder::Seeder;
-    use rpg::helpers::battler::Battler;
+    use grimscape::constants::FACTORY_ID;
+    use grimscape::store::{Store, StoreTrait};
+    use grimscape::models::factory::{Factory, FactoryTrait};
+    use grimscape::models::player::{Player, PlayerTrait, PlayerAssert};
+    use grimscape::models::dungeon::{Dungeon, DungeonTrait, DungeonAssert};
+    use grimscape::models::room::{Room, RoomTrait, RoomAssert};
+    use grimscape::models::team::{Team, TeamTrait, TeamAssert};
+    use grimscape::models::mob::{Mob, MobTrait, MobAssert};
+    use grimscape::models::challenge::{Challenge, ChallengeTrait, ChallengeAssert};
+    use grimscape::types::category::{Category, CategoryTrait};
+    use grimscape::types::role::{Role, RoleTrait};
+    use grimscape::types::monster::Monster;
+    use grimscape::types::threat::Threat;
+    use grimscape::types::element::Element;
+    use grimscape::types::direction::Direction;
+    use grimscape::types::spell::Spell;
+    use grimscape::helpers::seeder::Seeder;
+    use grimscape::helpers::battler::Battler;
 
     // Errors
 

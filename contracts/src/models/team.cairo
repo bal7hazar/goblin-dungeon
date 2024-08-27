@@ -4,17 +4,17 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::constants::{SPELL_BIT_LENGTH, TEAM_MATE_COUNT};
-use rpg::models::index::Team;
-use rpg::types::direction::Direction;
-use rpg::types::role::{Role, RoleTrait};
-use rpg::types::spell::Spell;
-use rpg::types::element::{Element, ElementTrait};
-use rpg::helpers::deck::{Deck, DeckTrait};
-use rpg::helpers::bitmap::Bitmap;
-use rpg::helpers::seeder::Seeder;
-use rpg::helpers::packer::Packer;
-use rpg::helpers::dice::{Dice, DiceTrait};
+use grimscape::constants::{SPELL_BIT_LENGTH, TEAM_MATE_COUNT};
+use grimscape::models::index::Team;
+use grimscape::types::direction::Direction;
+use grimscape::types::role::{Role, RoleTrait};
+use grimscape::types::spell::Spell;
+use grimscape::types::element::{Element, ElementTrait};
+use grimscape::helpers::deck::{Deck, DeckTrait};
+use grimscape::helpers::bitmap::Bitmap;
+use grimscape::helpers::seeder::Seeder;
+use grimscape::helpers::packer::Packer;
+use grimscape::helpers::dice::{Dice, DiceTrait};
 
 mod errors {
     const TEAM_NOT_EXIST: felt252 = 'Team: does not exist';

@@ -129,11 +129,11 @@
   {
     "type": "impl",
     "name": "IDojoInitImpl",
-    "interface_name": "rpg::systems::actions::actions::IDojoInit"
+    "interface_name": "grimscape::systems::actions::actions::IDojoInit"
   },
   {
     "type": "interface",
-    "name": "rpg::systems::actions::actions::IDojoInit",
+    "name": "grimscape::systems::actions::actions::IDojoInit",
     "items": [
       {
         "type": "function",
@@ -147,11 +147,11 @@
   {
     "type": "impl",
     "name": "ActionsImpl",
-    "interface_name": "rpg::systems::actions::IActions"
+    "interface_name": "grimscape::systems::actions::IActions"
   },
   {
     "type": "interface",
-    "name": "rpg::systems::actions::IActions",
+    "name": "grimscape::systems::actions::IActions",
     "items": [
       {
         "type": "function",
@@ -199,6 +199,61 @@
       {
         "type": "function",
         "name": "attack",
+        "inputs": [
+          {
+            "name": "orders",
+            "type": "core::integer::u16"
+          },
+          {
+            "name": "spell_index",
+            "type": "core::integer::u8"
+          },
+          {
+            "name": "caster_index",
+            "type": "core::integer::u8"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "hire",
+        "inputs": [
+          {
+            "name": "adventurer_index",
+            "type": "core::integer::u8"
+          },
+          {
+            "name": "team_index",
+            "type": "core::integer::u8"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "pickup",
+        "inputs": [],
+        "outputs": [],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "burn",
+        "inputs": [
+          {
+            "name": "spell_index",
+            "type": "core::integer::u8"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "heal",
         "inputs": [],
         "outputs": [],
         "state_mutability": "view"
@@ -254,19 +309,19 @@
   },
   {
     "type": "event",
-    "name": "rpg::components::signable::SignableComponent::Event",
+    "name": "grimscape::components::signable::SignableComponent::Event",
     "kind": "enum",
     "variants": []
   },
   {
     "type": "event",
-    "name": "rpg::components::playable::PlayableComponent::Event",
+    "name": "grimscape::components::playable::PlayableComponent::Event",
     "kind": "enum",
     "variants": []
   },
   {
     "type": "event",
-    "name": "rpg::systems::actions::actions::Event",
+    "name": "grimscape::systems::actions::actions::Event",
     "kind": "enum",
     "variants": [
       {
@@ -276,12 +331,12 @@
       },
       {
         "name": "SignableEvent",
-        "type": "rpg::components::signable::SignableComponent::Event",
+        "type": "grimscape::components::signable::SignableComponent::Event",
         "kind": "flat"
       },
       {
         "name": "PlayableEvent",
-        "type": "rpg::components::playable::PlayableComponent::Event",
+        "type": "grimscape::components::playable::PlayableComponent::Event",
         "kind": "flat"
       }
     ]

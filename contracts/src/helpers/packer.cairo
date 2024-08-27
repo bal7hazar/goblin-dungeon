@@ -6,7 +6,7 @@ use core::debug::PrintTrait;
 
 // Internal imports
 
-use rpg::helpers::math::Math;
+use grimscape::helpers::math::Math;
 
 mod errors {
     const PACKER_ELEMENT_IS_MISSING: felt252 = 'Packer: element is missing';

@@ -4,7 +4,7 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::models::index::Challenge;
+use grimscape::models::index::Challenge;
 
 // Errors
 

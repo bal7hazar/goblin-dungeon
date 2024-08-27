@@ -1,10 +1,10 @@
 kind = "DojoModel"
 class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
 original_class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
-abi = "manifests/dev/base/abis/models/goblin_dungeon-Factory-2a440efa.json"
-tag = "goblin_dungeon-Factory"
-qualified_path = "rpg::models::index::factory"
-manifest_name = "goblin_dungeon-Factory-2a440efa"
+abi = "manifests/slot/base/abis/models/grimscape-Factory-2a440efa.json"
+tag = "grimscape-Factory"
+qualified_path = "grimscape::models::index::factory"
+manifest_name = "grimscape-Factory-2a440efa"
 
 [[members]]
 name = "id"

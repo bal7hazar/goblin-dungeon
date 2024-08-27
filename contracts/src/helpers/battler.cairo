@@ -4,8 +4,8 @@ use core::debug::PrintTrait;
 
 // Internal imports
 
-use rpg::models::mob::{Mob, MobTrait};
-use rpg::types::element::{Element, ElementTrait};
+use grimscape::models::mob::{Mob, MobTrait};
+use grimscape::types::element::{Element, ElementTrait};
 
 // Errors
 
@@ -95,10 +95,10 @@ mod tests {
 
     // Internal imports
 
-    use rpg::types::role::{Role, RoleTrait};
-    use rpg::types::monster::{Monster, MonsterTrait};
-    use rpg::types::spell::{Spell, SpellTrait};
-    use rpg::types::threat::{Threat, ThreatTrait};
+    use grimscape::types::role::{Role, RoleTrait};
+    use grimscape::types::monster::{Monster, MonsterTrait};
+    use grimscape::types::spell::{Spell, SpellTrait};
+    use grimscape::types::threat::{Threat, ThreatTrait};
 
     // Local imports
 

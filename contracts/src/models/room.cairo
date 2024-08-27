@@ -4,17 +4,17 @@ use core::debug::PrintTrait;
 
 // Inernal imports
 
-use rpg::constants::{ROOM_MONSTER_COUNT, ROOM_ADVENTURER_COUNT, ADVENTURER_BIT_LENGTH};
-use rpg::models::index::Room;
-use rpg::helpers::seeder::Seeder;
-use rpg::helpers::packer::Packer;
-use rpg::helpers::dice::{Dice, DiceTrait};
-use rpg::types::category::{Category, CategoryTrait};
-use rpg::types::monster::{Monster, MonsterTrait};
-use rpg::types::element::{Element, ElementTrait};
-use rpg::types::spell::{Spell, SpellTrait};
-use rpg::types::threat::{Threat, ThreatTrait};
-use rpg::types::role::{Role, RoleTrait};
+use grimscape::constants::{ROOM_MONSTER_COUNT, ROOM_ADVENTURER_COUNT, ADVENTURER_BIT_LENGTH};
+use grimscape::models::index::Room;
+use grimscape::helpers::seeder::Seeder;
+use grimscape::helpers::packer::Packer;
+use grimscape::helpers::dice::{Dice, DiceTrait};
+use grimscape::types::category::{Category, CategoryTrait};
+use grimscape::types::monster::{Monster, MonsterTrait};
+use grimscape::types::element::{Element, ElementTrait};
+use grimscape::types::spell::{Spell, SpellTrait};
+use grimscape::types::threat::{Threat, ThreatTrait};
+use grimscape::types::role::{Role, RoleTrait};
 
 // Constants
 
