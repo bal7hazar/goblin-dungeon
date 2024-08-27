@@ -112,12 +112,12 @@ impl RoomImpl of RoomTrait {
             // [Check] Probability of being a monster
             if random <= probability {
                 // [Compute] Monster attributes
-                dice.roll();
-                let monster: Monster = MonsterTrait::from(dice.seed);
-                dice.roll();
-                let threat: Threat = ThreatTrait::from(dice.seed);
-                dice.roll();
-                let element: Element = ElementTrait::from(dice.seed);
+                let seed = Seeder::reseed(self.seed, random.low.into());
+                let monster: Monster = MonsterTrait::from(seed);
+                let seed = Seeder::reseed(self.seed, seed);
+                let threat: Threat = ThreatTrait::from(seed);
+                let seed = Seeder::reseed(self.seed, seed);
+                let element: Element = ElementTrait::from(seed);
                 monsters.append((monster, threat, element));
                 count -= 1;
             } else {
