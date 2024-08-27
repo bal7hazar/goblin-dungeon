@@ -16,6 +16,9 @@ mod setup {
     // Internal imports
 
     use rpg::models::index;
+    use rpg::types::direction::Direction;
+    use rpg::types::category::Category;
+    use rpg::helpers::seeder::Seeder;
     use rpg::systems::actions::{actions, IActions, IActionsDispatcher, IActionsDispatcherTrait};
 
     // Constants
@@ -35,6 +38,39 @@ mod setup {
     struct Context {
         player_id: felt252,
         player_name: felt252,
+    }
+
+    #[inline]
+    fn next(category: Category) -> (felt252, Direction) {
+        let (low, high) = match category {
+            Category::Exit => (0, 1),
+            Category::Burn => (1, 41),
+            Category::Spell => (41, 81),
+            Category::Fountain => (81, 121),
+            Category::Adventurer => (121, 161),
+            Category::Monster => (161, 1000),
+            _ => (0, 0),
+        };
+        let mut base: felt252 = 0;
+        loop {
+            let seed: u256 = Seeder::reseed(base, 1).into();
+            if seed % 1000 >= low && seed % 1000 < high {
+                break (base, Direction::North);
+            }
+            let seed: u256 = Seeder::reseed(base, 2).into();
+            if seed % 1000 >= low && seed % 1000 < high {
+                break (base, Direction::East);
+            }
+            let seed: u256 = Seeder::reseed(base, 3).into();
+            if seed % 1000 >= low && seed % 1000 < high {
+                break (base, Direction::South);
+            }
+            let seed: u256 = Seeder::reseed(base, 4).into();
+            if seed % 1000 >= low && seed % 1000 < high {
+                break (base, Direction::West);
+            }
+            base += 1;
+        }
     }
 
     #[inline]

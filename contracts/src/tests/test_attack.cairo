@@ -17,9 +17,15 @@ use rpg::store::{Store, StoreTrait};
 use rpg::models::player::{Player, PlayerTrait};
 use rpg::models::factory::{Factory, FactoryTrait};
 use rpg::models::dungeon::{Dungeon, DungeonTrait};
+use rpg::models::room::{Room, RoomTrait};
 use rpg::types::direction::Direction;
+use rpg::types::category::Category;
+use rpg::types::spell::Spell;
+use rpg::types::element::Element;
+use rpg::types::monster::Monster;
+use rpg::types::role::Role;
 use rpg::systems::actions::IActionsDispatcherTrait;
-use rpg::tests::setup::{setup, setup::{Systems, PLAYER}};
+use rpg::tests::setup::{setup, setup::{Systems, PLAYER, next}};
 
 #[test]
 fn test_actions_attack() {
@@ -60,4 +66,70 @@ fn test_actions_attack() {
     let new_foe_health: u16 = foe_1.health.into() + foe_2.health.into() + foe_3.health.into();
     assert_eq!(mate_health != new_mate_health, true);
     assert_eq!(foe_health != new_foe_health, true);
+}
+
+#[test]
+fn test_actions_attack_exit() {
+    // [Setup]
+    let (world, systems, context) = setup::spawn_game();
+    let store = StoreTrait::new(world);
+
+    // [Move]
+    systems.actions.move(Direction::South.into());
+
+    // [Attack]
+    // 0:Heal|1:Kick|2:Heal
+    // 0:MagA(100)|1:BarF(100)|2:BarA(100)
+    // 0:WarW(240)|1:MinA(60)|2:----
+    systems.actions.attack(0x210, 1, 0);
+    // 0:Stomp|1:Kick|2:Kick
+    // 0:MagA(80)|1:BarF(80)|2:BarA(100)
+    // 0:WarW(210)|1:MinA(30)|2:----
+    systems.actions.attack(0x210, 0, 1);
+    // 0:Kick|1:Heal|2:Kick
+    // 0:MagA(60)|1:BarF(80)|2:BarA(100)
+    // 0:WarW(190)|1:MinA(0)|2:----
+    systems.actions.attack(0x012, 0, 2);
+    // 0:Zephyr|1:Stomp|2:Heal
+    // 0:BarA(80)|1:BarF(80)|2:MagA(60)
+    // 0:WarW(160)|1:MinA(0)|2:----
+    systems.actions.attack(0x210, 1, 0);
+    // 0:Heal|1:Kick|2:Stomp
+    // 0:BarA(80)|1:BarF(80)|2:MagA(60)
+    // 0:WarW(120)|1:MinA(0)|2:----
+    systems.actions.attack(0x210, 2, 0);
+    // 0:Kick|1:Heal|2:Heal
+    // 0:BarA(80)|1:BarF(80)|2:MagA(60)
+    // 0:WarW(80)|1:MinA(0)|2:----
+    systems.actions.attack(0x210, 0, 0);
+    // 0:HEAL|1:STOMP|2:ZEPHYR
+    // 0:BarA(80)|1:BarF(80)|2:MagA(60)
+    // 0:WarW(50)|1:MinA(0)|2:----
+    systems.actions.attack(0x210, 1, 0);
+    // 0:HEAL|1:STOMP|2:ZEPHYR
+    // 0:BarA(80)|1:BarF(80)|2:MagA(60)
+    // 0:WarW(10)|1:MinA(0)|2:----
+    systems.actions.attack(0x210, 0, 2);
+    // 0:HEAL|1:STOMP|2:ZEPHYR
+    // 0:BarA(80)|1:BarF(80)|2:MagA(60)
+    // 0:WarW(0)|1:MinA(0)|2:----
+
+    // [Setup] Change seed to define an exit
+    let player = store.get_player(PLAYER().into());
+    let factory = store.get_factory(constants::FACTORY_ID);
+    let mut team = store.get_team(factory.dungeon_id(), player.team_id);
+    let (seed, direction) = next(Category::Exit);
+    team.seed = seed;
+    store.set_team(team);
+
+    // [Move]
+    systems.actions.move(direction.into());
+
+    // [Assert] Dungeon
+    let dungeon = store.get_dungeon(factory.dungeon_id());
+    assert_eq!(dungeon.name, context.player_name);
+
+    // [Assert] Factory
+    let factory = store.get_factory(constants::FACTORY_ID);
+    assert_eq!(factory.dungeon_id(), 2);
 }

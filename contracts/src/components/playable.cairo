@@ -210,9 +210,7 @@ mod PlayableComponent {
             };
 
             // [Effect] Create challenge
-            let category: Category = room.category.into();
-            let status: bool = category.default_challenge_status();
-            let challenge = ChallengeTrait::new(dungeon.id, team.id, team.x, team.y, status);
+            let challenge = ChallengeTrait::new(dungeon.id, team.id, team.x, team.y, false);
             store.set_challenge(challenge);
 
             // [Effect] Assess the end of the dungeon
@@ -296,9 +294,23 @@ mod PlayableComponent {
             challenge.iter();
             store.set_challenge(challenge);
 
-            // [Effect] Update mobs
+            // [Compute] Update monsters mobs and setup next caster
+            let seed: felt252 = Seeder::reseed(room.seed, challenge.nonce.into());
+            let caster_index = room.pick_monster(seed);
+            loop {
+                match monsters.pop_front() {
+                    Option::Some(mut monster) => {
+                        if monster.index == caster_index && !monster.is_dead() {
+                            monster.setup_monster();
+                        }
+                        store.set_mob(monster);
+                    },
+                    Option::None => { break; },
+                };
+            };
+
+            // [Effect] Update mates mobs
             store.set_mobs(ref mates);
-            store.set_mobs(ref monsters);
 
             // [Effect] Update team status
             team.dead = !mates_status;

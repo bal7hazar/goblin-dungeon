@@ -151,10 +151,7 @@ impl RoomImpl of RoomTrait {
 
     #[inline]
     fn compute_spell(self: Room, seed: felt252) -> Spell {
-        // [Compute] Spell attributes
-        let mut dice: Dice = DiceTrait::new(SpellTrait::count(), seed);
-        dice.face_count = SpellTrait::count();
-        dice.roll().into()
+        SpellTrait::from(seed).into()
     }
 }
 
@@ -258,6 +255,14 @@ mod tests {
             sum += monster.into();
         };
         assert_eq!(sum != 0, true);
+    }
+
+    #[test]
+    fn test_room_compute_adventurers() {
+        let mut room: Room = RoomTrait::new(DUNGEON_ID, X, Y);
+        room.explore(SEED);
+        let adventurers = room.compute_adventurers(room.seed);
+        assert_eq!(adventurers != 0, true);
     }
 }
 

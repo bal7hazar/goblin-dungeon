@@ -131,9 +131,7 @@ impl MobImpl of MobTrait {
 
     #[inline]
     fn restore(ref self: Mob) {
-        if self.is_dead() {
-            return;
-        }
+        // [Info] Can resurect dead mob
         let base_health = if self.index > 2 {
             let monster: Monster = self.class.into();
             let threat: Threat = self.threat.into();
@@ -150,7 +148,8 @@ impl MobImpl of MobTrait {
         if self.is_dead() {
             return;
         }
-        self.stun += quantity;
+        // [Info] Not stackable
+        self.stun = quantity;
     }
 
     #[inline]
@@ -158,7 +157,8 @@ impl MobImpl of MobTrait {
         if self.is_dead() {
             return;
         }
-        self.shield += quantity;
+        // [Info] Not stackable
+        self.shield = quantity;
     }
 
     #[inline]

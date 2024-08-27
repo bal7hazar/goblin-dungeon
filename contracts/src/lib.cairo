@@ -88,5 +88,9 @@ mod tests {
     mod test_setup;
     mod test_move;
     mod test_attack;
+    mod test_hire;
+    mod test_burn;
+    mod test_pickup;
+    mod test_heal;
 }
 
