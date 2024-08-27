@@ -54,5 +54,5 @@ fn test_actions_fountain() {
 
     // [Assert]
     let mate = store.get_mob(factory.dungeon_id(), player.team_id, 0);
-    assert_eq!(mate.health, 100);
+    assert_eq!(mate.health, 200);
 }

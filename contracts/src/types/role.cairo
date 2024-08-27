@@ -23,7 +23,7 @@ impl RoleImpl of RoleTrait {
     }
     #[inline]
     fn health(self: Role) -> u8 {
-        100
+        200
     }
 
     #[inline]
