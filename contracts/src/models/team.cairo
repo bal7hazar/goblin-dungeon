@@ -70,7 +70,11 @@ impl TeamImpl of TeamTrait {
         let mut spells: Array<u8> = Packer::unpack(self.deck, SPELL_BIT_LENGTH);
         let count = spells.len();
         let mut deck: Deck = DeckTrait::new(seed, count);
-        let spells = array![deck.draw(), deck.draw(), deck.draw(),];
+        let spells = array![
+            *spells.at(deck.draw().into() - 1),
+            *spells.at(deck.draw().into() - 1),
+            *spells.at(deck.draw().into() - 1),
+        ];
         // [Effect] Update spells
         self.spells = Packer::pack(spells, SPELL_BIT_LENGTH);
     }
@@ -138,9 +142,13 @@ impl TeamAssert of AssertTrait {
 
 #[cfg(test)]
 mod tests {
+    // Core imports
+
+    use core::debug::PrintTrait;
+
     // Local imports
 
-    use super::{Team, TeamTrait, Direction,};
+    use super::{Team, TeamTrait, Direction, Spell};
 
     // Constants
 
@@ -198,6 +206,34 @@ mod tests {
         assert_eq!(seed != team.seed, true);
         assert_eq!(team.y, 0);
         assert_eq!(team.x, -1);
+    }
+
+    #[test]
+    fn test_team_pick_spells() {
+        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
+        assert_eq!(team.spells, 0);
+        team.pick_spells(team.seed);
+        assert_eq!(team.spells, 0x332);
+    }
+
+    #[test]
+    fn test_team_mint_pick_spells() {
+        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
+        assert_eq!(team.spells, 0);
+        team.mint(Spell::Fireball);
+        assert_eq!(team.deck, 0x7333222);
+        team.pick_spells(team.seed);
+        assert_eq!(team.spells, 0x723);
+    }
+
+    #[test]
+    fn test_team_burn_pick_spells() {
+        let mut team = TeamTrait::new(DUNGEON_ID, TEAM_ID, SEED, PLAYER_ID);
+        assert_eq!(team.spells, 0);
+        team.burn(3);
+        assert_eq!(team.deck, 0x33222);
+        team.pick_spells(team.seed);
+        assert_eq!(team.spells, 0x232);
     }
 }
 
