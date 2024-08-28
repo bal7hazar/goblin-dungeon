@@ -2,6 +2,7 @@ import * as THREE from '../node_modules/three/build/three.module.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js'
 // import TWEEN from '../node_modules/@tweenjs/tween.js'
 
+let mainLayer = true, dungeonLayer = false
 let objectToInteract, uiObjectToInteract
 const tweens = []
 
@@ -39,6 +40,11 @@ export function initScene() {
     uiCamera.position.set(0,0,5);
     uiCamera.layers.set(2); // Layer 1 for orthographic camera
     scene.uiCamera = uiCamera
+
+    const dungeonCamera = new THREE.OrthographicCamera(-aspect, aspect, 1, -1, 1, 1000 );
+    dungeonCamera.position.set(0,0,5);
+    dungeonCamera.layers.set(3); // Layer 1 for orthographic camera
+    scene.uiCamera = dungeonCamera
 
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -91,11 +97,20 @@ export function initScene() {
         tweens.forEach((t) => t.update())
     }
 
+    scene.toggleCamera = () => {
+        mainLayer = !mainLayer
+        dungeonLayer = !dungeonLayer
+    }
+
     function render() {
-        renderer.clear();
-        renderer.render(scene, camera);
-        renderer.clearDepth(); 
-        renderer.render(scene, uiCamera);
+        renderer.clear();    
+        if (mainLayer) {
+            renderer.render(scene, camera);
+            renderer.clearDepth(); 
+            renderer.render(scene, uiCamera);
+        } else if (dungeonLayer) {
+            renderer.render(scene, dungeonCamera);
+        }
     }
 
     scene.addTween = function(object, name, callback) {

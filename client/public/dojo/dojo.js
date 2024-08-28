@@ -32,7 +32,7 @@ let dojoData = {
             team.roomInfo = this.rooms[player.team_id.value][team.y.value][team.x.value]
         }
         return team
-    }
+    },
 }
 
 let subscription

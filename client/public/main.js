@@ -4,6 +4,7 @@ import { initScene } from './game/scene.js';
 import { initMap } from './game/map.js';
 import { loadFont } from './utils/text.js';
 import { startFight } from './game/fight.js';
+import { setupDungeon } from './game/dungeon.js';
 import { addHero } from './game/hero.js';
 import { createStaticText } from './utils/text.js';
 import { dojo_burn, dojo_heal, dojo_hire, dojo_pickup, on_entity_update } from './utils/event.js';
@@ -21,9 +22,12 @@ let currentRoomPosition = { x: 0, y: 0 }
 let dojoData = {}
 let hero
 let currentFight
+let dungeon
 
 on_entity_update((data) => {
     dojoData = data
+    const team = data.teams[data.localPlayer.team_id.value];
+    dungeon = setupDungeon(scene, data.rooms, team);
     room = data.currentRoom
     if (data.currentRoom && (currentRoomPosition.x !== data.currentRoom.x.value || currentRoomPosition.y !== data.currentRoom.y.value)) {
         const x = data.currentRoom.x.value;
