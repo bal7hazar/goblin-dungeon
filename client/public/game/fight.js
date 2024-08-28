@@ -54,13 +54,19 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         swap1: undefined,
         swap2: undefined
     }
+
+    fight.getCharacterOrder = function() {
+        const baseIdA = Object.values(this.allies).filter((elem) => elem.currentId === 0)[0].baseId
+        const baseIdB = Object.values(this.allies).filter((elem) => elem.currentId === 1)[0].baseId
+        const baseIdC = Object.values(this.allies).filter((elem) => elem.currentId === 2)[0].baseId
+        return '0x' + (baseIdC * 256 + baseIdB * 16 + baseIdA).toString(16)
+    }
+
     fight.setState = (newState) => {
-        if (newState === "pickspell") {
-            console.log("select a spell")
+        if (newState === "pickspellandswap") {
+            console.log("select a spell or swap")
         } else if (newState === "pickcaster") {
             console.log("select a character to cast this spell")
-        } else if (newState === "swap") {
-            console.log("select a character to swap")
         } else if (newState === "attack") {
             fight.prepareCurrentFight()
             fight.playCurrentFight()
@@ -68,8 +74,8 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
                 scene.remove(icon)
             })
             fight.spellsDeck = []
-            console.log("calling dojo attack with", "0x210", `0x${Math.floor(fight.selectedSpell)}`, `0x${Math.floor(fight.selectedCaster)}`)
-            dojo_attack("0x210", `${Math.floor(fight.selectedSpell)}`, `${Math.floor(fight.selectedCaster)}`)
+            console.log("calling dojo attack with", fight.getCharacterOrder(), `0x${Math.floor(fight.selectedSpell)}`, `0x${Math.floor(fight.selectedCaster)}`)
+            dojo_attack(fight.getCharacterOrder(), `${Math.floor(fight.selectedSpell)}`, `${Math.floor(fight.selectedCaster)}`)
         }
         fight.state = newState
     },
@@ -77,45 +83,55 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
     setupFight(fight, scene, alliesInfo, enemiesInfo)
 
     const swapCharacters = function(id1, id2) {
-        const char1 = Object.values(fight.allies).filter((elem) => elem.currentId == id1)[0]
-        const char2 = Object.values(fight.allies).filter((elem) => elem.currentId == id2)[0]
+        const char1 = Object.values(fight.allies).filter((elem) => elem.currentId === id1)[0]
+        const char2 = Object.values(fight.allies).filter((elem) => elem.currentId === id2)[0]
         char1.currentId = id2
         char2.currentId = id1
 
         const char1Position = [...char1.position]
         char1.setPosition([...char2.position])
         char2.setPosition(char1Position)
+        fight.allies[id1] = char2
+        fight.allies[id2] = char1
+        if (fight.enemies[id1] && fight.enemies[id1].info && fight.enemies[id1].info.health.value > 0) {
+            fight.allies[id1].enemyElement(fight.enemies[id1].info.element.value)
+        } else {
+            fight.allies[id1].enemyElement()
+        }
+        if (fight.enemies[id2] && fight.enemies[id2].info && fight.enemies[id2].info.health.value > 0) {
+            fight.allies[id2].enemyElement(fight.enemies[id2].info.element.value)
+        } else {
+            fight.allies[id2].enemyElement()
+        }
     }
 
     on_click_character((id) => {
         if (fight.state === "pickcaster") {
-            fight.selectedCaster = id
+            fight.selectedCaster = fight.allies[id].baseId
             fight.allies[id].info.spell.value = fight.spellsDeck[fight.selectedSpell].spellId
             fight.allies[id].prepare(fight.spellsDeck[fight.selectedSpell].spellId)
             fight.setState("attack")
             return
         }
-        if (fight.state !== "swap") {
-            return
-        }
-        if (fight.swap1 === undefined) {
-            fight.swap1 = id
-            console.log("selected character", id)
-            return
-        }
-        if (id === -1 || id == fight.swap1) {
-            fight.swap1 = undefined
-            return
-        }
-        console.log("swaping character", fight.swap1, "and", id)
-        swapCharacters(fight.swap1, id)
-        fight.swap1 = undefined
     })
 
     fight.startTurn = async function(room, spells, enemiesActions) {
         this.turn++
         console.log("SPELLS", spells)
-        const [icon1, icon2, icon3] = await spellIconsChoices(scene, [SPELLS[spells[0]], SPELLS[spells[1]], SPELLS[spells[2]]])
+        fight.spellSelectionsIcons = await spellIconsChoices(scene, [SPELLS[spells[0]], SPELLS[spells[1]], SPELLS[spells[2]]])
+        const [icon1, icon2, icon3, swapAB, swapBC] = fight.spellSelectionsIcons
+        swapAB.onClick = () => {
+            if (fight.state !== "pickspellandswap") {
+                return
+            }
+            swapCharacters(0, 1)
+        }
+        swapBC.onClick = () => {
+            if (fight.state !== "pickspellandswap") {
+                return
+            }
+            swapCharacters(1, 2)
+        }
         icon1.spellId = spells[0]
         icon1.onClick = () => {
             fight.selectedSpell = 0
@@ -136,27 +152,34 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         }
         fight.spellsDeck = [icon1, icon2, icon3]
         Object.values(this.allies).forEach((ally, i) => {
+            ally.baseId = i
+            ally.currentId = i
             if (ally.hp !== room.allies[i].health.value) {
                 console.error("OUT OF SYNC ally", i, ally.hp, room.allies[i].health.value)
                 return
             }
             ally.info = room.allies[i]
-            if (ally.hp > 0) {
+            if (ally.hp > 0 && ally.info.stun.value <= 0) {
+                console.log("Ally", i, "prepare", SPELLS[ally.info.spell.value])
                 ally.prepare(ally.info.spell.value)
             }
         })
         enemiesActions.forEach((spellId, index) => {
             const enemy = this.enemies[index]
+            if (!enemy) {
+                return
+            }
             if (enemy.hp !== room.enemies[index].health.value) {
                 console.error("OUT OF SYNC enemy", index, enemy.hp, room.enemies[index].health.value)
                 return
             }
             enemy.info = room.enemies[index]
-            if (enemy && enemy.hp > 0) {
+            if (enemy && enemy.hp > 0 && enemy.info.stun.value <= 0) {
+                console.log("Enemy", index, "prepare", SPELLS[spellId])
                 enemy.prepare(spellId)
             }
         })
-        fight.setState("pickspell")
+        fight.setState("pickspellandswap")
     }
 
     function elementHasAdvantage(elem1, elem2) {
@@ -167,163 +190,260 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         this.playFightStep(0)
     }
 
+    function computeSpellEffect(fightDetails, source, effect, mainTarget) {
+        const myTeam = source.isAlly ? fightDetails.allies : fightDetails.enemies
+        const otherTeam = source.isAlly ? fightDetails.enemies : fightDetails.allies
+        if (effect.type === "meleeHitSelf") {
+            const damage = effect.dmg
+            const currentHP = myTeam[source.currentId].hp
+            const lastHit = currentHP < damage
+            const dmg = (lastHit ? currentHP : damage)
+            myTeam[source.currentId].hp -= dmg;
+            return {
+                changes: [
+                    { target: source, type: "hit", dmg, justKilled: lastHit }
+                ],
+                cast: function() {
+                    return 0
+                },
+            }
+        } else if (effect.type === "meleeHitSingle" || effect.type == "spellHitSingle") {
+            const damage = effect.dmg
+            const currentHP = otherTeam[mainTarget.currentId].hp
+            const lastHit = currentHP < damage
+            const dmg = (lastHit ? currentHP : damage)
+            otherTeam[mainTarget.currentId].hp -= dmg;
+            return {
+                changes: [
+                    { target: mainTarget, type: "hit", dmg, justKilled: lastHit }
+                ],
+                cast: function() {
+                    source.prepare()
+                    source.animationsList.Idle.stop()
+                    source.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
+                    source.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
+                    source.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
+                    if (effect.type === "meleeHitSingle") {
+                        scene.addTween(source, "position", (tween) => {
+                            tween.to({
+                                x: mainTarget.position.x + (source.position.x < mainTarget.position.x ? -1 : 1),
+                            }, 400)
+                            .start()
+                        })
+                        setTimeout(() => {
+                            scene.addTween(source, "position", (tween) => {
+                                tween.to({
+                                    x: -mainTarget.position.x,
+                                }, 100)
+                                .delay(300)
+                                .start()
+                            })
+                        }, 900)
+                    }
+                    return 900
+                },
+            }
+        } else if (effect.type === "healSelf") {
+            const hp = effect.hp
+            const currentHP = myTeam[source.currentId].hp
+            const maxHP = myTeam[source.currentId].maxHP
+            const reachMax =  currentHP + hp > maxHP
+            const hpHealed = (reachMax ? maxHP - currentHP : hp)
+            console.log("HP healed", hpHealed)
+            myTeam[source.currentId].hp = currentHP + hpHealed
+            return {
+                changes: [
+                    { target: source, type: "heal", hp: hpHealed }
+                ],
+                cast: function() {
+                    source.prepare()
+                    source.animationsList.Idle.stop()
+                    console.log("heal animation")
+                    // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
+                    // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
+                    // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
+                    // scene.addTween(source, "position", (tween) => {
+                    //     tween.to({
+                    //         x: mainTarget.position.x + (source.position.x < mainTarget.position.x ? -1 : 1),
+                    //     }, 400)
+                    //     .start()
+                    // })
+                    setTimeout(() => {
+                        // scene.addTween(source, "position", (tween) => {
+                        //     tween.to({
+                        //         x: -mainTarget.position.x,
+                        //     }, 100)
+                        //     .delay(300)
+                        //     .start()
+                        // })
+                    }, 900)
+                    return 500
+                },
+            }
+        } else if (effect.type === "stunSingle") {
+            const duration = effect.duration
+            otherTeam[mainTarget.currentId].stunned = true
+            // const currentHP = myTeam[source.currentId].hp
+            // const maxHP = myTeam[source.currentId].maxHP
+            // const reachMax =  currentHP + hp > maxHP
+            // const hpHealed = (reachMax ? maxHP - currentHP : hp)
+            // console.log("HP healed", hpHealed)
+            // myTeam[source.currentId].hp = currentHP + hpHealed
+            return {
+                changes: [
+                    { target: mainTarget, type: "stun", duration }
+                ],
+                cast: function() {
+                    // source.prepare()
+                    // source.animationsList.Idle.stop()
+                    // console.log("heal animation")
+                    // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
+                    // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
+                    // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
+                    // scene.addTween(source, "position", (tween) => {
+                    //     tween.to({
+                    //         x: mainTarget.position.x + (source.position.x < mainTarget.position.x ? -1 : 1),
+                    //     }, 400)
+                    //     .start()
+                    // })
+                    // setTimeout(() => {
+                        // scene.addTween(source, "position", (tween) => {
+                        //     tween.to({
+                        //         x: -mainTarget.position.x,
+                        //     }, 100)
+                        //     .delay(300)
+                        //     .start()
+                        // })
+                    // }, 900)
+                    return 500
+                },
+            }
+        } else if (effect.type === "stunAll" || effect.type === "stunOthers") {
+            const duration = effect.duration
+            const changes = Object.values(otherTeam).map((enemy) => {
+                if (enemy === undefined) {
+                    return undefined
+                }
+                if (effect.type === "stunOthers" && enemy == source) {
+                    return undefined
+                }
+                otherTeam[enemy.obj.currentId].stunned = true
+                return {
+                    target: enemy.obj,
+                    type: "stun",
+                    duration,
+                }
+            })
+            return {
+                changes,
+                cast: function() {
+                    // source.prepare()
+                    // source.animationsList.Idle.stop()
+                    // console.log("heal animation")
+                    return 0
+                },
+            }
+        } else if (effect.type === "healAll" || effect.type === "healOthers") {
+            const hp = effect.hp
+            console.log("hp effect raw", effect.hp)
+            const changes = Object.values(myTeam).map((ally) => {
+                if (ally === undefined) {
+                    return undefined
+                }
+                if (effect.type === "healOthers" && ally == source) {
+                    return undefined
+                }
+                const currentHP = ally.hp
+                const maxHP = ally.maxHP
+                const reachMax =  currentHP + hp > maxHP
+                const hpHealed = (reachMax ? maxHP - currentHP : hp)
+                if (hpHealed === 0) {
+                    return undefined
+                }
+                ally.hp += hpHealed;
+                console.log("HP healed", hpHealed)
+                return {
+                    target: ally.obj,
+                    type: "heal",
+                    hp: hpHealed,
+                }
+            })
+            return {
+                changes,
+                cast: function() {
+                    source.prepare()
+                    source.animationsList.Idle.stop()
+                    console.log("heal animation")
+                    return 500
+                },
+            }
+        } else if (effect.type === "meleeHitAll" || effect.type === "meleeHitOther" ||
+            effect.type === "spellHitAll" || effect.type === "spellHitOthers") {
+            const damage = effect.dmg
+            return {
+                changes: Object.values(otherTeam).map((enemy) => {
+                    if (enemy === undefined) {
+                        return
+                    }
+                    if (effect.type.endsWith("Others") && enemy.obj == mainTarget) {
+                        return undefined
+                    }
+                    const currentHP = enemy.hp
+                    const lastHit = currentHP < damage
+                    const dmg = (lastHit ? currentHP : damage)
+                    enemy.hp -= dmg;
+                    return {
+                        target: enemy.obj,
+                        type: "hit",
+                        dmg,
+                        justKilled: lastHit
+                    }
+                }),
+                cast: function() {
+                    source.prepare()
+                    source.animationsList.Idle.stop()
+                    source.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
+                    source.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
+                    source.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
+                    if (effect.type === "meleeHitAll" || effect.type === "meleeHitOthers") {
+                        scene.addTween(source, "position", (tween) => {
+                            tween.to({
+                                x: mainTarget.position.x + (source.position.x < mainTarget.position.x ? -1 : 1),
+                            }, 400)
+                            .start()
+                        })
+                        setTimeout(() => {
+                            scene.addTween(source, "position", (tween) => {
+                                tween.to({
+                                    x: -mainTarget.position.x,
+                                }, 100)
+                                .delay(300)
+                                .start()
+                            })
+                        }, 900)
+                    }
+                    return 900
+                },
+            }
+        }
+    }
+
     function computeSpellDetails(fightDetails, source, spellId, mainTarget) {
         if (source.hp <= 0) {
             return
         }
+        console.log("COMPUTING", source, spellId, mainTarget)
         const spellEffects = SPELLS_EFFECTS[spellId]
-        const myTeam = source.isAlly ? fightDetails.allies : fightDetails.enemies
-        const otherTeam = source.isAlly ? fightDetails.enemies : fightDetails.allies
-        if (spellEffects.length === 1) {
-            const effect = spellEffects[0]
-            if (effect.type === "meleeHitSingle" || effect.type == "spellHitSingle") {
-                const damage = effect.dmg
-                const currentHP = fightDetails.enemies[mainTarget.currentId].hp
-                const lastHit = currentHP < damage
-                const dmg = (lastHit ? currentHP : damage)
-                fightDetails.enemies[mainTarget.currentId].hp -= dmg;
-                return {
-                    changes: [
-                        { target: mainTarget, type: "hit", dmg, justKilled: lastHit }
-                    ],
-                    cast: function() {
-                        source.prepare()
-                        source.animationsList.Idle.stop()
-                        source.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
-                        source.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
-                        source.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
-                        if (effect.type === "meleeHitSingle") {
-                            scene.addTween(source, "position", (tween) => {
-                                tween.to({
-                                    x: mainTarget.position.x + (source.position.x < mainTarget.position.x ? -1 : 1),
-                                }, 400)
-                                .start()
-                            })
-                            setTimeout(() => {
-                                scene.addTween(source, "position", (tween) => {
-                                    tween.to({
-                                        x: -mainTarget.position.x,
-                                    }, 100)
-                                    .delay(300)
-                                    .start()
-                                })
-                            }, 900)
-                        }
-                        return 900
-                    },
-                }
-            } else if (effect.type === "healSelf") {
-                const hp = effect.hp
-                const currentHP = myTeam[source.currentId].hp
-                const maxHP = myTeam[source.currentId].maxHP
-                const reachMax =  currentHP + hp > maxHP
-                const hpHealed = (reachMax ? maxHP - currentHP : hp)
-                console.log("HP healed", hpHealed)
-                myTeam[source.currentId].hp = currentHP + hpHealed
-                return {
-                    changes: [
-                        { target: source, type: "heal", hp: hpHealed }
-                    ],
-                    cast: function() {
-                        source.prepare()
-                        source.animationsList.Idle.stop()
-                        console.log("heal animation")
-                        // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
-                        // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
-                        // source.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
-                        // scene.addTween(source, "position", (tween) => {
-                        //     tween.to({
-                        //         x: mainTarget.position.x + (source.position.x < mainTarget.position.x ? -1 : 1),
-                        //     }, 400)
-                        //     .start()
-                        // })
-                        setTimeout(() => {
-                            // scene.addTween(source, "position", (tween) => {
-                            //     tween.to({
-                            //         x: -mainTarget.position.x,
-                            //     }, 100)
-                            //     .delay(300)
-                            //     .start()
-                            // })
-                        }, 900)
-                        return 500
-                    },
-                }
-            } else if (effect.type === "healAll" || effect.type === "healOthers") {
-                const hp = effect.hp
-                return {
-                    changes: Object.values(myTeam).map((ally) => {
-                        if (effect.type === "healOthers" && ally == source) {
-                            return undefined
-                        }
-                        const currentHP = ally.hp
-                        const maxHP = ally.maxHP
-                        const reachMax =  currentHP + hp > maxHP
-                        const hpHealed = (reachMax ? maxHP - currentHP : hp)
-                        ally.hp += hpHealed;
-                        console.log("HP healed", hpHealed)
-                        return {
-                            target: ally,
-                            type: "hit",
-                            dmg,
-                            justKilled: lastHit
-                        }
-                    }).filter(),
-                    cast: function() {
-                        source.prepare()
-                        source.animationsList.Idle.stop()
-                        console.log("heal animation")
-                        return 500
-                    },
-                }
-            } else if (effect.type === "meleeHitAll" || effect.type === "meleeHitOther" ||
-                effect.type === "spellHitAll" || effect.type === "spellHitOthers") {
-                const damage = effect.dmg
-                return {
-                    changes: Object.values(otherTeam).map((enemy) => {
-                        if (effect.type === "spellHitOthers" && enemy == mainTarget) {
-                            return undefined
-                        }
-                        const currentHP = enemy.hp
-                        const lastHit = currentHP < damage
-                        const dmg = (lastHit ? currentHP : damage)
-                        enemy.hp -= dmg;
-                        return {
-                            target: enemy,
-                            type: "hit",
-                            dmg,
-                            justKilled: lastHit
-                        }
-                    }).filter(),
-                    cast: function() {
-                        source.prepare()
-                        source.animationsList.Idle.stop()
-                        source.animationsList["1H_Melee_Attack_Slice_Horizontal"].reset()
-                        source.animationsList["1H_Melee_Attack_Slice_Horizontal"].loop = THREE.LoopOnce
-                        source.animationsList["1H_Melee_Attack_Slice_Horizontal"].play()
-                        if (effect.type === "meleeHitAll" || effect.type === "meleeHitOthers") {
-                            scene.addTween(source, "position", (tween) => {
-                                tween.to({
-                                    x: mainTarget.position.x + (source.position.x < mainTarget.position.x ? -1 : 1),
-                                }, 400)
-                                .start()
-                            })
-                            setTimeout(() => {
-                                scene.addTween(source, "position", (tween) => {
-                                    tween.to({
-                                        x: -mainTarget.position.x,
-                                    }, 100)
-                                    .delay(300)
-                                    .start()
-                                })
-                            }, 900)
-                        }
-                        return 900
-                    },
-                }
+        const [effect, effect2] = spellEffects
+        const spellDetails = computeSpellEffect(fightDetails,source, effect, mainTarget)
+        if (effect2) {
+            const spellDetails2 = computeSpellEffect(fightDetails, source, effect2, mainTarget)
+            if (spellDetails2.changes) {
+                spellDetails.changes = spellDetails.changes.concat(spellDetails2.changes)
+                console.log("EXTRA EFFECT", spellDetails2.changes)    
             }
         }
-        return {
+        return spellDetails || {
             changes: [],
             cast: function() {
                 console.log(SPELLS[spellId], "not handled")
@@ -335,9 +455,9 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
     fight.prepareCurrentFight = function() {
         this.currentTurn = []
 
-        let isFirstCharacterStarting = fight.allies[0].info.health.value > 0 && (!fight.enemies[0] || elementHasAdvantage(fight.allies[0].info.element.value, fight.enemies[0].info.element.value))
-        let isSecondCharacterStarting = fight.allies[1].info.health.value > 0 && (!fight.enemies[1] || elementHasAdvantage(fight.allies[1].info.element.value, fight.enemies[1].info.element.value))
-        let isThirdCharacterStarting = fight.allies[2].info.health.value > 0 && (!fight.enemies[2] || elementHasAdvantage(fight.allies[2].info.element.value, fight.enemies[2].info.element.value))
+        let isFirstCharacterStarting =  fight.allies[0] && fight.allies[0].info.health.value > 0 && (!fight.enemies[0] || elementHasAdvantage(fight.allies[0].info.element.value, fight.enemies[0].info.element.value))
+        let isSecondCharacterStarting = fight.allies[1] && fight.allies[1].info.health.value > 0 && (!fight.enemies[1] || elementHasAdvantage(fight.allies[1].info.element.value, fight.enemies[1].info.element.value))
+        let isThirdCharacterStarting = fight.allies[2] && fight.allies[2].info.health.value > 0 && (!fight.enemies[2] || elementHasAdvantage(fight.allies[2].info.element.value, fight.enemies[2].info.element.value))
 
         const currentTurn = {
             0: { source: isFirstCharacterStarting ? fight.allies[0] : fight.enemies[0],
@@ -356,25 +476,29 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
 
         const fightStatus = {
             allies: [
-                fight.allies[0] && { hp: fight.allies[0].info.health.value, maxHP: fight.allies[0].maxHP },
-                fight.allies[1] && { hp: fight.allies[1].info.health.value, maxHP: fight.allies[1].maxHP },
-                fight.allies[2] && { hp: fight.allies[2].info.health.value, maxHP: fight.allies[2].maxHP },
+                fight.allies[0] && { obj: fight.allies[0], hp: fight.allies[0].info.health.value, maxHP: fight.allies[0].maxHP, stunned: false },
+                fight.allies[1] && { obj: fight.allies[1], hp: fight.allies[1].info.health.value, maxHP: fight.allies[1].maxHP, stunned: false },
+                fight.allies[2] && { obj: fight.allies[2], hp: fight.allies[2].info.health.value, maxHP: fight.allies[2].maxHP, stunned: false },
             ],
             enemies: [
-                fight.enemies[0] && { hp: fight.enemies[0].info.health.value, maxHP: fight.enemies[0].maxHP },
-                fight.enemies[1] && { hp: fight.enemies[1].info.health.value, maxHP: fight.enemies[1].maxHP },
-                fight.enemies[2] && { hp: fight.enemies[2].info.health.value, maxHP: fight.enemies[2].maxHP },
+                fight.enemies[0] && { obj: fight.enemies[0], hp: fight.enemies[0].info.health.value, maxHP: fight.enemies[0].maxHP, stunned: false },
+                fight.enemies[1] && { obj: fight.enemies[1], hp: fight.enemies[1].info.health.value, maxHP: fight.enemies[1].maxHP, stunned: false },
+                fight.enemies[2] && { obj: fight.enemies[2], hp: fight.enemies[2].info.health.value, maxHP: fight.enemies[2].maxHP, stunned: false },
             ],
         }
-
-        console.log(currentTurn)
-        console.log(fightStatus)
-
         fight.currentTurn = Object.values(currentTurn).map((info) => {
             if (!info.source || !info.mainTarget || info.source.info.health.value <= 0) {
                 return undefined
             }
+            if (info.source.info.stun.value > 0) {
+                return undefined
+            }
             info.spell = info.source.info.spell.value
+            // is character dead (avoid Volley as it can hit other people)
+            if (info.spell !== 13 && (info.source.isAlly && (fightStatus.allies[info.source.currentId].hp <= 0 || fightStatus.allies[info.source.currentId].stunned)) ||
+                (!info.source.isAlly && (fightStatus.enemies[info.source.currentId].hp <= 0 || fightStatus.enemies[info.source.currentId].stunned))) {
+                return undefined
+            }
             info.spellDetails = computeSpellDetails(fightStatus, info.source, info.spell, info.mainTarget)
             if (info.spellDetails === undefined) {
                 return undefined
@@ -385,7 +509,7 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
 
     fight.playFightStep = function(step) {
         if (step >= 6) {
-            fight.setState("pickspell")
+            fight.setState("pickspellandswap")
             return
         }
         const turnAction = this.currentTurn[step]
@@ -395,51 +519,20 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         const duration = turnAction.spellDetails.cast()
         setTimeout(() => {
             turnAction.spellDetails.changes.forEach((change) => {
+                if (!change) {
+                    return
+                }
                 if (change.type === "hit") {
                     change.target.hit(change.dmg)
                 } else if (change.type === "heal") {
                     change.target.heal(change.hp)
+                } else if (change.type === "stun") {
+                    change.target.stun(change.duration)
                 }
             })    
         }, duration)
         setTimeout(() => { this.playFightStep(step + 1) }, 1000)
     }
-
-    // fight.executeTurn = function(step) {
-    //     if (step >= 6) {
-    //         fight.setState("pickspell")
-    //         return
-    //     }
-    //     const turnAction = this.currentTurn[step]
-    //     if (!turnAction) {
-    //         this.executeTurn(step + 1)
-    //         return
-    //     }
-    //     const spell = turnAction.spell
-    //     if (spell > 0) {
-    //         turnAction.source.attack()
-    //         scene.addTween(turnAction.source, "position", (tween) => {
-    //             tween.to({
-    //                 x: turnAction.targets[0].object.position.x + (turnAction.source.position.x < turnAction.targets[0].object.position.x ? -1 : 1),
-    //             }, 400)
-    //             .start()
-    //         })
-    //         setTimeout(() => {
-    //             turnAction.targets.forEach((t) => t.object.hit(t.dmg))
-    //             scene.addTween(turnAction.source, "position", (tween) => {
-    //                 tween.to({
-    //                     x: -turnAction.targets[0].object.position.x,
-    //                 }, 100)
-    //                 .delay(300)
-    //                 .start()
-    //             })
-    //         }, 900)
-    //     } else {
-    //         console.log("spell not handled id:", spell)
-    //     }
-        
-    //     setTimeout(() => { this.executeTurn(step + 1) }, 1000)
-    // }
 
     fight.clean = function() {
         for (let i = 0; i < 3; i++) {
@@ -450,6 +543,9 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
                 fight.enemies[i].clean()
             }
         }
+        fight.spellSelectionsIcons.forEach((node) => {
+            scene.remove(node)
+        })
     }
 
     return fight

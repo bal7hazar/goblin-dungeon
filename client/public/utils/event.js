@@ -39,6 +39,29 @@ export function dojo_move(direction) {
     document.body.dispatchEvent(e)
 }
 
+export function dojo_heal() {
+    const event = new Event("dojo_heal")
+    document.body.dispatchEvent(event)
+}
+
+export function dojo_pickup() {
+    const event = new Event("dojo_pickup")
+    document.body.dispatchEvent(event)
+}
+
+export function dojo_hire(adventurerId, teamId) {
+    const event = new Event("dojo_hire")
+    event.adventurerId = adventurerId
+    event.teamId = teamId
+    document.body.dispatchEvent(event)
+}
+
+export function dojo_burn(spellId) {
+    const event = new Event("dojo_burn")
+    event.spellId = spellId
+    document.body.dispatchEvent(event)
+}
+
 const DIRECTIONS = ["None", "North", "East", "South", "West"]
 export function clickDoor(direction) {
     dojo_move(DIRECTIONS.indexOf(direction))

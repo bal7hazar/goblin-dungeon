@@ -19,23 +19,25 @@ export function addCharacter(scene, className, element, _position, rotation) {
     object.rotation.set(rotation[0], rotation[1], rotation[2])
     object.scale.set(0.5,0.5,0.5)
 
-    getSpellIcon(ELEMENTS[element], 1, scene).then((elementIcon) => {
-        object.elementIcon = elementIcon
-        elementIcon.refresh = function() {
-            elementIcon.position.set(position[0], 0.055, position[2])    
-        }
-        elementIcon.rotation.set(-Math.PI * 0.5, 0, 0)
-        elementIcon.receiveShadow = true
-        elementIcon.traverse((node) => {
-            if (node.isMesh) {
-                node.receiveShadow = true
+    if (element > 0) {
+        getSpellIcon(ELEMENTS[element], 1, scene).then((elementIcon) => {
+            object.elementIcon = elementIcon
+            elementIcon.refresh = function() {
+                elementIcon.position.set(position[0], 0.055, position[2])    
             }
+            elementIcon.rotation.set(-Math.PI * 0.5, 0, 0)
+            elementIcon.receiveShadow = true
+            elementIcon.traverse((node) => {
+                if (node.isMesh) {
+                    node.receiveShadow = true
+                }
+            })
+            elementIcon.layers.set(0);
+            scene.tickCallbacks.push(() => {
+                elementIcon.refresh()
+            })
         })
-        elementIcon.layers.set(0);
-        scene.tickCallbacks.push(() => {
-            elementIcon.refresh()
-        })
-    })
+    }
 
     object.enemyElement = (targetElement) => {
         const elementIcon = object.elementIcon
@@ -67,13 +69,13 @@ export function addCharacter(scene, className, element, _position, rotation) {
     object.animationsList = animationsList
     object.animationsList.Idle.play()
     object.animationsList.Idle.loop = THREE.LoopPingPong
-    object.animationMixer.addEventListener( 'finished', function( e	) {
-        if (e.action.name === 'Idle') {
+    object.animationMixer.addEventListener('finished', function(e) {
+        if (e.action._clip.name === 'Idle') {
             return
         }
-        if (e.action.name === 'Death_A') {
+        if (e.action._clip.name === 'Death_A') {
             setTimeout(() => {
-                scene.remove(object)
+                object.clean()
             }, 1000)
             return
         }
@@ -116,13 +118,17 @@ export function addCharacter(scene, className, element, _position, rotation) {
         textHP = textHP.updateText(`${object.hp}/${object.maxHP}`)
     }
 
+    object.stun = function(duration) {
+        object.stunDuration = duration
+    }
+
     object.hit = function(damage) {
         if (damage <= 0) {
             return
         }
         if (object.hp <= 0) {
             console.error("already dead")
-            return;   
+            return;
         }
         object.hp -= damage
         if (object.hp <= 0) {
@@ -138,6 +144,7 @@ export function addCharacter(scene, className, element, _position, rotation) {
         } else if (object.hp <= 0 && object.animationsList.Death_A) {
             object.animationsList.Idle.stop()
             object.animationsList.Death_A.loop = THREE.LoopOnce
+            object.animationsList.Death_A.clampWhenFinished = true
             object.animationsList.Death_A.reset()
             object.animationsList.Death_A.play()
         }
@@ -183,6 +190,10 @@ export function addCharacter(scene, className, element, _position, rotation) {
     }
 
     object.clean = function() {
+        if (object.cleaned) {
+            return
+        }
+        object.cleaned = true
         scene.remove(object)
         if (object.elementIcon) {
             scene.remove(object.elementIcon)

@@ -75,15 +75,15 @@ export const SPELLS_EFFECTS = {
     2: [{ type: 'meleeHitSingle', dmg: 30 }], // Kick
     3: [{ type: 'healSelf', hp: 25 }], // Heal
     4: [{ type: 'spellHitAll', dmg: 30 }], // Blizzard
-    5: [{ type: 'spellHitAll', dmg: 20 }],//, { type: 'stunSingle', duration: 1 }], // Burst
+    5: [{ type: 'spellHitAll', dmg: 20 }, { type: 'stunSingle', duration: 1 }], // Burst
     6: [{ type: 'spellHitOthers', dmg: 40 }], // Fireblade
     7: [{ type: 'spellHitSingle', dmg: 60 }], // Fireball
-    8: [{ type: 'healSelf', hp: 40 }],//, { type: 'healOthers', hp: 10 }], // Holywater
-    9: [{ type: 'meleeHitSingle', dmg: 70 }],//, { type: 'meleeHitSelf', dmg: 20 }], // Sacrifice
-    10: [{ type: 'meleeHitAll', dmg: 40 }],//, { type: 'stunSingle', duration: 1 }], // Smash
-    11: [{ type: 'meleeHitSingle', dmg: 40 }],//, { type: 'stunSingle', duration: 2 }], // Stomp
+    8: [{ type: 'healSelf', hp: 40 }, { type: 'healOthers', hp: 10 }], // Holywater
+    9: [{ type: 'meleeHitSingle', dmg: 70 }, { type: 'meleeHitSelf', dmg: 20 }], // Sacrifice
+    10: [{ type: 'meleeHitSingle', dmg: 40 }, { type: 'stunOthers', duration: 1 }], // Smash
+    11: [{ type: 'meleeHitSingle', dmg: 40 }, { type: 'stunSingle', duration: 2 }], // Stomp
     12: [{ type: 'spellHitAll', dmg: 30 }], // Tornado
-    13: [{ type: 'spellHitSingle', dmg: 40 }],//, { type: 'spellHitOthers', dmg: 20 }], // Volley
+    13: [{ type: 'spellHitSingle', dmg: 40 }, { type: 'spellHitOthers', dmg: 20 }], // Volley
     14: [{ type: 'healAll', hp: 30 }], // Waterfall
     15: [{ type: 'healOthers', hp: 30 }], // Zephyr
 }

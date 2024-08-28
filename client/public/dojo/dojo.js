@@ -100,7 +100,11 @@ export async function initDojo() {
         dojo_signup: (e) => [burnerAccount, actionAddress, 'signup', [`${Math.floor(e.name)}`]],
         dojo_spawn: () => [burnerAccount, actionAddress, 'spawn', []],
         dojo_attack: (e) => [burnerAccount, actionAddress, 'attack', [e.characterOrder, e.spellId, e.caster]],
-        dojo_move: (e) => [burnerAccount, actionAddress, 'move', [`${Math.floor(e.direction)}`]]
+        dojo_move: (e) => [burnerAccount, actionAddress, 'move', [`${Math.floor(e.direction)}`]],
+        dojo_heal: (e) => [burnerAccount, actionAddress, 'heal', []],
+        dojo_pickup: (e) => [burnerAccount, actionAddress, 'pickup', []],
+        dojo_hire: (e) => [burnerAccount, actionAddress, 'hire', [`${Math.floor(e.adventurerId)}`, `${Math.floor(e.teamId)}`]],
+        dojo_burn: (e) => [burnerAccount, actionAddress, 'burn', [`${Math.floor(e.spellId)}`]],
     })
 
     setTimeout(() => {

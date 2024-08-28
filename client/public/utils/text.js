@@ -48,11 +48,12 @@ export function createStaticText(scene, text, position, needRefresh) {
     ];
     
     const textMesh = new THREE.Mesh(textGeo, materials);
-
+    textMesh.geometry.center()
     scene.add(textMesh);
 
     textMesh.refresh = function() {
-        textMesh.position.set(...worldToScreenPosition(scene, position))
+        const screenPos = worldToScreenPosition(scene, position)
+        textMesh.position.set(...screenPos)
     }
     textMesh.layers.set(2);
 
