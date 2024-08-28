@@ -3,8 +3,8 @@ kind = "WorldContract"
 class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
 original_class_hash = "0x3715f072aa1c07be724249fcda8b0322687f6c5c585eebc4402d162649c707c"
 abi = "manifests/dev/deployment/abis/dojo-world.json"
-address = "0x3b092891f7d869d9255225311da9ffd7a090c851b7ea5de92ea162e5b4dfcd6"
-transaction_hash = "0x1d913752dde6b801850d3137739a55b7d7c005884164a25681ffb2fe156ae17"
+address = "0x1b27c5db43d03721c5025a4309adc91d061f02f4f49f2b5310effcd19897bde"
+transaction_hash = "0x8eadfd2912283f8730aa8df0a49709d47eb1e7d8495ad1a7519ae368ac9874"
 block_number = 3
 seed = "grimscape"
 manifest_name = "dojo-world"
@@ -23,11 +23,11 @@ manifest_name = "dojo-base"
 
 [[contracts]]
 kind = "DojoContract"
-address = "0x3022cd638babf65f15e26ebc9e85a2413bedd9b6580db12b8dd0a8516c4bcfa"
-class_hash = "0x1b8477f1c6a4491dfccbc7eb1c84e8eafec34d12035ef99e7b56fa98148e3f4"
-original_class_hash = "0x1b8477f1c6a4491dfccbc7eb1c84e8eafec34d12035ef99e7b56fa98148e3f4"
+address = "0x4726d22f268d0718d4b076fb37f5a2bed74982731fa00cf1fbdec9994f4129f"
+class_hash = "0x537e9836bdf6969e4980a71ebac1c0143781816ba51229eece52448725507d3"
+original_class_hash = "0x537e9836bdf6969e4980a71ebac1c0143781816ba51229eece52448725507d3"
 base_class_hash = "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2"
-abi = "manifests/dev/deployment/abis/contracts/grimscape-actions-bc726048.json"
+abi = "manifests/dev/deployment/abis/contracts/grimscape-actions-18ec7a89.json"
 reads = []
 writes = [
     "grimscape-Player",
@@ -40,17 +40,27 @@ writes = [
 ]
 init_calldata = []
 tag = "grimscape-actions"
-systems = ["signup", "rename", "spawn", "move", "attack"]
-manifest_name = "grimscape-actions-bc726048"
+systems = [
+    "signup",
+    "rename",
+    "spawn",
+    "move",
+    "attack",
+    "hire",
+    "pickup",
+    "burn",
+    "heal",
+]
+manifest_name = "grimscape-actions-18ec7a89"
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
-original_class_hash = "0x2696f65565b8fa2662422aac29606f10dbe96b87acaac2acb2ad2d9f25cf43b"
-abi = "manifests/dev/deployment/abis/models/grimscape-Challenge-6cbc441e.json"
+class_hash = "0x1a492c129ec892bf0b2b5dfea09932b14590036adb332b9bf9eb9360ccd3"
+original_class_hash = "0x1a492c129ec892bf0b2b5dfea09932b14590036adb332b9bf9eb9360ccd3"
+abi = "manifests/dev/deployment/abis/models/grimscape-Challenge-4d96708c.json"
 tag = "grimscape-Challenge"
 qualified_path = "grimscape::models::index::challenge"
-manifest_name = "grimscape-Challenge-6cbc441e"
+manifest_name = "grimscape-Challenge-4d96708c"
 
 [[models.members]]
 name = "dungeon_id"
@@ -84,12 +94,12 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
-original_class_hash = "0x57424fc00e0ef06f5bb845dc0a96087221f3aa8ad675f5ed3c93ecb7b943f5"
-abi = "manifests/dev/deployment/abis/models/grimscape-Dungeon-6a08af97.json"
+class_hash = "0x7c9571d80cfe75bde8f5a4d5027f334121ee81cd90c4cacb16acdc05efa49ee"
+original_class_hash = "0x7c9571d80cfe75bde8f5a4d5027f334121ee81cd90c4cacb16acdc05efa49ee"
+abi = "manifests/dev/deployment/abis/models/grimscape-Dungeon-8e7b8b82.json"
 tag = "grimscape-Dungeon"
 qualified_path = "grimscape::models::index::dungeon"
-manifest_name = "grimscape-Dungeon-6a08af97"
+manifest_name = "grimscape-Dungeon-8e7b8b82"
 
 [[models.members]]
 name = "id"
@@ -113,12 +123,12 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
-original_class_hash = "0x2a16123e1881e723b693463ea1a8ded4dddd6af7fe531267d046fa36fd05a28"
-abi = "manifests/dev/deployment/abis/models/grimscape-Factory-2a440efa.json"
+class_hash = "0x2a5fb56491e97bd613e2609235da1ff0b6c6c2551b49ec2bfd94c65afb7f05b"
+original_class_hash = "0x2a5fb56491e97bd613e2609235da1ff0b6c6c2551b49ec2bfd94c65afb7f05b"
+abi = "manifests/dev/deployment/abis/models/grimscape-Factory-47ed7cb4.json"
 tag = "grimscape-Factory"
 qualified_path = "grimscape::models::index::factory"
-manifest_name = "grimscape-Factory-2a440efa"
+manifest_name = "grimscape-Factory-47ed7cb4"
 
 [[models.members]]
 name = "id"
@@ -132,12 +142,12 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
-original_class_hash = "0x4963d1f53dc28627702f3eaf2d4bf1fed2bb0dfebaa54ffa54f75f5cd3aa313"
-abi = "manifests/dev/deployment/abis/models/grimscape-Mob-57fe6720.json"
+class_hash = "0x310c9f841c0f3595eb7838b8e3f12590eb8e759e57c96e9c3f3b5be7d898cf2"
+original_class_hash = "0x310c9f841c0f3595eb7838b8e3f12590eb8e759e57c96e9c3f3b5be7d898cf2"
+abi = "manifests/dev/deployment/abis/models/grimscape-Mob-3a6da169.json"
 tag = "grimscape-Mob"
 qualified_path = "grimscape::models::index::mob"
-manifest_name = "grimscape-Mob-57fe6720"
+manifest_name = "grimscape-Mob-3a6da169"
 
 [[models.members]]
 name = "dungeon_id"
@@ -156,6 +166,11 @@ key = true
 
 [[models.members]]
 name = "class"
+type = "u8"
+key = false
+
+[[models.members]]
+name = "threat"
 type = "u8"
 key = false
 
@@ -191,12 +206,12 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
-original_class_hash = "0x5a184e5d79cb412daff88b15fc262f51148b8236d0e88c140af0004f0ef9417"
-abi = "manifests/dev/deployment/abis/models/grimscape-Player-25b86644.json"
+class_hash = "0x7440f26edb8f8585022c9b424db17526bcca12843b42d4f6c71a1f874dfa267"
+original_class_hash = "0x7440f26edb8f8585022c9b424db17526bcca12843b42d4f6c71a1f874dfa267"
+abi = "manifests/dev/deployment/abis/models/grimscape-Player-560a0042.json"
 tag = "grimscape-Player"
 qualified_path = "grimscape::models::index::player"
-manifest_name = "grimscape-Player-25b86644"
+manifest_name = "grimscape-Player-560a0042"
 
 [[models.members]]
 name = "id"
@@ -215,12 +230,12 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
-original_class_hash = "0x5df26024a120516b8833201495975baeb791924ed3aea85992874269bc4d81b"
-abi = "manifests/dev/deployment/abis/models/grimscape-Room-c252dd67.json"
+class_hash = "0x413ed160a3075d8652aa7cec0d79d7cf0c7a3adaa4d0e15f45f2ee95021d4e9"
+original_class_hash = "0x413ed160a3075d8652aa7cec0d79d7cf0c7a3adaa4d0e15f45f2ee95021d4e9"
+abi = "manifests/dev/deployment/abis/models/grimscape-Room-58989322.json"
 tag = "grimscape-Room"
 qualified_path = "grimscape::models::index::room"
-manifest_name = "grimscape-Room-c252dd67"
+manifest_name = "grimscape-Room-58989322"
 
 [[models.members]]
 name = "dungeon_id"
@@ -243,18 +258,13 @@ type = "u8"
 key = false
 
 [[models.members]]
-name = "item"
-type = "u8"
-key = false
-
-[[models.members]]
-name = "monsters"
-type = "u128"
-key = false
-
-[[models.members]]
 name = "adventurers"
-type = "u128"
+type = "u16"
+key = false
+
+[[models.members]]
+name = "spell"
+type = "u8"
 key = false
 
 [[models.members]]
@@ -264,12 +274,12 @@ key = false
 
 [[models]]
 kind = "DojoModel"
-class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
-original_class_hash = "0x2e25b83bc539594be5897e81295c6b7a93340b0522cc525589cd388aae6d1c4"
-abi = "manifests/dev/deployment/abis/models/grimscape-Team-2e92bc02.json"
+class_hash = "0x5a4bf296f23729f0f66d5a35eb86e8be5ce862389f483166b2d29a2ac82703"
+original_class_hash = "0x5a4bf296f23729f0f66d5a35eb86e8be5ce862389f483166b2d29a2ac82703"
+abi = "manifests/dev/deployment/abis/models/grimscape-Team-2008b6e4.json"
 tag = "grimscape-Team"
 qualified_path = "grimscape::models::index::team"
-manifest_name = "grimscape-Team-2e92bc02"
+manifest_name = "grimscape-Team-2008b6e4"
 
 [[models.members]]
 name = "dungeon_id"
@@ -294,6 +304,16 @@ key = false
 [[models.members]]
 name = "dead"
 type = "bool"
+key = false
+
+[[models.members]]
+name = "deck"
+type = "u64"
+key = false
+
+[[models.members]]
+name = "spells"
+type = "u16"
 key = false
 
 [[models.members]]
