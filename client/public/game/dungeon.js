@@ -18,7 +18,6 @@ export function setupDungeon(scene, rooms, team) {
             Object.keys(room[y]).forEach((x) => {
                 const roomInfo = room[y][x];
                 const roomType = roomInfo.category.value;
-                console.log('roomType', roomType, x, y)
                 const icon = getIconName(roomType);
                 getRoomIcon(icon, 0.1, scene, DUNGEON_LAYER, x / 9, y / 9, 0);
             });
