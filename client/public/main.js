@@ -44,7 +44,7 @@ on_entity_update((data) => {
         }
 
         setTimeout(() => {
-            console.log(dojoData.currentRoom)
+            console.log(dojoData)
             const roomInfo = data.rooms[data.currentRoom.dungeon_id.value][data.currentRoom.y.value][data.currentRoom.x.value]
             const roomType = ROOM_TYPES[roomInfo.category.value]
             if (roomType === "Monster") {
@@ -78,18 +78,20 @@ on_entity_update((data) => {
     } else if (currentFight) {
         if (timeoutUpdateFight) { clearTimeout(timeoutUpdateFight) }
         timeoutUpdateFight = setTimeout(() => {
-            setTimeout(() => {
+            currentFight.startNextTurn = () => {
                 if (room.spells.value === 0) {
-                    currentFight.clean()
-                    currentFight = undefined
-                    enterRoom("afterfight")
+                    setTimeout(() => {
+                        currentFight.clean()
+                        currentFight = undefined
+                        enterRoom("afterfight")    
+                    }, 1000)
                     return
                 }
                 const spellHex = '0x' + room.spells.value.toString(16)
                 const spells = [parseInt(spellHex.slice(4,5),16), parseInt(spellHex.slice(3,4),16),parseInt(spellHex.slice(2,3),16)]
                 currentFight.startTurn(dojoData.currentRoom, spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
-                console.log(dojoData.currentRoom)
-            }, 6000)
+                console.log(dojoData)
+            }
         }, 500)
     }
 })
@@ -151,7 +153,7 @@ async function enterRoom(name, data) {
             roomData.nodes.push(createStaticText(scene, `New spell added!`, [0,0,0]))
             dojo_pickup()
         }
-    } else if (name === "Hire") {
+    } else if (name === "Adventurer") {
         roomData.nodes.push(createStaticText(scene, `You can replace one ally.\nClick on the one to fire, then the one to hire,\nthen Recruit button.`, [0,2,0]))
         const character0 = parseInt(data.adventurers.slice(5,6))
         const character0Element = parseInt(data.adventurers.slice(4,5))

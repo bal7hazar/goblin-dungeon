@@ -24,7 +24,7 @@ export function iconToSpellPreview(name, scene, position) {
         console.log(name)
         const icon = await getSpellIcon(name, 0.2, scene)
         icon.refresh = function() {
-            const screenPos = worldToScreenPosition(scene, [position[0], 1.5, position[2]])
+            const screenPos = worldToScreenPosition(scene, [position[0], position[1], position[2]])
             screenPos[0] -= 0.15
             icon.position.set(...screenPos)    
         }

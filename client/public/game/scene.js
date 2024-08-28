@@ -1,6 +1,6 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js'
-// import TWEEN from '../node_modules/@tweenjs/tween.js'
+import TWEEN from '../node_modules/@tweenjs/tween.js'
 
 let mainLayer = true, dungeonLayer = false
 let objectToInteract, uiObjectToInteract
@@ -63,28 +63,28 @@ export function initScene() {
         controls.update();
 
         // Scene raycast
-        raycaster.setFromCamera(pointer, camera);
-        raycaster.layers.enableAll();
-        let intersects = raycaster.intersectObjects(scene.children);
+        // raycaster.setFromCamera(pointer, camera);
+        // raycaster.layers.enableAll();
+        // let intersects = raycaster.intersectObjects(scene.children);
     
-        objectToInteract = undefined
-        for ( let i = 0; i < intersects.length; i ++ ) {
-            if (intersects[i].object.onClick) {
-                objectToInteract = intersects[i].object
-            }
-        }
+        // objectToInteract = undefined
+        // for ( let i = 0; i < intersects.length; i ++ ) {
+        //     if (intersects[i].object.onClick) {
+        //         objectToInteract = intersects[i].object
+        //     }
+        // }
 
-        // UI Raycast
-        raycaster.setFromCamera(pointer, uiCamera);
-        raycaster.layers.set(2);
-        intersects = raycaster.intersectObjects(scene.children);
+        // // UI Raycast
+        // raycaster.setFromCamera(pointer, uiCamera);
+        // raycaster.layers.set(2);
+        // intersects = raycaster.intersectObjects(scene.children);
     
-        uiObjectToInteract = undefined
-        for ( let i = 0; i < intersects.length; i ++ ) {
-            if (intersects[i].object.onClick) {
-                uiObjectToInteract = intersects[i].object
-            }
-        }
+        // uiObjectToInteract = undefined
+        // for ( let i = 0; i < intersects.length; i ++ ) {
+        //     if (intersects[i].object.onClick) {
+        //         uiObjectToInteract = intersects[i].object
+        //     }
+        // }
     
         for (let i = scene.tickCallbacks.length - 1; i >= 0; --i) {
             const callbackResult = scene.tickCallbacks[i]()
@@ -114,20 +114,48 @@ export function initScene() {
     }
 
     scene.addTween = function(object, name, callback) {
-        // const tween = new TWEEN.Tween(object[name])
-        // tween.onComplete(() => {
-        //     const index = tweens.indexOf(tween)
-        //     tweens.splice(index, 1)
-        // })
-        // tweens.push(tween)
-        // callback(tween)
+        const tween = new TWEEN.Tween(object[name])
+        tween.onComplete(() => {
+            const index = tweens.indexOf(tween)
+            tweens.splice(index, 1)
+        })
+        tweens.push(tween)
+        callback(tween)
     }
 
-    window.addEventListener('click', (e) => {
+    window.addEventListener('click', (event) => {
         // Avoid double click mouse
-        if (e.detail === 2) {
+        if (event.detail === 2) {
             return
         }
+
+        pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        // Scene raycast
+        raycaster.setFromCamera(pointer, camera);
+        raycaster.layers.enableAll();
+        let intersects = raycaster.intersectObjects(scene.children);
+    
+        objectToInteract = undefined
+        for ( let i = 0; i < intersects.length; i ++ ) {
+            if (intersects[i].object.onClick) {
+                objectToInteract = intersects[i].object
+            }
+        }
+
+        // UI Raycast
+        raycaster.setFromCamera(pointer, uiCamera);
+        raycaster.layers.set(2);
+        intersects = raycaster.intersectObjects(scene.children);
+    
+        uiObjectToInteract = undefined
+        for ( let i = 0; i < intersects.length; i ++ ) {
+            if (intersects[i].object.onClick) {
+                uiObjectToInteract = intersects[i].object
+            }
+        }
+
         if (uiObjectToInteract) {
             uiObjectToInteract.onClick()
             return

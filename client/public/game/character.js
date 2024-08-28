@@ -107,7 +107,7 @@ export function addCharacter(scene, className, element, _position, rotation) {
     object.maxHP = CHARACTERS_MAX_HP[className]
     object.hp = object.maxHP
 
-    let textHP = createStaticText(scene, `${object.hp}/${object.maxHP}`, [position[0], 1.2, position[2]])
+    let textHP = createStaticText(scene, `${object.hp}/${object.maxHP}`, [position[0] + 0.5, 1.2, position[2] + 0.5])
     object.textHP = textHP
 
     object.setHP = function(newHP) {
@@ -183,10 +183,23 @@ export function addCharacter(scene, className, element, _position, rotation) {
         }
         object.currentSpell = spellId
         let name = SPELLS[spellId]
-        prevIcon = await iconToSpellPreview(name, scene, position)
-        prevIcon.onClick = () => {
-            click_character(object.currentId)
-        }
+        // const spellPosition = [position[0],position[1] - 1,position[2]]
+        getSpellIcon(name, 1, scene).then((icon) => {
+            prevIcon = icon
+            prevIcon.refresh = function() {
+                prevIcon.position.set(position[0] + (position[0] < 0 ? 1.2 : -1.2), 0.1, position[2])    
+            }
+            prevIcon.rotation.set(-Math.PI * 0.5, 0, 0)
+            prevIcon.layers.set(0);
+            prevIcon.onClick = () => {
+                click_character(object.currentId)
+            }
+            prevIcon.refresh()
+        })
+        // scene.tickCallbacks.push(() => {
+        //     elementIcon.refresh()
+        // })
+
     }
 
     object.clean = function() {

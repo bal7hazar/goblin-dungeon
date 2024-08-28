@@ -51,8 +51,7 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         currentTurn: [],
         selectedSpell: -1,
         selectedCaster: -1,
-        swap1: undefined,
-        swap2: undefined
+        startNextTurn: undefined
     }
 
     fight.getCharacterOrder = function() {
@@ -64,6 +63,10 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
 
     fight.setState = (newState) => {
         if (newState === "pickspellandswap") {
+            if (fight.startNextTurn) {
+                fight.startNextTurn()
+                fight.startNextTurn = undefined
+            }
             console.log("select a spell or swap")
         } else if (newState === "pickcaster") {
             console.log("select a character to cast this spell")
@@ -132,6 +135,8 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
             }
             swapCharacters(1, 2)
         }
+        fight.swapAB = swapAB
+        fight.swapBC = swapBC
         icon1.spellId = spells[0]
         icon1.onClick = () => {
             fight.selectedSpell = 0
@@ -324,7 +329,7 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
                 if (enemy === undefined) {
                     return undefined
                 }
-                if (effect.type === "stunOthers" && enemy == source) {
+                if (effect.type === "stunOthers" && enemy.obj === mainTarget) {
                     return undefined
                 }
                 otherTeam[enemy.obj.currentId].stunned = true
@@ -350,7 +355,7 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
                 if (ally === undefined) {
                     return undefined
                 }
-                if (effect.type === "healOthers" && ally == source) {
+                if (effect.type === "healOthers" && ally.obj == source) {
                     return undefined
                 }
                 const currentHP = ally.hp
@@ -487,20 +492,24 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
             ],
         }
         fight.currentTurn = Object.values(currentTurn).map((info) => {
-            if (!info.source || !info.mainTarget || info.source.info.health.value <= 0) {
-                return undefined
-            }
-            if (info.source.info.stun.value > 0) {
+            if (!info.source || !info.mainTarget || info.source.info.health.value <= 0 ||
+                info.source.info.stun.value > 0
+            ) {
+                if (info.source) {
+                    info.source.prepare()
+                }
                 return undefined
             }
             info.spell = info.source.info.spell.value
             // is character dead (avoid Volley as it can hit other people)
             if (info.spell !== 13 && (info.source.isAlly && (fightStatus.allies[info.source.currentId].hp <= 0 || fightStatus.allies[info.source.currentId].stunned)) ||
                 (!info.source.isAlly && (fightStatus.enemies[info.source.currentId].hp <= 0 || fightStatus.enemies[info.source.currentId].stunned))) {
+                info.source.prepare()
                 return undefined
             }
             info.spellDetails = computeSpellDetails(fightStatus, info.source, info.spell, info.mainTarget)
-            if (info.spellDetails === undefined) {
+            if (info.spellDetails === undefined || info.spellDetails.changes.length === 0) {
+                info.source.prepare()
                 return undefined
             }
             return info
@@ -546,6 +555,8 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         fight.spellSelectionsIcons.forEach((node) => {
             scene.remove(node)
         })
+        scene.remove(fight.swapAB)
+        scene.remove(fight.swapBC)
     }
 
     return fight
