@@ -1,5 +1,5 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
-import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader';
+import { FBXLoader } from '../node_modules/three/examples/jsm/loaders/FBXLoader.js';
 import * as SkeletonUtils from '../node_modules/three/examples/jsm/utils/SkeletonUtils.js';
 
 const loader = new THREE.ImageBitmapLoader();

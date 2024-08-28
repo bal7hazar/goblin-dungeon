@@ -1,6 +1,6 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
-import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls'
-import TWEEN from '../node_modules/@tweenjs/tween.js'
+import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js'
+// import TWEEN from '../node_modules/@tweenjs/tween.js'
 
 let objectToInteract, uiObjectToInteract
 const tweens = []
@@ -92,23 +92,27 @@ export function initScene() {
     }
 
     function render() {
-        renderer.clear();      
+        renderer.clear();
         renderer.render(scene, camera);
         renderer.clearDepth(); 
         renderer.render(scene, uiCamera);
     }
 
     scene.addTween = function(object, name, callback) {
-        const tween = new TWEEN.Tween(object[name])
-        tween.onComplete(() => {
-            const index = tweens.indexOf(tween)
-            tweens.splice(index, 1)
-        })
-        tweens.push(tween)
-        callback(tween)
+        // const tween = new TWEEN.Tween(object[name])
+        // tween.onComplete(() => {
+        //     const index = tweens.indexOf(tween)
+        //     tweens.splice(index, 1)
+        // })
+        // tweens.push(tween)
+        // callback(tween)
     }
 
     window.addEventListener('click', (e) => {
+        // Avoid double click mouse
+        if (e.detail === 2) {
+            return
+        }
         if (uiObjectToInteract) {
             uiObjectToInteract.onClick()
             return
