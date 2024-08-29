@@ -17,7 +17,7 @@ impl Blizzard of SpellTrait {
                 break;
             }
             let mut foe = foes.pop_front().unwrap();
-            foe.stun(DAMAGE * caster.multiplier);
+            foe.stun(STUN);
             foes.append(foe);
             index -= 1;
         };
