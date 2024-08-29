@@ -1,3 +1,5 @@
+import { play_sfx } from "../game/scene.js";
+
 export function setDojoListeners(list) {
     for (const eventName in list) {
         document.body.addEventListener(eventName, function(e) {
@@ -64,6 +66,7 @@ export function dojo_burn(spellId) {
 
 const DIRECTIONS = ["None", "North", "East", "South", "West"]
 export function clickDoor(direction) {
+    play_sfx("door_open")
     dojo_move(DIRECTIONS.indexOf(direction))
 }
 

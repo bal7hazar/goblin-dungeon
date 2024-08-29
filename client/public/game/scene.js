@@ -5,6 +5,9 @@ import TWEEN from '../node_modules/@tweenjs/tween.js'
 let mainLayer = true, dungeonLayer = false
 let objectToInteract, uiObjectToInteract
 const tweens = []
+const sfxList = {}
+let globalScene
+let listener
 
 export function initScene() {
     // Scene setup
@@ -25,7 +28,7 @@ export function initScene() {
     directionalLight.position.set(10, 200, 10); // Adjust light position as needed
     directionalLight.castShadow = true; // Enable shadows for this light
     scene.add(directionalLight);
-        
+
     // Camera positioning
     const cameraPivot = new THREE.Group()
     scene.add(cameraPivot)
@@ -51,40 +54,11 @@ export function initScene() {
     
     const controls = new OrbitControls(camera, renderer.domElement);
 
-    function onPointerMove(event) {
-        pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-    }
-
     scene.tickCallbacks = []
     
     function gameLoop() {
         requestAnimationFrame(gameLoop)
         controls.update();
-
-        // Scene raycast
-        // raycaster.setFromCamera(pointer, camera);
-        // raycaster.layers.enableAll();
-        // let intersects = raycaster.intersectObjects(scene.children);
-    
-        // objectToInteract = undefined
-        // for ( let i = 0; i < intersects.length; i ++ ) {
-        //     if (intersects[i].object.onClick) {
-        //         objectToInteract = intersects[i].object
-        //     }
-        // }
-
-        // // UI Raycast
-        // raycaster.setFromCamera(pointer, uiCamera);
-        // raycaster.layers.set(2);
-        // intersects = raycaster.intersectObjects(scene.children);
-    
-        // uiObjectToInteract = undefined
-        // for ( let i = 0; i < intersects.length; i ++ ) {
-        //     if (intersects[i].object.onClick) {
-        //         uiObjectToInteract = intersects[i].object
-        //     }
-        // }
     
         for (let i = scene.tickCallbacks.length - 1; i >= 0; --i) {
             const callbackResult = scene.tickCallbacks[i]()
@@ -165,14 +139,36 @@ export function initScene() {
             objectToInteract.onClick()
         }
     })
-    
-    window.addEventListener('pointermove', onPointerMove);
-    
+
     gameLoop()
 
     // scene.tickCallbacks.push(() => {
     //     cameraPivot.rotation.y += 0.001
     // })
 
+    globalScene = scene
+
     return scene
+}
+
+export function play_sfx(name) {
+    if (!globalScene) {
+        return
+    }
+    if (!listener) {
+        listener = new THREE.AudioListener()
+        sfxList[name] = new THREE.Audio(listener)
+        globalScene.camera.add(listener)
+    }
+    if (sfxList[name]) {
+        sfxList[name].play()
+        return
+    } 
+    const audioLoader = new THREE.AudioLoader()
+    audioLoader.load(`assets/sfx/${name}.mp3`, (buffer) => {
+        sfxList[name].setBuffer(buffer)
+        sfxList[name].setLoop(false)
+        sfxList[name].setVolume(1.0)
+        sfxList[name].play()
+    })
 }
