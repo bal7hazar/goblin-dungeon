@@ -78,7 +78,10 @@ on_entity_update((data) => {
     } else if (currentFight) {
         if (timeoutUpdateFight) { clearTimeout(timeoutUpdateFight) }
         timeoutUpdateFight = setTimeout(() => {
+            let autoNextTurnToAvoidStuck
+            let nextTurnAlreadyStarted = false
             currentFight.startNextTurn = () => {
+                nextTurnAlreadyStarted = true
                 if (room.spells.value === 0) {
                     setTimeout(() => {
                         currentFight.clean()
@@ -92,6 +95,12 @@ on_entity_update((data) => {
                 currentFight.startTurn(dojoData.currentRoom, spells, [room.enemies[0] ? room.enemies[0].spell.value : undefined,room.enemies[1] ? room.enemies[1].spell.value : undefined,room.enemies[2] ? room.enemies[2].spell.value : undefined])
                 console.log(dojoData)
             }
+            autoNextTurnToAvoidStuck = setTimeout(() => {
+                if (nextTurnAlreadyStarted) {
+                    return
+                }
+                currentFight.startNextTurn()
+            }, 6000)
         }, 500)
     }
 })

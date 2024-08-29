@@ -7,7 +7,6 @@ const DUNGEON_LAYER = 3;
 let circle = undefined;
 
 export function setupDungeon(scene, rooms, team) {
-    console.log(team);
     const data = rooms;
     setupToggle(scene, UI_LAYER, 0.95, 0.8, 0);
     setupToggle(scene, DUNGEON_LAYER, 0.95, 0.8, 0);
