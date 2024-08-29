@@ -65,7 +65,56 @@ export function createStaticText(scene, text, position, needRefresh) {
     scene.tickCallbacks.push(() => {
         if (textMesh.removed) return false;
         textMesh.refresh()
-    })    
+    })
+    return textMesh
+}
+
+export function createStaticTextHPBar(scene, text, position, needRefresh) {
+    if (!fontLoaded) return;
+    const depth = 0.01,
+        size = 0.04,
+        curveSegments = 10,
+        bevelThickness = 0.04,
+        bevelSize = 0.;
+    textGeo = new TextGeometry(text, {
+        font: font,
+        size: size,
+        depth: depth,
+        curveSegments: curveSegments,
+
+        bevelThickness: bevelThickness,
+        bevelSize: bevelSize,
+        bevelEnabled: true
+
+    } );
+
+    textGeo.computeBoundingBox();
+
+    materials = [
+        new THREE.MeshBasicMaterial({ color: 0xffffff }),
+        new THREE.MeshBasicMaterial({ color: 0xffffff }),
+    ];
+    
+    const textMesh = new THREE.Mesh(textGeo, materials);
+    textMesh.geometry.center()
+    scene.add(textMesh);
+
+    textMesh.refresh = () => {
+        const screenPos = worldToScreenPosition(scene, position)
+        screenPos[2] += 0.2
+        textHP.position.set(...screenPos)
+    }
+    textMesh.layers.set(2);
+
+    textMesh.updateText = function(newText) {
+        scene.remove(textMesh)
+        textMesh.removed = true
+        return createStaticText(scene, newText, position)
+    }
+    scene.tickCallbacks.push(() => {
+        if (textMesh.removed) return false;
+        textMesh.refresh()
+    })
     return textMesh
 }
 

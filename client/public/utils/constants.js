@@ -13,10 +13,10 @@ export const ENEMY_CLASSES = {
 }
 
 export const CHARACTERS_MAX_HP = {
-    Knight: 100,
-    Mage: 100,
-    Rogue: 100,
-    Barbarian: 100,
+    Knight: 200,
+    Mage: 200,
+    Rogue: 200,
+    Barbarian: 200,
     Skeleton_Mage: 80,
     Skeleton_Minion: 60,
     Skeleton_Warrior: 120,

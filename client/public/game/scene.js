@@ -88,9 +88,9 @@ export function initScene() {
     
         for (let i = scene.tickCallbacks.length - 1; i >= 0; --i) {
             const callbackResult = scene.tickCallbacks[i]()
-            // if (callbackResult === false) {
-            //     scene.tickCallbacks.splice(i, 1)
-            // }
+            if (callbackResult === false) {
+                scene.tickCallbacks.splice(i, 1)
+            }
         }
 
         render();

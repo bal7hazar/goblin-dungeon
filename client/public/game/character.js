@@ -1,23 +1,30 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { CHARACTERS_MAX_HP, ELEMENTS, ELEMENTS_STRENGTH, SPELLS } from '../utils/constants.js';
 import { click_character } from '../utils/event.js';
-import { createFightInfoText, createStaticText } from '../utils/text.js';
-import { getSpellIcon, iconToSpellPreview } from '../utils/ui.js';
+import { createFightInfoText } from '../utils/text.js';
+import { addHealthBar, getSpellIcon, iconToSpellPreview } from '../utils/ui.js';
 import { getModel } from '../utils/assets.js';
 import { worldToScreenPosition } from '../utils/utils.js';
 
 export function addCharacter(scene, className, element, _position, rotation) {
     const object = getModel(className)
+    object.maxHP = CHARACTERS_MAX_HP[className]
+    object.hp = object.maxHP
 
     let position = _position
     object.traverse(function (node) {
         if (node.isMesh) {
-            node.castShadow = true; // Cast shadow
+            node.castShadow = true;
         }
     });
     object.position.set(position[0], position[1], position[2])
     object.rotation.set(rotation[0], rotation[1], rotation[2])
     object.scale.set(0.5,0.5,0.5)
+
+    const hpBarPosition = [position[0], position[1] + 1.6, position[2]]
+    const hpBar = addHealthBar(scene, hpBarPosition, 0.3, 0.08)
+    hpBar.setHP(object.hp, object.maxHP)
+    object.hpBar = hpBar
 
     if (element > 0) {
         getSpellIcon(ELEMENTS[element], 1, scene).then((elementIcon) => {
@@ -104,18 +111,12 @@ export function addCharacter(scene, className, element, _position, rotation) {
         }
     }
 
-    object.maxHP = CHARACTERS_MAX_HP[className]
-    object.hp = object.maxHP
-
-    let textHP = createStaticText(scene, `${object.hp}/${object.maxHP}`, [position[0] + 0.5, 1.2, position[2] + 0.5])
-    object.textHP = textHP
-
     object.setHP = function(newHP) {
         if (newHP > object.maxHP) {
             object.maxHP = newHP
         }
         object.hp = newHP
-        textHP = textHP.updateText(`${object.hp}/${object.maxHP}`)
+        object.hpBar.setHP(object.hp, object.maxHP)
     }
 
     object.stun = function(duration) {
@@ -134,8 +135,8 @@ export function addCharacter(scene, className, element, _position, rotation) {
         if (object.hp <= 0) {
             object.hp = 0
         }
-        textHP = textHP.updateText(`${object.hp}/${object.maxHP}`)
-        createFightInfoText(scene, `-${damage} HP`, [position[0], 1.5, position[2]])
+        object.hpBar.setHP(object.hp, object.maxHP)
+        createFightInfoText(scene, `-${damage} HP`, [position[0], 1.9, position[2]])
         if (object.hp > 0 && object.animationsList.Hit_A) {
             object.animationsList.Idle.stop()
             object.animationsList.Hit_A.loop = THREE.LoopOnce
@@ -168,8 +169,8 @@ export function addCharacter(scene, className, element, _position, rotation) {
             object.animationsList.Hit_B.reset()
             object.animationsList.Hit_B.play()
         }
-        textHP = textHP.updateText(`${object.hp}/${object.maxHP}`)
-        createFightInfoText(scene, `+${hp} HP`, [position[0], 1.5, position[2]])
+        object.hpBar.setHP(object.hp, object.maxHP)
+        createFightInfoText(scene, `+${hp} HP`, [position[0], 1.9, position[2]])
     }
 
     let prevIcon
@@ -214,7 +215,7 @@ export function addCharacter(scene, className, element, _position, rotation) {
         if (prevIcon) {
             scene.remove(prevIcon)
         }
-        scene.remove(textHP)
+        object.hpBar.clean()
     }
 
     return object

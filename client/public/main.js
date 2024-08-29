@@ -65,11 +65,11 @@ on_entity_update((data) => {
                 })
             } else if (roomType === "Spell") {
                 enterRoom(roomType, {
-                    spellId: dojoData.rooms[dojoData.currentRoom.dungeon_id.value][dojoData.currentRoom.y.value][dojoData.currentRoom.x.value].spellId
+                    spellId: dojoData.rooms[dojoData.currentRoom.dungeon_id.value][dojoData.currentRoom.y.value][dojoData.currentRoom.x.value].spellId.value
                 })
             } else if (roomType === "Adventurer") {
                 enterRoom(roomType, {
-                    adventurers: dojoData.rooms[dojoData.currentRoom.dungeon_id.value][dojoData.currentRoom.y.value][dojoData.currentRoom.x.value].adventurers
+                    adventurers: "0x" + dojoData.rooms[dojoData.currentRoom.dungeon_id.value][dojoData.currentRoom.y.value][dojoData.currentRoom.x.value].adventurers.value.toString(16)
                 })
             } else {
                 enterRoom(roomType)
