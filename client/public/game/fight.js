@@ -86,16 +86,24 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
     setupFight(fight, scene, alliesInfo, enemiesInfo)
 
     const swapCharacters = function(id1, id2) {
-        const char1 = Object.values(fight.allies).filter((elem) => elem.currentId === id1)[0]
-        const char2 = Object.values(fight.allies).filter((elem) => elem.currentId === id2)[0]
+        console.log("before swap")
+        console.log(fight.allies[0].currentId, fight.allies[0].baseId, '<baseid')
+        console.log(fight.allies[1].currentId, fight.allies[1].baseId, '<baseid')
+        console.log(fight.allies[2].currentId, fight.allies[2].baseId, '<baseid')
+
+        const char1 = fight.allies[id1]
+        const char2 = fight.allies[id2]
+
+        fight.allies[id1] = char2
+        fight.allies[id2] = char1
+
         char1.currentId = id2
         char2.currentId = id1
 
         const char1Position = [...char1.position]
         char1.setPosition([...char2.position])
         char2.setPosition(char1Position)
-        fight.allies[id1] = char2
-        fight.allies[id2] = char1
+
         if (fight.enemies[id1] && fight.enemies[id1].info && fight.enemies[id1].info.health.value > 0) {
             fight.allies[id1].enemyElement(fight.enemies[id1].info.element.value)
         } else {
@@ -106,13 +114,21 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         } else {
             fight.allies[id2].enemyElement()
         }
+        console.log("after swap")
+        console.log(fight.allies[0].currentId, fight.allies[0].baseId, '<baseid')
+        console.log(fight.allies[1].currentId, fight.allies[1].baseId, '<baseid')
+        console.log(fight.allies[2].currentId, fight.allies[2].baseId, '<baseid')
+        refreshTurnOrder()
     }
 
     on_click_character((id) => {
         if (fight.state === "pickcaster") {
-            fight.selectedCaster = fight.allies[id].baseId
-            fight.allies[id].info.spell.value = fight.spellsDeck[fight.selectedSpell].spellId
-            fight.allies[id].prepare(fight.spellsDeck[fight.selectedSpell].spellId)
+            fight.selectedCaster = fight.allies[id].currentId
+            console.log(fight.selectedCaster)
+            const ally = Object.values(fight.allies).filter((obj) => obj.baseId == fight.selectedCaster)[0]
+            ally.info.spell.value = fight.spellsDeck[fight.selectedSpell].spellId
+            console.log("SPELL SELECTED FOR ALLY", ally.info.spell.value)
+            ally.prepare(fight.spellsDeck[fight.selectedSpell].spellId)
             fight.setState("attack")
             return
         }
@@ -124,13 +140,13 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         fight.spellSelectionsIcons = await spellIconsChoices(scene, [SPELLS[spells[0]], SPELLS[spells[1]], SPELLS[spells[2]]])
         const [icon1, icon2, icon3, swapAB, swapBC] = fight.spellSelectionsIcons
         swapAB.onClick = () => {
-            if (fight.state !== "pickspellandswap") {
+            if (fight.state !== "pickspellandswap" && fight.state !== "pickcaster") {
                 return
             }
             swapCharacters(0, 1)
         }
         swapBC.onClick = () => {
-            if (fight.state !== "pickspellandswap") {
+            if (fight.state !== "pickspellandswap" && fight.state !== "pickcaster") {
                 return
             }
             swapCharacters(1, 2)
@@ -185,6 +201,37 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
             }
         })
         fight.setState("pickspellandswap")
+        refreshTurnOrder()
+    }
+
+    function refreshTurnOrder() {
+        let isFirstCharacterStarting =  fight.allies[0] && fight.allies[0].info.health.value > 0 && (!fight.enemies[0] || elementHasAdvantage(fight.allies[0].info.element.value, fight.enemies[0].info.element.value))
+        let isSecondCharacterStarting = fight.allies[1] && fight.allies[1].info.health.value > 0 && (!fight.enemies[1] || elementHasAdvantage(fight.allies[1].info.element.value, fight.enemies[1].info.element.value))
+        let isThirdCharacterStarting = fight.allies[2] && fight.allies[2].info.health.value > 0 && (!fight.enemies[2] || elementHasAdvantage(fight.allies[2].info.element.value, fight.enemies[2].info.element.value))
+
+        const turnOrder = {
+            0: { source: isFirstCharacterStarting ? fight.allies[0] : fight.enemies[0],
+                mainTarget: isFirstCharacterStarting ? fight.enemies[0] : fight.allies[0] },
+            1: { source: isSecondCharacterStarting ? fight.allies[1] : fight.enemies[1],
+                mainTarget: isSecondCharacterStarting ? fight.enemies[1] : fight.allies[1] },
+            2: { source: isThirdCharacterStarting ? fight.allies[2] : fight.enemies[2],
+                mainTarget: isThirdCharacterStarting ? fight.enemies[2] : fight.allies[2] },
+            3: { source: isFirstCharacterStarting ? fight.enemies[0] : fight.allies[0],
+                mainTarget: isFirstCharacterStarting ? fight.allies[0] : fight.enemies[0] },
+            4: { source: isSecondCharacterStarting ? fight.enemies[1] : fight.allies[1],
+                mainTarget: isSecondCharacterStarting ? fight.allies[1] : fight.enemies[1] },
+            5: { source: isThirdCharacterStarting ? fight.enemies[2] : fight.allies[2],
+                mainTarget: isThirdCharacterStarting ? fight.allies[2] : fight.enemies[2] },
+        }
+        let turn = 1
+        Object.values(fight.allies).forEach((obj) => obj.setTurnInfo())
+        Object.values(fight.enemies).forEach((obj) => obj.setTurnInfo())
+        Object.values(turnOrder)
+            .forEach((obj) => {
+                if (obj.source && obj.mainTarget && obj.mainTarget.info.health.value >= 0 && obj.source.info.stun.value <= 0) {
+                    obj.source.setTurnInfo(turn++)
+                }
+            })
     }
 
     function elementHasAdvantage(elem1, elem2) {
@@ -350,7 +397,6 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
             }
         } else if (effect.type === "healAll" || effect.type === "healOthers") {
             const hp = effect.hp
-            console.log("hp effect raw", effect.hp)
             const changes = Object.values(myTeam).map((ally) => {
                 if (ally === undefined) {
                     return undefined
@@ -437,15 +483,15 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         if (source.hp <= 0) {
             return
         }
-        console.log("COMPUTING", source, spellId, mainTarget)
+        // console.log("COMPUTING", source, spellId, mainTarget)
         const spellEffects = SPELLS_EFFECTS[spellId]
         const [effect, effect2] = spellEffects
-        const spellDetails = computeSpellEffect(fightDetails,source, effect, mainTarget)
+        const spellDetails = computeSpellEffect(fightDetails, source, effect, mainTarget)
         if (effect2) {
             const spellDetails2 = computeSpellEffect(fightDetails, source, effect2, mainTarget)
             if (spellDetails2.changes) {
                 spellDetails.changes = spellDetails.changes.concat(spellDetails2.changes)
-                console.log("EXTRA EFFECT", spellDetails2.changes)    
+                // console.log("EXTRA EFFECT", spellDetails2.changes)    
             }
         }
         return spellDetails || {
@@ -458,8 +504,6 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
     }
 
     fight.prepareCurrentFight = function() {
-        this.currentTurn = []
-
         let isFirstCharacterStarting =  fight.allies[0] && fight.allies[0].info.health.value > 0 && (!fight.enemies[0] || elementHasAdvantage(fight.allies[0].info.element.value, fight.enemies[0].info.element.value))
         let isSecondCharacterStarting = fight.allies[1] && fight.allies[1].info.health.value > 0 && (!fight.enemies[1] || elementHasAdvantage(fight.allies[1].info.element.value, fight.enemies[1].info.element.value))
         let isThirdCharacterStarting = fight.allies[2] && fight.allies[2].info.health.value > 0 && (!fight.enemies[2] || elementHasAdvantage(fight.allies[2].info.element.value, fight.enemies[2].info.element.value))
@@ -491,7 +535,7 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
                 fight.enemies[2] && { obj: fight.enemies[2], hp: fight.enemies[2].info.health.value, maxHP: fight.enemies[2].maxHP, stunned: false },
             ],
         }
-        fight.currentTurn = Object.values(currentTurn).map((info) => {
+        fight.currentTurn = Object.values(currentTurn).map((info, index) => {
             if (!info.source || !info.mainTarget || info.source.info.health.value <= 0 ||
                 info.source.info.stun.value > 0
             ) {
@@ -500,6 +544,7 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
                 }
                 return undefined
             }
+            console.log("current turn", index, "spell:", info.source.info.spell.value)
             info.spell = info.source.info.spell.value
             // is character dead (avoid Volley as it can hit other people)
             if (info.spell !== 13 && (info.source.isAlly && (fightStatus.allies[info.source.currentId].hp <= 0 || fightStatus.allies[info.source.currentId].stunned)) ||

@@ -1,7 +1,7 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
 import { CHARACTERS_MAX_HP, ELEMENTS, ELEMENTS_STRENGTH, SPELLS } from '../utils/constants.js';
 import { click_character } from '../utils/event.js';
-import { createFightInfoText } from '../utils/text.js';
+import { createFightInfoText, createStaticText } from '../utils/text.js';
 import { addHealthBar, getSpellIcon, iconToSpellPreview } from '../utils/ui.js';
 import { getModel } from '../utils/assets.js';
 import { worldToScreenPosition } from '../utils/utils.js';
@@ -20,6 +20,11 @@ export function addCharacter(scene, className, element, _position, rotation) {
     object.position.set(position[0], position[1], position[2])
     object.rotation.set(rotation[0], rotation[1], rotation[2])
     object.scale.set(0.5,0.5,0.5)
+
+    let turnInfo = createStaticText(scene, ' ', [position[0] + (position[0] < 0 ? -1.5 : +1.5), position[1], position[2]])
+    object.setTurnInfo = function(index) {
+        turnInfo = turnInfo.updateText(index === undefined ? '' : index.toString())
+    }
 
     const hpBarPosition = [position[0], position[1] + 1.6, position[2]]
     const hpBar = addHealthBar(scene, hpBarPosition, 0.3, 0.08)
@@ -131,6 +136,7 @@ export function addCharacter(scene, className, element, _position, rotation) {
             console.error("already dead")
             return;
         }
+
         object.hp -= damage
         if (object.hp <= 0) {
             object.hp = 0
@@ -216,6 +222,7 @@ export function addCharacter(scene, className, element, _position, rotation) {
             scene.remove(prevIcon)
         }
         object.hpBar.clean()
+        scene.remove(turnInfo)
     }
 
     return object

@@ -9,7 +9,9 @@ const sfxList = {}
 let globalScene
 let listener
 
-export function initScene() {
+let physics
+
+export function initScene() {    
     // Scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -27,6 +29,8 @@ export function initScene() {
     const directionalLight = new THREE.DirectionalLight( 0xaaaaaa, 1 );
     directionalLight.position.set(10, 200, 10); // Adjust light position as needed
     directionalLight.castShadow = true; // Enable shadows for this light
+    directionalLight.shadow.mapSize.width = 2048;
+    directionalLight.shadow.mapSize.height = 2048;
     scene.add(directionalLight);
 
     // Camera positioning

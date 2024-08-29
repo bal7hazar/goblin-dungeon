@@ -74,8 +74,8 @@ export const SPELLS_EFFECTS = {
     1: [{ type: 'meleeHitSingle', dmg: 20 }], // Punch
     2: [{ type: 'meleeHitSingle', dmg: 30 }], // Kick
     3: [{ type: 'healSelf', hp: 25 }], // Heal
-    4: [{ type: 'spellHitAll', dmg: 30 }], // Blizzard
-    5: [{ type: 'spellHitAll', dmg: 20 }, { type: 'stunSingle', duration: 1 }], // Burst
+    4: [{ type: 'spellHitSingle', dmg: 20 }, { type: 'stunAll', duration: 1 }], // Blizzard
+    5: [{ type: 'spellHitAll', dmg: 50 }, { type: 'spellHitOthers', dmg: 10 }], // Burst
     6: [{ type: 'spellHitOthers', dmg: 40 }], // Fireblade
     7: [{ type: 'spellHitSingle', dmg: 60 }], // Fireball
     8: [{ type: 'healSelf', hp: 40 }, { type: 'healOthers', hp: 10 }], // Holywater
