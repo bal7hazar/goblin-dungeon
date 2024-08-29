@@ -1251,8 +1251,8 @@
     {
       "kind": "DojoContract",
       "address": "0x4726d22f268d0718d4b076fb37f5a2bed74982731fa00cf1fbdec9994f4129f",
-      "class_hash": "0x4b1f794afbbbca9ff168d2bd0bb28730cdbc1349e7c04e4c541d1222af34ed8",
-      "original_class_hash": "0x4b1f794afbbbca9ff168d2bd0bb28730cdbc1349e7c04e4c541d1222af34ed8",
+      "class_hash": "0x4a3ae8338584692bfa463a526128e3af1de38b5ab98e8c372a1317af1a55486",
+      "original_class_hash": "0x4a3ae8338584692bfa463a526128e3af1de38b5ab98e8c372a1317af1a55486",
       "base_class_hash": "0x2427dd10a58850ac9a5ca6ce04b7771b05330fd18f2e481831ad903b969e6b2",
       "abi": [
         {
