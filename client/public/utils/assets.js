@@ -30,6 +30,33 @@ const MODELS_TO_LOAD = [
     "characters/monsters/Characters/fbx/Skeleton_Rogue",
     "characters/monsters/Characters/fbx/Skeleton_Warrior",
 ]
+
+const CHILDREN_TO_HIDE = [
+    // Knight
+    "1H_Sword_Offhand",
+    "2H_Sword",
+    "Badge_Shield",
+    "Rectangle_Shield",
+    "Round_Shield",
+    // Rogue
+    "1H_Crossbow",
+    "Knife",
+    "Knife_Offhand",
+    "Throwable",
+    // Barbarian
+    "2H_Axe",
+    "Barbarian_Round_Shield",
+    "Mug",
+    // Mage
+    "1H_Wand",
+    "Spellbook",
+    "Spellbook_open",
+    // Skeleton_Mage
+    // Skeleton_Minion
+    // Skeleton_Rogue
+    // Skeleton_Warrior
+]
+
 const fbxLoader = new FBXLoader()
 export async function loadModels() {
     return new Promise(async (resolve, reject) => {
@@ -38,6 +65,13 @@ export async function loadModels() {
                 fbxLoader.load(
                     `assets/models/${name}.fbx`,
                     function (object) {
+                        // Hide children with the flag isGroup at true
+                        object.traverse((child) => {
+                            if (CHILDREN_TO_HIDE.includes(child.name)) {
+                                child.visible = false
+                            }
+                        })
+
                         models[name.split('/')[name.split('/').length - 1]] = object
                         resolve()
                     },
