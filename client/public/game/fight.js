@@ -125,7 +125,7 @@ export function startFight(scene, alliesInfo, enemiesInfo, spellsList) {
         if (fight.state === "pickcaster") {
             fight.selectedCaster = fight.allies[id].currentId
             console.log(fight.selectedCaster)
-            const ally = Object.values(fight.allies).filter((obj) => obj.baseId == fight.selectedCaster)[0]
+            const ally = fight.allies[id]//Object.values(fight.allies).filter((obj) => obj.baseId == fight.selectedCaster)[0]
             ally.info.spell.value = fight.spellsDeck[fight.selectedSpell].spellId
             console.log("SPELL SELECTED FOR ALLY", ally.info.spell.value)
             ally.prepare(fight.spellsDeck[fight.selectedSpell].spellId)
