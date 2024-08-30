@@ -21,9 +21,9 @@ export function addCharacter(scene, className, element, _position, rotation) {
     object.rotation.set(rotation[0], rotation[1], rotation[2])
     object.scale.set(0.5,0.5,0.5)
 
-    // let turnInfo = createStaticText(scene, ' ', [position[0] + (position[0] < 0 ? -1.5 : +1.5), position[1], position[2]])
+    let turnInfo = createStaticText(scene, ' ', [position[0] + (position[0] < 0 ? -1.5 : +1.5), position[1], position[2]])
     object.setTurnInfo = function(index) {
-        // turnInfo = turnInfo.updateText(index === undefined ? '' : index.toString())
+        turnInfo = turnInfo.updateText(index === undefined ? '' : index.toString())
     }
 
     const hpBarPosition = [position[0], position[1] + 1.6, position[2]]
@@ -99,46 +99,49 @@ export function addCharacter(scene, className, element, _position, rotation) {
         object.animationMixer.update(clock.getDelta())
     })
 
-    // object.reload = () => {
-    //     if (object.elementIcon) {
-    //         scene.remove(object.elementIcon)
+    object.reload = () => {
+        if (object.elementIcon) {
+            scene.remove(object.elementIcon)
 
-    //         if (element > 0) {
-    //             getSpellIcon(ELEMENTS[element], 1, scene).then((elementIcon) => {
-    //                 object.elementIcon = elementIcon
-    //                 elementIcon.refresh = function() {
-    //                     elementIcon.position.set(position[0], 0.055, position[2])    
-    //                 }
-    //                 elementIcon.rotation.set(-Math.PI * 0.5, 0, 0)
-    //                 elementIcon.receiveShadow = true
-    //                 elementIcon.traverse((node) => {
-    //                     if (node.isMesh) {
-    //                         node.receiveShadow = true
-    //                     }
-    //                 })
-    //                 elementIcon.layers.set(0);
-    //                 scene.tickCallbacks.push(() => {
-    //                     elementIcon.refresh()
-    //                 })
-    //             })
-    //         }
-    //     }
-    //     if (prevIcon) {
-    //         object.prepare(object.currentSpell)
-    //     }
-    //     object.hpBar.clean()
-    //     const hpBarPosition = [position[0], position[1] + 1.6, position[2]]
-    //     const hpBar = addHealthBar(scene, hpBarPosition, 0.3, 0.08)
-    //     hpBar.setHP(object.hp, object.maxHP)
-    //     object.hpBar = hpBar
+            if (element > 0) {
+                getSpellIcon(ELEMENTS[element], 1, scene).then((elementIcon) => {
+                    object.elementIcon = elementIcon
+                    elementIcon.refresh = function() {
+                        elementIcon.position.set(position[0], 0.055, position[2])    
+                    }
+                    elementIcon.rotation.set(-Math.PI * 0.5, 0, 0)
+                    elementIcon.receiveShadow = true
+                    elementIcon.traverse((node) => {
+                        if (node.isMesh) {
+                            node.receiveShadow = true
+                        }
+                    })
+                    elementIcon.layers.set(0);
+                    scene.tickCallbacks.push(() => {
+                        elementIcon.refresh()
+                    })
+                })
+            }
+        }
+        if (prevIcon) {
+            object.prepare(object.currentSpell)
+        }
+        object.hpBar.clean()
+        const hpBarPosition = [position[0], position[1] + 1.6, position[2]]
+        const hpBar = addHealthBar(scene, hpBarPosition, 0.3, 0.08)
+        hpBar.setHP(object.hp, object.maxHP)
+        object.hpBar = hpBar
 
-    //     object.setTurnInfo('')
-    // }
+        scene.remove(turnInfo)
+        turnInfo = createStaticText(scene, '', [position[0] + (position[0] < 0 ? -1.5 : +1.5), position[1], position[2]])
+    }
 
     object.setPosition = function(newPosition) {
         position = newPosition
         object.position.set(position[0], position[1], position[2])
-        // object.reload()
+        if (object.info.health.value > 0) {
+            object.reload()
+        }
     }
 
     for (const child of object.children) {
@@ -259,7 +262,7 @@ export function addCharacter(scene, className, element, _position, rotation) {
             scene.remove(prevIcon)
         }
         object.hpBar.clean()
-        // scene.remove(turnInfo)
+        scene.remove(turnInfo)
     }
 
     return object
